@@ -1,0 +1,27 @@
+# Cloudflare Redirects Configuration
+# Add to _redirects file for Cloudflare Pages deployment
+
+# Redirect common variations to canonical URL
+http://dynamo-elixir.com/* https://dynamo-elixir.com/:splat 301!
+www.dynamo-elixir.com/* https://dynamo-elixir.com/:splat 301!
+
+# GitHub repository redirect
+/github https://github.com/bmalum/dynamo 302
+/repo https://github.com/bmalum/dynamo 302
+
+# Documentation redirects
+/docs https://hexdocs.pm/dynamo 302
+/documentation https://hexdocs.pm/dynamo 302
+
+# Issues and support
+/issues https://github.com/bmalum/dynamo/issues 302
+/support https://github.com/bmalum/dynamo/issues 302
+/bugs https://github.com/bmalum/dynamo/issues 302
+
+# Package manager links
+/hex https://hex.pm/packages/dynamo 302
+/package https://hex.pm/packages/dynamo 302
+
+# Social media and sharing
+/twitter https://twitter.com/intent/tweet?text=Check%20out%20Dynamo%20-%20Elegant%20DynamoDB%20DSL%20for%20Elixir&url=https://dynamo-elixir.com 302
+/share https://dynamo-elixir.com 302

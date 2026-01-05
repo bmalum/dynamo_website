@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>Dynamo - Elegant DynamoDB DSL for Elixir | Type-Safe NoSQL Made Simple</title>
+    <meta name="title" content="Dynamo - Elegant DynamoDB DSL for Elixir | Type-Safe NoSQL Made Simple">
+    <meta name="description" content="Transform your DynamoDB experience with Dynamo - an Ecto-inspired DSL that brings type safety, familiar syntax, and powerful features to Elixir developers. Start building scalable applications today.">
+    <meta name="keywords" content="Elixir, DynamoDB, AWS, Database, DSL, Ecto, Type Safety, NoSQL, Amazon DynamoDB, Elixir Library, Database ORM, Schema Definition, Serverless">
+    <meta name="author" content="Dynamo Community">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://dynamo-elixir.com/">
+    <meta property="og:title" content="Dynamo - Elegant DynamoDB DSL for Elixir">
+    <meta property="og:description" content="Transform your DynamoDB experience with type-safe, Ecto-inspired DSL for Elixir developers.">
+    <meta property="og:image" content="https://dynamo-elixir.com/og-image.png">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://dynamo-elixir.com/">
+    <meta name="twitter:title" content="Dynamo - Elegant DynamoDB DSL for Elixir">
+    <meta name="twitter:description" content="Transform your DynamoDB experience with type-safe, Ecto-inspired DSL for Elixir developers.">
+    <meta name="twitter:image" content="https://dynamo-elixir.com/og-image.png">
+    
+    <!-- Enhanced Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Dynamo",
+        "description": "Elegant DynamoDB DSL for Elixir - Type-safe, Ecto-inspired DSL for Amazon DynamoDB",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Cross-platform",
+        "programmingLanguage": "Elixir",
+        "url": "https://dynamo-elixir.com",
+        "codeRepository": "https://github.com/bmalum/dynamo",
+        "softwareVersion": "0.1.0",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Organization",
+            "name": "Dynamo Community"
+        },
+        "keywords": "Elixir, DynamoDB, AWS, NoSQL, Database, DSL, Ecto, Type Safety",
+        "sameAs": [
+            "https://github.com/bmalum/dynamo",
+            "https://hexdocs.pm/dynamo"
+        ],
+        "softwareRequirements": "Elixir >= 1.12, Erlang/OTP >= 24",
+        "releaseNotes": "Initial release with core DynamoDB operations and Ecto-inspired DSL",
+        "downloadUrl": "https://github.com/bmalum/dynamo",
+        "installUrl": "https://github.com/bmalum/dynamo#installation",
+        "screenshot": "https://dynamo-elixir.com/og-image.png",
+        "featureList": [
+            "Type-safe schema definition",
+            "Ecto-inspired DSL",
+            "Batch operations support",
+            "Transaction support",
+            "Parallel scan capabilities",
+            "Mix tasks for table management"
+        ]
+    }
+    </script>
+    
+    <!-- Additional Structured Data for Organization -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Dynamo Community",
+        "url": "https://dynamo-elixir.com",
+        "logo": "https://dynamo-elixir.com/logo.png",
+        "sameAs": [
+            "https://github.com/bmalum/dynamo"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "technical support",
+            "url": "https://github.com/bmalum/dynamo/issues"
+        }
+    }
+    </script>
+    
+    <!-- WebSite Structured Data for Search Box -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Dynamo - Elegant DynamoDB DSL for Elixir",
+        "url": "https://dynamo-elixir.com",
+        "description": "Transform your DynamoDB experience with type-safe, Ecto-inspired DSL for Elixir developers",
+        "inLanguage": "en-US",
+        "isAccessibleForFree": true,
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://github.com/bmalum/dynamo/search?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+    
+    <!-- Additional Meta Tags for SEO -->
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+    <meta name="distribution" content="global">
+    <meta name="rating" content="general">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- Enhanced SEO Meta Tags -->
+    <meta name="application-name" content="Dynamo">
+    <meta name="apple-mobile-web-app-title" content="Dynamo">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- Geo and Location -->
+    <meta name="geo.region" content="US">
+    <meta name="geo.placename" content="Global">
+    
+    <!-- Content Classification -->
+    <meta name="category" content="Technology, Software Development, Database, Elixir">
+    <meta name="coverage" content="Worldwide">
+    <meta name="target" content="developers, software engineers, elixir developers">
+    
+    <!-- Social Media Optimization -->
+    <meta property="og:site_name" content="Dynamo">
+    <meta property="og:locale" content="en_US">
+    <meta property="article:author" content="Dynamo Community">
+    <meta property="article:publisher" content="https://dynamo-elixir.com">
+    
+    <!-- Twitter Enhanced -->
+    <meta name="twitter:site" content="@dynamo_elixir">
+    <meta name="twitter:creator" content="@dynamo_elixir">
+    
+    <!-- Search Engine Specific -->
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="bingbot" content="index, follow">
+    <meta name="slurp" content="index, follow">
+    
+    <!-- Performance Optimization -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://github.com">
+    <link rel="dns-prefetch" href="https://hexdocs.pm">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    
+    <!-- Resource Hints -->
+    <link rel="prefetch" href="https://github.com/bmalum/dynamo">
+    <link rel="prefetch" href="https://hexdocs.pm/dynamo">
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="styles.css" as="style">
+    <link rel="preload" href="script.js" as="script">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" as="style">
+    
+    <!-- Module Preload for Modern Browsers -->
+    <link rel="modulepreload" href="script.js">
+    
+    <!-- Critical CSS Inlining Placeholder -->
+    <!-- Consider inlining critical CSS here for faster rendering -->
+    
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/svg+xml" href="./website/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#3b82f6">
+    <meta name="msapplication-TileColor" content="#3b82f6">
+    <meta name="theme-color" content="#3b82f6">
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Fonts with font-display optimization -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Prism.js for syntax highlighting with performance optimization -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet"></noscript>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Noscript Styles -->
+    <noscript>
+        <style>
+            .examples-noscript {
+                display: block !important;
+            }
+            .examples-content {
+                display: none;
+            }
+            .examples-tabs {
+                display: none;
+            }
+            .examples-noscript h3 {
+                color: #1f2937;
+                font-size: 1.25rem;
+                font-weight: 600;
+                margin: 2rem 0 1rem 0;
+                border-bottom: 2px solid #e5e7eb;
+                padding-bottom: 0.5rem;
+            }
+            .examples-noscript .code-block {
+                margin-bottom: 2rem;
+            }
+        </style>
+    </noscript>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="nav-logo">⚡</span>
+                <span class="nav-title">Dynamo</span>
+            </div>
+            <div class="nav-links">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#examples" class="nav-link">Examples</a>
+                <a href="#docs" class="nav-link">Docs</a>
+                <a href="https://github.com/bmalum/dynamo" class="nav-link nav-cta" target="_blank">GitHub</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <!-- Version Ribbon -->
+        <div class="version-ribbon" role="status" aria-label="Elixir version requirement">
+            <div class="ribbon-content">
+                Elixir 1.16+
+            </div>
+        </div>
+        
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    Elegant DynamoDB DSL <span class="hero-highlight">for Elixir</span>
+                </h1>
+                <p class="hero-description">
+                    Transform your DynamoDB experience with type-safe schemas, familiar Ecto-inspired syntax, 
+                    and powerful features that make NoSQL development a joy.
+                </p>
+                <div class="hero-actions">
+                    <a href="#get-started" class="btn btn-primary">Get Started</a>
+                    <a href="#examples" class="btn btn-secondary">View Examples</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">Type-Safe</span>
+                        <span class="stat-label">Schema Definition</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">Ecto-Inspired</span>
+                        <span class="stat-label">Familiar Syntax</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">Production</span>
+                        <span class="stat-label">Ready</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="code-preview">
+                    <div class="code-header">
+                        <div class="code-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <span class="code-title">user.ex</span>
+                    </div>
+                    <pre class="code-content"><code class="language-elixir">defmodule MyApp.User do
+  use Dynamo.Schema
+
+  item do
+    table_name "users"
+    
+    field :id, partition_key: true
+    field :email, sort_key: true
+    field :name
+    field :role, default: "user"
+    field :created_at, default: &DateTime.utc_now/0
+    field :active, default: true
+    
+    # Validation
+    validates :email, format: ~r/@/
+    validates :name, presence: true
+  end
+end
+
+# Create user with validation
+user = %MyApp.User{
+  id: UUID.uuid4(),
+  email: "alice@example.com",
+  name: "Alice Johnson",
+  role: "admin"
+}
+
+{:ok, saved_user} = MyApp.User.put_item(user)</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="features-container">
+            <div class="section-header">
+                <h2 class="section-title">Why Choose Dynamo?</h2>
+                <p class="section-description">
+                    Built for modern Elixir developers who want the power of DynamoDB 
+                    with the safety and elegance of structured schemas.
+                </p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3 class="feature-title">Type Safety</h3>
+                    <p class="feature-description">
+                        Define schemas that enforce data consistency and catch errors at compile time.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3 class="feature-title">Familiar Syntax</h3>
+                    <p class="feature-description">
+                        Ecto-inspired DSL that feels natural to Elixir developers.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3 class="feature-title">Performance</h3>
+                    <p class="feature-description">
+                        Built-in support for batch operations and parallel scans.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <h3 class="feature-title">Flexible Config</h3>
+                    <p class="feature-description">
+                        Multiple configuration levels to suit your application needs.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Transactions</h3>
+                    <p class="feature-description">
+                        Full support for DynamoDB transactions with clean syntax.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛠️</div>
+                    <h3 class="feature-title">CLI Tools</h3>
+                    <p class="feature-description">
+                        Mix tasks for table management and schema generation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code Examples Section -->
+    <section id="examples" class="examples">
+        <div class="examples-container">
+            <div class="section-header">
+                <h2 class="section-title">See It In Action</h2>
+                <p class="section-description">
+                    From simple CRUD operations to complex transactions, Dynamo makes it elegant.
+                </p>
+            </div>
+            <div class="examples-tabs">
+                <button class="tab-button active" data-tab="schema">Schema Definition</button>
+                <button class="tab-button" data-tab="crud">CRUD Operations</button>
+                <button class="tab-button" data-tab="query">Advanced Queries</button>
+                <button class="tab-button" data-tab="batch">Batch Operations</button>
+            </div>
+            
+            <!-- Noscript fallback for crawlers and users without JavaScript -->
+            <noscript>
+                <div class="examples-noscript">
+                    <h3>Schema Definition</h3>
+                    <div class="code-block">
+                        <pre><code class="language-elixir">defmodule MyApp.Product do
+  use Dynamo.Schema
+
+  item do
+    table_name "products"
+    
+    field :category_id, partition_key: true
+    field :product_id, sort_key: true
+    field :name
+    field :price
+    field :stock, default: 0
+    field :active, default: true
+  end
+end</code></pre>
+                    </div>
+                    
+                    <h3>CRUD Operations</h3>
+                    <div class="code-block">
+                        <pre><code class="language-elixir"># Create
+product = %MyApp.Product{
+  category_id: "electronics",
+  product_id: "smartphone-123",
+  name: "iPhone 15",
+  price: 999.99
+}
+{:ok, saved} = MyApp.Product.put_item(product)
+
+# Read
+{:ok, product} = MyApp.Product.get_item(%MyApp.Product{
+  category_id: "electronics",
+  product_id: "smartphone-123"
+})
+
+# List all products in category
+{:ok, products} = MyApp.Product.list_items(
+  %MyApp.Product{category_id: "electronics"}
+)</code></pre>
+                    </div>
+                    
+                    <h3>Advanced Queries</h3>
+                    <div class="code-block">
+                        <pre><code class="language-elixir"># Query with conditions
+{:ok, products} = MyApp.Product.list_items(
+  %MyApp.Product{category_id: "electronics"},
+  [
+    sort_key: "smartphone",
+    sk_operator: :begins_with,
+    filter_expression: "price > :min_price",
+    expression_attribute_values: %{
+      ":min_price" => %{"N" => "500"}
+    },
+    scan_index_forward: false
+  ]
+)
+
+# Parallel scan for large datasets
+{:ok, all_products} = Dynamo.Table.parallel_scan(
+  MyApp.Product,
+  segments: 8
+)</code></pre>
+                    </div>
+                    
+                    <h3>Batch Operations</h3>
+                    <div class="code-block">
+                        <pre><code class="language-elixir"># Batch write multiple items
+products = [
+  %MyApp.Product{category_id: "electronics", product_id: "phone-1", name: "iPhone", price: 999},
+  %MyApp.Product{category_id: "electronics", product_id: "laptop-1", name: "MacBook", price: 1999},
+  %MyApp.Product{category_id: "books", product_id: "book-1", name: "Elixir Guide", price: 29}
+]
+
+{:ok, result} = Dynamo.Table.batch_write_item(products)
+
+# Transactions
+Dynamo.Transaction.transact([
+  {:update, %Account{id: "acc-1"}, %{balance: {:decrement, 100}}},
+  {:update, %Account{id: "acc-2"}, %{balance: {:increment, 100}}}
+])</code></pre>
+                    </div>
+                </div>
+            </noscript>
+            <div class="examples-content">
+                <div class="example-tab active" id="schema-tab">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">Define Your Schema</span>
+                            <button class="copy-btn" data-code="schema">Copy</button>
+                        </div>
+                        <pre><code class="language-elixir">defmodule MyApp.Product do
+  use Dynamo.Schema
+
+  item do
+    table_name "products"
+    
+    field :category_id, partition_key: true
+    field :product_id, sort_key: true
+    field :name
+    field :price
+    field :stock, default: 0
+    field :active, default: true
+  end
+end</code></pre>
+                    </div>
+                </div>
+                <div class="example-tab" id="crud-tab">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">CRUD Operations</span>
+                            <button class="copy-btn" data-code="crud">Copy</button>
+                        </div>
+                        <pre><code class="language-elixir"># Create
+product = %MyApp.Product{
+  category_id: "electronics",
+  product_id: "smartphone-123",
+  name: "iPhone 15",
+  price: 999.99
+}
+{:ok, saved} = MyApp.Product.put_item(product)
+
+# Read
+{:ok, product} = MyApp.Product.get_item(%MyApp.Product{
+  category_id: "electronics",
+  product_id: "smartphone-123"
+})
+
+# List all products in category
+{:ok, products} = MyApp.Product.list_items(
+  %MyApp.Product{category_id: "electronics"}
+)</code></pre>
+                    </div>
+                </div>
+                <div class="example-tab" id="query-tab">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">Advanced Queries</span>
+                            <button class="copy-btn" data-code="query">Copy</button>
+                        </div>
+                        <pre><code class="language-elixir"># Query with conditions
+{:ok, products} = MyApp.Product.list_items(
+  %MyApp.Product{category_id: "electronics"},
+  [
+    sort_key: "smartphone",
+    sk_operator: :begins_with,
+    filter_expression: "price > :min_price",
+    expression_attribute_values: %{
+      ":min_price" => %{"N" => "500"}
+    },
+    scan_index_forward: false
+  ]
+)
+
+# Parallel scan for large datasets
+{:ok, all_products} = Dynamo.Table.parallel_scan(
+  MyApp.Product,
+  segments: 8
+)</code></pre>
+                    </div>
+                </div>
+                <div class="example-tab" id="batch-tab">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">Batch Operations</span>
+                            <button class="copy-btn" data-code="batch">Copy</button>
+                        </div>
+                        <pre><code class="language-elixir"># Batch write multiple items
+products = [
+  %MyApp.Product{category_id: "electronics", product_id: "phone-1", name: "iPhone", price: 999},
+  %MyApp.Product{category_id: "electronics", product_id: "laptop-1", name: "MacBook", price: 1999},
+  %MyApp.Product{category_id: "books", product_id: "book-1", name: "Elixir Guide", price: 29}
+]
+
+{:ok, result} = Dynamo.Table.batch_write_item(products)
+
+# Transactions
+Dynamo.Transaction.transact([
+  {:update, %Account{id: "acc-1"}, %{balance: {:decrement, 100}}},
+  {:update, %Account{id: "acc-2"}, %{balance: {:increment, 100}}}
+])</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Get Started Section -->
+    <section id="get-started" class="get-started">
+        <div class="get-started-container">
+            <div class="section-header">
+                <h2 class="section-title">Get Started in Minutes</h2>
+                <p class="section-description">
+                    Add Dynamo to your Elixir project and start building with confidence.
+                </p>
+            </div>
+            <div class="steps-grid">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Install</h3>
+                    <div class="code-block small">
+                        <pre><code class="language-elixir"># mix.exs
+def deps do
+  [
+    {:dynamo, github: "bmalum/dynamo"}
+  ]
+end</code></pre>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Define Schema</h3>
+                    <div class="code-block small">
+                        <pre><code class="language-elixir">defmodule MyApp.User do
+  use Dynamo.Schema
+  
+  item do
+    table_name "users"
+    field :id, partition_key: true
+    field :email, sort_key: true
+    field :name
+  end
+end</code></pre>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Start Building</h3>
+                    <div class="code-block small">
+                        <pre><code class="language-elixir">user = %MyApp.User{
+  id: "user-123",
+  email: "john@example.com",
+  name: "John Doe"
+}
+
+{:ok, saved} = MyApp.User.put_item(user)</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="cta-container">
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to Transform Your DynamoDB Experience?</h2>
+                <p class="cta-description">
+                    Join developers who are building scalable applications with type-safe DynamoDB operations.
+                </p>
+                <div class="cta-actions">
+                    <a href="https://github.com/bmalum/dynamo" class="btn btn-primary" target="_blank">
+                        View on GitHub
+                    </a>
+                    <a href="https://hexdocs.pm/dynamo" class="btn btn-secondary" target="_blank">
+                        Read Documentation
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="footer-logo">⚡</span>
+                    <span class="footer-title">Dynamo</span>
+                </div>
+                <div class="footer-links">
+                    <a href="https://github.com/bmalum/dynamo" target="_blank">GitHub</a>
+                    <a href="https://hexdocs.pm/dynamo" target="_blank">Documentation</a>
+                    <a href="https://github.com/bmalum/dynamo/issues" target="_blank">Issues</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Dynamo Community. MIT License.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-elixir.min.js" defer></script>
+    <script src="script.js" defer></script>
+    
+    <!-- Analytics Setup (Ready for implementation) -->
+    <!-- Google Analytics 4 -->
+    <!--
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+    -->
+    
+    <!-- Google Tag Manager -->
+    <!--
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+    -->
+    
+    <!-- Structured Data for Breadcrumbs -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://dynamo-elixir.com"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Features",
+                "item": "https://dynamo-elixir.com#features"
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Examples",
+                "item": "https://dynamo-elixir.com#examples"
+            },
+            {
+                "@type": "ListItem",
+                "position": 4,
+                "name": "Get Started",
+                "item": "https://dynamo-elixir.com#get-started"
+            }
+        ]
+    }
+    </script>
+</body>
+</html>

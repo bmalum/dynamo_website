@@ -1,0 +1,35 @@
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore Kiro CLI files
+.kiro/
+
+# Ignore temporary files
+*.tmp
+*.temp
+
+# Ignore logs
+*.log
+
+# Ignore the dynamo library directory (separate repo)
+dynamo/
+
+# Ignore build artifacts
+dist/
+build/
+out/
+
+# Ignore node modules if any
+node_modules/
+
+# Ignore environment files
+.env
+.env.local
+.env.production
