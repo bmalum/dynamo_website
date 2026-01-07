@@ -1,7 +1,28 @@
 # Dynamo Website
 
-SEO-optimized website for the Dynamo Elixir library.
+Marketing website for [Dynamo](https://github.com/bmalum/dynamo) - an elegant DynamoDB DSL for Elixir.
+
+🌐 **Live:** [dynamo-elixir.com](https://dynamo-elixir.com)
+
+## Tech Stack
+
+- Static HTML/CSS/JS
+- Hosted on Cloudflare Pages
+- Prism.js for syntax highlighting
+
+## Development
+
+```bash
+# Serve locally
+python -m http.server 8000
+# or
+npx serve .
+```
 
 ## Deployment
 
-Deploy to Cloudflare Pages for optimal performance.
+Automatically deployed to Cloudflare Pages on push to `main`.
+
+## License
+
+MIT
