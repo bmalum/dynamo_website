@@ -71,9 +71,19 @@ body {
     min-width: 320px; /* Prevent layout breaking on very small screens */
 }
 
+/* Beta Banner */
+.beta-banner {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: white;
+    text-align: center;
+    padding: 0.5rem var(--space-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
 /* Navigation */
 .nav {
-    position: fixed;
+    position: sticky;
     top: 0;
     left: 0;
     right: 0;
@@ -140,7 +150,7 @@ body {
 
 /* Hero Section */
 .hero {
-    padding: 8rem var(--space-lg) var(--space-3xl);
+    padding: 6rem var(--space-lg) var(--space-3xl);
     background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
     position: relative;
     overflow: hidden;
@@ -693,7 +703,7 @@ body {
     
     .hero {
         padding: var(--space-2xl) var(--space-md);
-        padding-top: 6rem;
+        padding-top: 5rem;
     }
     
     .hero-container {
