@@ -1,6 +1,6 @@
 # ⚡ Dynamo Website
 
-> Marketing website for [Dynamo](https://github.com/bmalum/dynamo) — an elegant DynamoDB DSL for Elixir
+> Landing page for [Dynamo](https://github.com/bmalum/dynamo) — an elegant DynamoDB DSL for Elixir
 
 [![Live Site](https://img.shields.io/badge/Live-elixir--dynamodb.dev-6366f1)](https://elixir-dynamodb.dev/)
 [![Cloudflare Pages](https://img.shields.io/badge/Hosted%20on-Cloudflare%20Pages-f38020)](https://pages.cloudflare.com/)
