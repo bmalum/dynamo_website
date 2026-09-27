@@ -4,8 +4,8 @@
   "description": "Ecto-inspired Repo and schema library for Amazon DynamoDB in Elixir",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f7f6f2",
-  "theme_color": "#f7f6f2",
+  "background_color": "#f8f9fb",
+  "theme_color": "#f8f9fb",
   "icons": [
     {
       "src": "/favicon.svg",
