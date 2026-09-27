@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://dynamo-elixir.com/sitemap.xml
+Sitemap: https://elixir-dynamodb.dev/sitemap.xml
 
 # Crawl-delay for respectful crawling
 Crawl-delay: 1

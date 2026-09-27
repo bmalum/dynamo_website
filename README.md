@@ -27,6 +27,12 @@ npx serve .
 
 Then open [localhost:8000](http://localhost:8000)
 
+## ✅ Keeping snippets honest
+
+Every code snippet on the page is exercised against the library's test suite
+before it is published (`Dynamo 0.2` API). When the library API changes,
+update `index.html` **and** the matching `codeSnippets` in `script.js`.
+
 ## 🚢 Deployment
 
 Automatically deployed to Cloudflare Pages on push to `main`.

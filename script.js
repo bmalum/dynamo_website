@@ -51,72 +51,124 @@ function initCopyButtons() {
 // Get code content based on type
 function getCodeContent(type) {
     const codeSnippets = {
-        schema: `defmodule MyApp.Product do
+        schema: `defmodule MyApp.Address do
+  use Dynamo.Schema, embedded: true
+
+  item do
+    field :street, :string
+    field :city, :string
+    field :geo, {:list, :float}
+  end
+end
+
+defmodule MyApp.Product do
   use Dynamo.Schema
 
   item do
-    table_name "products"
-    
-    field :category_id, partition_key: true
-    field :product_id, sort_key: true
-    field :name
-    field :price
-    field :stock, default: 0
-    field :active, default: true
+    table "shop"
+
+    field :category, :string, partition_key: true
+    field :sku, :string, sort_key: true
+    field :name, :string
+    field :price, :decimal
+    field :stock, :integer, default: 0
+    field :tags, :string_set
+    field :warehouse, MyApp.Address
   end
 end`,
-        crud: `# Create
-product = %MyApp.Product{
-  category_id: "electronics",
-  product_id: "smartphone-123",
-  name: "iPhone 15",
-  price: 999.99
+        crud: `alias MyApp.{Dynamo, Product, Address}
+
+product = %Product{
+  category: "electronics", sku: "phone-1", name: "Phone",
+  price: Decimal.new("999.00"), tags: MapSet.new(["new"]),
+  warehouse: %Address{city: "Berlin", geo: [52.5, 13.4]}
 }
-{:ok, saved} = MyApp.Product.put_item(product)
 
-# Read
-{:ok, product} = MyApp.Product.get_item(%MyApp.Product{
-  category_id: "electronics",
-  product_id: "smartphone-123"
-})
+# create – fails with :conditional_check_failed if it exists
+{:ok, product} = Dynamo.put(product, condition: [sku: :not_exists])
 
-# List all products in category
-{:ok, products} = MyApp.Product.list_items(
-  %MyApp.Product{category_id: "electronics"}
-)`,
-        query: `# Query with conditions
-{:ok, products} = MyApp.Product.list_items(
-  %MyApp.Product{category_id: "electronics"},
-  [
-    sort_key: "smartphone",
-    sk_operator: :begins_with,
-    filter_expression: "price > :min_price",
-    expression_attribute_values: %{
-      ":min_price" => %{"N" => "500"}
-    },
-    scan_index_forward: false
-  ]
+# read – embedded struct and Decimal come back typed
+{:ok, %Product{warehouse: %Address{city: "Berlin"}}} =
+  Dynamo.get(%Product{category: "electronics", sku: "phone-1"})
+
+# update – SET / ADD / REMOVE built for you
+{:ok, nil} =
+  Dynamo.update(%Product{category: "electronics", sku: "phone-1"},
+    stock: {:increment, 5},
+    tags: {:add, MapSet.new(["sale"])}
+  )
+
+{:ok, nil} = Dynamo.delete(%Product{category: "electronics", sku: "phone-1"})`,
+        query: `# one page, sort-key condition + typed filter
+{:ok, %Dynamo.Page{items: items, last_evaluated_key: key}} =
+  Dynamo.query(%Product{category: "electronics"},
+    sort_key: {:begins_with, "laptop-"},
+    filter: [price: {:gt, Decimal.new("200")}],
+    descending: true,
+    limit: 10
+  )
+
+# every page, bounded
+{:ok, products} = Dynamo.query_all(%Product{category: "electronics"}, limit: 100)
+
+# global secondary index – keys keep their field type
+Dynamo.query(%Order{status: "shipped"},
+  index: "StatusIndex",
+  sort_key: {:gt, ~U[2024-01-01 00:00:00Z]}
 )
 
-# Parallel scan for large datasets
-{:ok, all_products} = Dynamo.Table.parallel_scan(
-  MyApp.Product,
-  segments: 8
-)`,
-        batch: `# Batch write multiple items
-products = [
-  %MyApp.Product{category_id: "electronics", product_id: "phone-1", name: "iPhone", price: 999},
-  %MyApp.Product{category_id: "electronics", product_id: "laptop-1", name: "MacBook", price: 1999},
-  %MyApp.Product{category_id: "books", product_id: "book-1", name: "Elixir Guide", price: 29}
-]
+# lazy stream; segments: N makes it a real parallel scan
+Dynamo.stream(Product, segments: 4)
+|> Stream.filter(&(&1.stock == 0))
+|> Enum.count()`,
+        batch: `# any number of items: chunked into 25, unprocessed retried with backoff
+{:ok, %{unprocessed: []}} =
+  Dynamo.batch_write([
+    %Product{category: "books", sku: "b1", name: "Elixir", price: Decimal.new("29")},
+    {:delete, %Product{category: "electronics", sku: "laptop-1"}}
+  ])
 
-{:ok, result} = Dynamo.Table.batch_write_item(products)
+{:ok, %{items: products}} =
+  Dynamo.batch_get([%Product{category: "books", sku: "b1"}])
 
-# Transactions
-Dynamo.Transaction.transact([
-  {:update, %Account{id: "acc-1"}, %{balance: {:decrement, 100}}},
-  {:update, %Account{id: "acc-2"}, %{balance: {:increment, 100}}}
-])`
+# atomic transfer with an idempotency token
+{:ok, _} =
+  Dynamo.transaction(
+    [
+      {:update, %Account{id: "src"}, [balance: {:decrement, 100}],
+        condition: [balance: {:gte, 100}]},
+      {:update, %Account{id: "dst"}, [balance: {:increment, 100}]},
+      {:put, %Transfer{id: "t1", amount: 100}, condition: [id: :not_exists]}
+    ],
+    client_request_token: "transfer-t1"
+  )
+
+# on cancellation you get per-item reasons
+# {:error, %Dynamo.Error{type: :transaction_canceled,
+#          cancellation_reasons: [%{code: "ConditionalCheckFailed"}, ...]}}`,
+        errors: `case Dynamo.put(user, condition: [pk: :not_exists]) do
+  {:ok, user} ->
+    {:ok, user}
+
+  {:error, %Dynamo.Error{type: :conditional_check_failed}} ->
+    {:error, :already_exists}
+
+  {:error, %Dynamo.Error{retryable?: true}} ->
+    retry_later()
+
+  {:error, %Dynamo.Error{} = e} ->
+    Logger.error(Exception.message(e))
+end
+
+# local validation happens before any request is sent
+{:error, %Dynamo.Error{type: :validation_error}} = Dynamo.put(%User{})
+
+# telemetry on every request
+:telemetry.attach("dynamo", [:dynamo, :request, :stop],
+  fn _, %{duration: d}, meta, _ ->
+    ms = System.convert_time_unit(d, :native, :millisecond)
+    Logger.debug("dynamo #{meta.action} #{meta.table} #{ms}ms #{meta.result}")
+  end, nil)`
     };
     
     return codeSnippets[type] || '';
