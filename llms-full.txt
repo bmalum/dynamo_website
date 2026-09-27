@@ -1,0 +1,1536 @@
+# Dynamo: full documentation (generated 2026-09-27 from 1a73b4d)
+
+
+---
+
+<!-- source: README.md -->
+
+# Dynamo
+
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+> An Ecto-inspired Repo and schema DSL for Amazon DynamoDB.
+
+Dynamo gives you typed schemas, composite key generation, a supervised `Repo`
+that owns credentials and retries, pure request builders you can unit-test,
+and a single normalised `%Dynamo.Error{}` for every failure.
+
+```elixir
+defmodule MyApp.Order do
+  use Dynamo.Schema
+
+  item do
+    table "app_data"
+
+    field :user_id, :string, partition_key: true
+    field :placed_at, :utc_datetime, sort_key: true
+    field :order_id, :string, sort_key: true
+    field :total, :decimal
+    field :status, :string, default: "pending"
+    field :version, :integer, default: 0
+
+    global_secondary_index "StatusIndex", partition_key: :status, sort_key: :placed_at
+  end
+end
+
+defmodule MyApp.Dynamo do
+  use Dynamo.Repo, otp_app: :my_app
+end
+
+{:ok, order} = MyApp.Dynamo.put(%MyApp.Order{user_id: "u1", placed_at: DateTime.utc_now(), order_id: "o1", total: Decimal.new("9.99")})
+{:ok, page}  = MyApp.Dynamo.query(%MyApp.Order{user_id: "u1"}, sort_key: {:gte, "2024-01-01"}, limit: 20)
+{:ok, nil}   = MyApp.Dynamo.update(order, status: "shipped", version: {:increment, 1})
+```
+
+## Installation
+
+```elixir
+def deps do
+  [
+    {:dynamo, github: "bmalum/dynamo"},
+    {:decimal, "~> 2.0"}   # optional, for the :decimal type
+  ]
+end
+```
+
+Requires Elixir 1.16+. `decimal` is optional: if you add it *after* `dynamo`
+was first compiled, run `mix deps.compile dynamo --force` so the `:decimal`
+type picks it up.
+
+> **Upgrading from 0.1?** The API changed completely. See [CHANGELOG.md](CHANGELOG.md).
+
+## Setup
+
+```elixir
+# lib/my_app/dynamo.ex
+defmodule MyApp.Dynamo do
+  use Dynamo.Repo, otp_app: :my_app
+end
+
+# config/runtime.exs
+config :my_app, MyApp.Dynamo,
+  region: System.get_env("AWS_REGION", "eu-central-1"),
+  endpoint: System.get_env("DYNAMO_ENDPOINT")        # e.g. "http://localhost:8000" for DynamoDB Local
+
+# lib/my_app/application.ex
+children = [MyApp.Dynamo, ...]
+```
+
+Credentials resolve in the standard order: repo config → `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`
+→ ECS container credentials → EC2 instance metadata (IMDSv2). Metadata credentials
+are cached in a supervised process and refreshed before expiry.
+
+Other repo options: `:max_retries` (3), `:base_backoff_ms`, `:max_backoff_ms`,
+`:receive_timeout`, `:connect_timeout`, `:req_options`, `:telemetry_prefix`, `:batch_retries` (5).
+
+## Schemas
+
+```elixir
+defmodule MyApp.User do
+  use Dynamo.Schema,
+    key_separator: "#",         # default
+    partition_key_name: "pk",   # default
+    sort_key_name: "sk"         # default
+
+  item do
+    table "app_data"
+    entity_name "user"          # default: underscored module basename; or a parent schema module
+
+    field :id, :string, partition_key: true
+    field :email, :string, sort_key: true
+    field :name, :string
+    field :age, :integer, default: 0
+    field :active, :boolean, default: true
+    field :created_at, :utc_datetime
+    field :balance, :decimal
+    field :tags, :string_set
+    field :profile, :map
+    field :avatar, :binary
+
+    global_secondary_index "EmailIndex", partition_key: :email, projection: :keys_only
+  end
+end
+```
+
+### Field types
+
+| Type | Elixir | DynamoDB |
+|---|---|---|
+| `:string` (default) | `String.t()` | `S` |
+| `:integer`, `:float`, `:decimal` | `integer`, `float`, `Decimal.t()` | `N` |
+| `:boolean` | `boolean` | `BOOL` |
+| `:binary` | `binary` | `B` |
+| `:utc_datetime`, `:naive_datetime`, `:date`, `:time` | calendar structs (ISO 8601) | `S` |
+| `:map`, `:list` | string-keyed map, list | `M`, `L` |
+| `:string_set`, `:number_set`, `:binary_set` | `MapSet.t()` | `SS`, `NS`, `BS` |
+| `:any` | inferred | any |
+| `{:list, type}` | `[type]` | `L` |
+| `:vector`, `{:vector, n}` | `[float]` embedding | `L` of `N` |
+| a schema module | embedded struct (see below) | `M` |
+| a module | implements `Dynamo.Type` | your choice |
+
+Field options: `default:`, `partition_key:`, `sort_key:`, `required:`.
+
+Nil fields are **omitted** from written items (`omit_nil: true`, the default), so
+`put` never stores `NULL` attributes and `load` fills them from struct defaults.
+To *remove* an attribute from an existing item use `update(item, field: :remove)`;
+`update(item, field: nil)` writes an explicit `NULL`.
+
+### Embedded schemas
+
+```elixir
+defmodule MyApp.Address do
+  use Dynamo.Schema, embedded: true      # no table, keys or indexes
+
+  item do
+    field :street, :string
+    field :city, :string
+    field :geo, {:list, :float}
+  end
+end
+
+field :address, MyApp.Address
+field :previous_addresses, {:list, MyApp.Address}
+```
+
+Embedded values keep their types on the way back (dates stay dates, decimals
+stay decimals). Any table schema can be embedded too; its key attributes are
+left out when nested.
+
+### Keys
+
+Key fields are combined in declaration order with `key_separator`:
+
+```
+pk = "<entity_name>#<pk fields…>"      e.g. "user#u1"
+sk = "<sk fields…>"                    e.g. "2024-01-15T10:00:00Z#o1"
+```
+
+Use `partition_key [:a, :b]` / `sort_key [:c, :d]` inside `item` instead of
+per-field flags if you prefer. Rules that keep keys round-trippable:
+
+- Every partition key field must be non-nil → otherwise `{:error, %Dynamo.Error{type: :validation_error}}`.
+- Sort key fields may be *partially* populated: generation stops at the first
+  `nil`, producing a prefix for `begins_with` queries.
+- A key value containing the separator is rejected (this is why the default is
+  `"#"`, not `"-"` – ISO dates contain dashes).
+
+**Existing tables that don't follow this layout:** `use Dynamo.Schema, raw_keys: true`
+uses the partition/sort key fields as-is (native types, no entity prefix).
+
+### Working with schemas directly
+
+```elixir
+{:ok, %Dynamo.Key{pk: %{"S" => "user#u1"}, sk: %{"S" => "a@b.c"}}} = Dynamo.Schema.primary_key(user)
+{:ok, item}   = Dynamo.Schema.dump(user)          # DynamoDB item map incl. pk/sk
+{:ok, user}   = Dynamo.Schema.load(MyApp.User, item)
+```
+
+## Operations
+
+All return `{:ok, result} | {:error, %Dynamo.Error{}}`; every function has a
+`!` variant that raises.
+
+```elixir
+alias MyApp.{Dynamo, User}
+
+# write
+{:ok, user} = Dynamo.put(user)
+{:ok, user} = Dynamo.put(user, condition: "attribute_not_exists(pk)")
+{:ok, old}  = Dynamo.put(user, return_values: :all_old)
+
+# read
+{:ok, %User{} | nil} = Dynamo.get(%User{id: "u1", email: "a@b.c"}, consistent: true)
+
+# update – SET / REMOVE / ADD / DELETE built for you
+{:ok, nil} = Dynamo.update(%User{id: "u1", email: "a@b.c"},
+  name: "Jane",
+  age: {:increment, 1},
+  tags: {:add, MapSet.new(["vip"])},
+  legacy_field: :remove,
+  login_count: {:if_not_exists, 0}
+)
+{:ok, %User{}} = Dynamo.update(key, [age: {:add, 1}], return_values: :all_new)
+
+# delete
+{:ok, nil}     = Dynamo.delete(%User{id: "u1", email: "a@b.c"})
+{:ok, %User{}} = Dynamo.delete(key, return_values: :all_old)
+```
+
+Expression options (`condition:`, `filter:`, `projection:`, `names:`, `values:`)
+are the same everywhere. `condition:` and `filter:` take either a raw string
+(with your own `names:`/`values:`, which are plain Elixir values encoded for you)
+or a keyword DSL that generates the placeholders:
+
+```elixir
+Dynamo.put(user, condition: "#v = :v", names: %{"#v" => "version"}, values: %{v: 3})
+Dynamo.put(user, condition: [version: 3])                                     # same thing
+Dynamo.put(user, condition: [pk: :not_exists])
+Dynamo.update(key, [age: {:increment, 1}], condition: [age: {:lt, 120}, active: true])
+Dynamo.query(order, filter: {:or, [status: "open"], [total: {:gte, 100}]})
+Dynamo.scan(User, filter: [tags: {:contains, "vip"}, {[:address, :city], "Berlin"}])   # nested path
+```
+
+Operators: value (`=`), `{:eq | :ne | :lt | :lte | :gt | :gte, v}`, `{:between, lo, hi}`,
+`{:in, [..]}`, `{:begins_with, s}`, `{:contains, v}`, `:exists`, `:not_exists`,
+`{:attribute_type, "S"}`, `{:size, {:gt, n}}`; combinators `{:and, a, b}`, `{:or, a, b}`, `{:not, a}`.
+Values are dumped with the field's schema type.
+
+### Querying
+
+```elixir
+# all items in the partition
+{:ok, %Dynamo.Page{items: items, last_evaluated_key: key}} = Dynamo.query(%Order{user_id: "u1"})
+
+# sort key conditions
+Dynamo.query(%Order{user_id: "u1"}, sort_key: {:begins_with, "2024-01"})
+Dynamo.query(%Order{user_id: "u1"}, sort_key: {:between, "2024-01-01", "2024-02-01"})
+Dynamo.query(%Order{user_id: "u1"}, sort_key: {:gte, "2024-06"}, descending: true, limit: 10)
+
+# populated sort-key fields on the struct imply begins_with on the partial key
+Dynamo.query(%Order{user_id: "u1", placed_at: ~U[2024-01-15 00:00:00Z]})
+
+# pagination
+{:ok, page1} = Dynamo.query(%Order{user_id: "u1"}, limit: 50)
+{:ok, page2} = Dynamo.query(%Order{user_id: "u1"}, limit: 50, start_key: page1.last_evaluated_key)
+
+# global secondary index (keys use the field's own type)
+Dynamo.query(%Order{status: "shipped"}, index: "StatusIndex", sort_key: {:gt, ~U[2024-01-01 00:00:00Z]})
+
+# filter / projection / count
+Dynamo.query(%Order{user_id: "u1"}, filter: "#t > :min", names: %{"#t" => "total"}, values: %{min: 100})
+Dynamo.query(%Order{user_id: "u1"}, projection: [:order_id, :total])
+Dynamo.query(%Order{user_id: "u1"}, select: :count)
+
+# everything, paginating for you (bounded by :limit)
+{:ok, orders} = Dynamo.query_all(%Order{user_id: "u1"}, limit: 1_000)
+```
+
+`%Dynamo.Page{}` is enumerable: `Enum.map(page, & &1.total)`.
+
+### Streaming and scans
+
+```elixir
+# lazy query
+Dynamo.stream(%Order{user_id: "u1"}, page_size: 100)
+|> Stream.filter(&(&1.status == "open"))
+|> Enum.take(10)
+
+# lazy scan
+Dynamo.stream(User) |> Enum.each(&migrate/1)
+
+# truly parallel scan: segments fetched concurrently under the repo's Task.Supervisor
+Dynamo.stream(User, segments: 8, max_concurrency: 4) |> Enum.count()
+
+# one page
+{:ok, %Dynamo.Page{}} = Dynamo.scan(User, limit: 100, filter: "attribute_exists(email)")
+```
+
+Streams raise `%Dynamo.Error{}` on failure (there is no other way to signal
+from inside a stream). Scans read every item – stream lazily, but don't scan casually.
+
+### Batches
+
+```elixir
+# any number of items, chunked into 25, unprocessed items retried with backoff
+{:ok, %{unprocessed: []}} = Dynamo.batch_write(users ++ [{:delete, old_user}])
+
+# any number of keys (one schema), chunked into 100
+{:ok, %{items: users, unprocessed_keys: []}} = Dynamo.batch_get([%User{id: "u1", email: "a"}, %User{id: "u2", email: "b"}])
+```
+
+### Vector search
+
+DynamoDB has native vector indexes (August 2026). Declare one on a `{:vector, n}`
+field and search it with an embedding:
+
+```elixir
+defmodule MyApp.Doc do
+  use Dynamo.Schema
+
+  item do
+    table "docs"
+    field :id, :string, partition_key: true
+    field :tenant, :string
+    field :lang, :string
+    field :title, :string
+    field :embedding, {:vector, 1024}
+
+    vector_index "Semantic",
+      field: :embedding,
+      distance: :cosine,                          # :cosine | :dot_product | :euclidean
+      projection: :include, projected_attributes: [:title, :lang],
+      partition_key: :tenant,                     # optional: scopes and scales searches
+      filters: [:lang]                            # optional inline filter attributes
+  end
+end
+
+{:ok, %{results: results}} =
+  Dynamo.search_vectors(MyApp.Doc, "Semantic", query_embedding,
+    top_k: 5,
+    filter: [tenant: "acme", lang: "en"]          # partition key is required when declared
+  )
+
+for {%MyApp.Doc{title: t}, score} <- results, do: IO.puts("#{score}  #{t}")
+```
+
+`mix dynamo.create_table --schema MyApp.Doc` creates the index (on-demand billing
+is required). Results are `{struct, score}` pairs, most similar first; lower is
+closer for `:cosine`/`:euclidean`, higher for `:dot_product`. Only projected
+attributes are returned; key fields are recovered from the item key. Writes to the
+index are eventually consistent. `SearchVectors` is served from a separate AWS
+endpoint, which the client routes automatically (`:search_endpoint` to override).
+
+### Transactions
+
+```elixir
+{:ok, _} =
+  Dynamo.transaction(
+    [
+      {:update, %Account{id: "src"}, [balance: {:decrement, 100}], condition: "#b >= :amt", names: %{"#b" => "balance"}, values: %{amt: 100}},
+      {:update, %Account{id: "dst"}, [balance: {:increment, 100}]},
+      {:put, %Transfer{id: "t1", amount: 100}, condition: "attribute_not_exists(pk)"},
+      {:check, %Account{id: "audit"}, "attribute_exists(pk)"},
+      {:delete, %Hold{id: "h1"}}
+    ],
+    client_request_token: "transfer-t1"   # idempotency (10 min window)
+  )
+```
+
+On cancellation the error carries per-item reasons:
+
+```elixir
+{:error, %Dynamo.Error{type: :transaction_canceled, cancellation_reasons: [%{code: "ConditionalCheckFailed"}, %{code: "None"}, ...]}}
+```
+
+## Errors
+
+Every failure is a `%Dynamo.Error{}`:
+
+```elixir
+case Dynamo.put(user, condition: "attribute_not_exists(pk)") do
+  {:ok, user} -> ...
+  {:error, %Dynamo.Error{type: :conditional_check_failed}} -> {:error, :already_exists}
+  {:error, %Dynamo.Error{retryable?: true}} -> retry_later()
+  {:error, %Dynamo.Error{} = e} -> Logger.error(Exception.message(e))
+end
+```
+
+Fields: `type`, `message`, `aws_type` (e.g. `"ResourceNotFoundException"`), `status`,
+`retryable?`, `cancellation_reasons`, `details`.
+
+Common types: `:validation_error` (local or AWS), `:resource_not_found`,
+`:conditional_check_failed`, `:provisioned_throughput_exceeded`, `:throttled`,
+`:access_denied`, `:authentication_error`, `:transaction_canceled`,
+`:transaction_conflict`, `:item_collection_size_exceeded`, `:internal_server_error`,
+`:transport_error`, `:decode_error`. Retryable errors are retried by the client
+automatically (`:max_retries`, jittered exponential backoff).
+
+**Retries and idempotency.** Throttling and 5xx responses are safe to retry –
+DynamoDB did not apply the write. A *transport* timeout is different: the
+request may or may not have been applied, and the client retries it anyway
+(as the AWS SDKs do). Plain `put`/`delete` are idempotent so this is harmless;
+`update` with `{:increment, n}`/`{:add, n}` is not. For counters that must be
+exact, guard the update with a version condition
+(`update(item, [count: {:increment, 1}, version: {:increment, 1}], condition: [version: item.version])`)
+or use `transaction/2` with `client_request_token:`, which DynamoDB de-duplicates
+for 10 minutes. Set `max_retries: 0` on the repo to opt out of retries entirely.
+
+## Telemetry
+
+The client emits `[:dynamo, :request, :start | :stop | :exception]` (prefix
+configurable) with metadata `action`, `table`, `attempt`, `result`, `status`,
+`error`, `consumed_capacity` and `duration` on stop:
+
+```elixir
+:telemetry.attach("dynamo-log", [:dynamo, :request, :stop], fn _, %{duration: d}, meta, _ ->
+  Logger.debug("dynamo #{meta.action} #{meta.table} #{System.convert_time_unit(d, :native, :millisecond)}ms #{meta.result}")
+end, nil)
+```
+
+Add `return_consumed_capacity: :total` to any call to get capacity in the metadata.
+
+## Mix tasks
+
+```bash
+mix dynamo.create_table --schema MyApp.User --endpoint http://localhost:8000   # table + GSIs + vector indexes from the schema
+mix dynamo.create_table my_table --partition-key id --no-sort-key --region eu-west-1
+mix dynamo.list_tables --name-contains user
+mix dynamo.delete_table my_table --force
+mix dynamo.generate_schema legacy_table --module MyApp.Legacy                   # round-trip safe: detects key layout
+```
+
+All tasks load your application config, accept `--repo MyApp.Dynamo` to reuse a
+started repo's client, and exit non-zero on failure.
+
+## Testing your application
+
+Point the repo at a fake via `Req`'s plug option – no network, no mocks of library modules:
+
+```elixir
+config :my_app, MyApp.Dynamo,
+  region: "us-east-1", access_key_id: "test", secret_access_key: "test",
+  req_options: [plug: {Req.Test, MyApp.Dynamo}]
+```
+
+Or run [DynamoDB Local](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html)
+and set `endpoint: "http://localhost:8000"`. The library's own test suite uses an
+in-memory fake (`test/support/fake_dynamo.ex`) you can borrow.
+
+## Design
+
+- **Schema** – typed fields, one `Dynamo.Schema.primary_key/1` used by every operation.
+- **Request** – pure builders (`Dynamo.Request`, `Dynamo.Update`) that return `{action, payload}`; fully unit-tested against golden JSON.
+- **Client** – SigV4, retries, telemetry, error normalisation. Nothing above it sees a raw AWS error.
+- **Repo** – supervised owner of client + credentials; the only stateful piece.
+- **Fail loud** – nil keys, separator collisions, unknown options and wrong types are errors, never sentinels.
+
+See [Agents.md](Agents.md) for data-modelling guidance and the `guides/` folder for worked examples.
+
+## License
+
+MIT – see [LICENSE](LICENSE).
+
+---
+
+<!-- source: guides/GETTING_STARTED.md -->
+
+# Getting started
+
+A complete, minimal walkthrough: local DynamoDB, a repo, a schema, CRUD.
+
+## 1. Run DynamoDB Local
+
+```bash
+docker run -p 8000:8000 amazon/dynamodb-local
+```
+
+## 2. Add the dependency and a repo
+
+```elixir
+# mix.exs
+{:dynamo, github: "bmalum/dynamo"}
+
+# lib/my_app/dynamo.ex
+defmodule MyApp.Dynamo do
+  use Dynamo.Repo, otp_app: :my_app
+end
+
+# config/dev.exs
+config :my_app, MyApp.Dynamo,
+  region: "eu-central-1",
+  endpoint: "http://localhost:8000",
+  access_key_id: "local",
+  secret_access_key: "local"
+
+# lib/my_app/application.ex
+children = [MyApp.Dynamo]
+```
+
+## 3. Define a schema
+
+```elixir
+defmodule MyApp.Note do
+  use Dynamo.Schema
+
+  item do
+    table "notes"
+
+    field :owner, :string, partition_key: true
+    field :created_at, :utc_datetime, sort_key: true
+    field :title, :string
+    field :body, :string
+    field :tags, :string_set
+    field :pinned, :boolean, default: false
+  end
+end
+```
+
+Keys are generated for you: `pk = "note#<owner>"`, `sk = "<created_at ISO 8601>"`.
+
+## 4. Create the table from the schema
+
+```bash
+mix dynamo.create_table --schema MyApp.Note --repo MyApp.Dynamo
+```
+
+## 5. Use it
+
+```elixir
+alias MyApp.{Dynamo, Note}
+
+note = %Note{owner: "alice", created_at: DateTime.utc_now(), title: "Hello", tags: MapSet.new(["intro"])}
+
+{:ok, note} = Dynamo.put(note)
+
+{:ok, ^note} = Dynamo.get(%Note{owner: "alice", created_at: note.created_at})
+
+{:ok, nil} = Dynamo.update(note, pinned: true, tags: {:add, MapSet.new(["important"])})
+
+{:ok, page} = Dynamo.query(%Note{owner: "alice"}, descending: true, limit: 20)
+Enum.map(page.items, & &1.title)
+
+{:ok, nil} = Dynamo.delete(note)
+```
+
+Every call returns `{:ok, _} | {:error, %Dynamo.Error{}}`; use the `!` variants
+(`put!`, `get!`, …) when you'd rather raise.
+
+## 6. Handle errors
+
+```elixir
+case Dynamo.put(note, condition: "attribute_not_exists(pk)") do
+  {:ok, note} -> {:ok, note}
+  {:error, %Dynamo.Error{type: :conditional_check_failed}} -> {:error, :already_exists}
+  {:error, %Dynamo.Error{} = e} -> raise e
+end
+```
+
+## Next
+
+- [Data modelling](DATA_MODELLING.md) – composite keys, GSIs, single-table design
+- [Streaming & batches](STREAMING.md)
+- [Testing](TESTING.md)
+- [Agents.md](../Agents.md) – patterns and anti-patterns
+
+---
+
+<!-- source: guides/DATA_MODELLING.md -->
+
+# Data modelling with Dynamo
+
+## Composite keys
+
+Key fields are joined in declaration order with `key_separator` (default `#`).
+The partition key is prefixed with the entity name so several entity types can
+share a table.
+
+```elixir
+defmodule Shop.Order do
+  use Dynamo.Schema
+
+  item do
+    table "shop"
+    entity_name "order"
+
+    field :tenant, :string
+    field :customer_id, :string
+    field :placed_at, :utc_datetime
+    field :order_id, :string
+    field :total, :decimal
+
+    partition_key [:tenant, :customer_id]
+    sort_key [:placed_at, :order_id]
+  end
+end
+
+{:ok, key} = Dynamo.Schema.primary_key(%Shop.Order{tenant: "acme", customer_id: "c1", placed_at: ~U[2024-01-15 10:00:00Z], order_id: "o1"})
+key.pk  #=> %{"S" => "order#acme#c1"}
+key.sk  #=> %{"S" => "2024-01-15T10:00:00Z#o1"}
+```
+
+Rules:
+
+- All partition key fields must be non-nil. `{:error, %Dynamo.Error{type: :validation_error}}` otherwise.
+- Sort key fields may be partially populated (prefix). `%Shop.Order{tenant: "acme", customer_id: "c1", placed_at: dt}` gives `sk = "2024-01-15T10:00:00Z"`, which `query/2` turns into `begins_with`.
+- A value containing the separator is rejected. Keep `#` unless your data contains it.
+- `prefix_sort_key: true` renders `"placed_at#2024-…#order_id#o1"` if you want self-describing keys.
+
+## Sort key strategies
+
+**Time ordering** – put an ISO 8601 datetime first; `descending: true` gives newest first.
+
+```elixir
+Repo.query(%Shop.Order{tenant: "acme", customer_id: "c1"}, sort_key: {:gte, "2024-01-01"}, descending: true)
+```
+
+**Type prefix in a single partition** – `sort_key [:kind, :id]` with `kind` as `"PROFILE"`, `"ORDER"`, `"ADDRESS"`:
+
+```elixir
+Repo.query(%Account.Item{account_id: "a1", kind: "ORDER"})           # begins_with "ORDER"
+Repo.query(%Account.Item{account_id: "a1"}, sort_key: {:eq, "PROFILE"})
+```
+
+**Range with BETWEEN** – composite string keys compare lexicographically, so an
+upper bound like `"2024-01-31"` excludes `"2024-01-31T10:00:00Z#o1"`. Append `~`
+(0x7E, above every character that can follow) to make the bound inclusive:
+
+```elixir
+Repo.query(%Shop.Order{...}, sort_key: {:between, "2024-01-01", "2024-01-31~"})
+```
+
+## Global secondary indexes
+
+```elixir
+item do
+  table "shop"
+  field :order_id, :string, partition_key: true
+  field :status, :string
+  field :placed_at, :utc_datetime
+  field :total, :decimal
+
+  global_secondary_index "StatusIndex", partition_key: :status, sort_key: :placed_at
+  global_secondary_index "TotalIndex", partition_key: :status, sort_key: :total, projection: :keys_only
+end
+```
+
+GSI key attributes are the raw field values with their own types – no entity
+prefix, no separator. Numbers stay `N`, so range conditions work numerically:
+
+```elixir
+Repo.query(%Shop.Order{status: "paid"}, index: "TotalIndex", sort_key: {:gt, Decimal.new("100")})
+```
+
+`mix dynamo.create_table --schema Shop.Order` creates the indexes with the right
+attribute types. Consistent reads are rejected on GSIs (DynamoDB does not support them).
+
+## Single-table design
+
+Several schemas can point at the same table; the entity prefix keeps them apart:
+
+```elixir
+defmodule App.User do
+  use Dynamo.Schema
+  item do
+    table "app"
+    field :id, :string, partition_key: true
+    field :email, :string
+  end
+end
+
+defmodule App.Session do
+  use Dynamo.Schema
+  item do
+    table "app"
+    field :user_id, :string, partition_key: true      # pk = "session#<user_id>"
+    field :token, :string, sort_key: true
+    field :expires_at, :utc_datetime
+  end
+end
+```
+
+To store child items *under the parent's partition* (adjacency list), point the
+child's `entity_name` at the parent module and put the type in the sort key:
+
+```elixir
+defmodule App.Order do
+  use Dynamo.Schema
+  item do
+    table "app"
+    entity_name App.User                                # pk = "user#<id>" – inherited from App.User
+    field :id, :string, partition_key: true             # the parent's id
+    field :kind, :string, sort_key: true, default: "order"
+    field :order_id, :string, sort_key: true
+    field :total, :decimal
+  end
+end
+
+Repo.query(%App.Order{id: "u1"})                       # all orders of u1: begins_with(sk, "order")
+Repo.get(%App.User{id: "u1"})                          # the parent, with its own sort key
+```
+
+`entity_name App.User` is resolved at compile time, so renaming the parent
+moves both entities together and a typo is a compile error. The string form
+(`entity_name "user"`) does the same thing without the compile-time link.
+Give the parent a fixed sort-key value too (e.g. `field :kind, default: "profile"`)
+so parent and children never collide in the sort-key space. If two kinds share
+a prefix (`"order"`, `"order_note"`), query with an explicit
+`sort_key: {:begins_with, "order#"}`.
+
+## Existing tables
+
+For a table you did not design around this layout:
+
+```elixir
+defmodule Legacy.Customer do
+  use Dynamo.Schema, raw_keys: true
+
+  item do
+    table "Customers"
+    field :CustomerId, :string, partition_key: true    # attribute names are used as-is
+    field :Version, :integer, sort_key: true
+    field :Name, :string
+  end
+end
+```
+
+`mix dynamo.generate_schema Customers` writes this for you after sampling the table.
+
+## Embedded schemas
+
+Nested structures keep their types when you declare them as embedded schemas:
+
+```elixir
+defmodule Shop.Address do
+  use Dynamo.Schema, embedded: true       # no table, keys or indexes
+
+  item do
+    field :street, :string
+    field :city, :string
+    field :geo, {:list, :float}
+  end
+end
+
+defmodule Shop.Customer do
+  use Dynamo.Schema
+  item do
+    table "shop"
+    field :id, :string, partition_key: true
+    field :billing, Shop.Address
+    field :shipping, {:list, Shop.Address}, default: []
+    field :prices, {:list, :decimal}
+  end
+end
+```
+
+A `:map` field would hand you string-keyed maps with floats and strings back;
+an embedded schema gives you `%Shop.Address{}` with `Decimal`/`Date` values
+intact. Any table schema can be embedded as well – only its declared fields
+are stored, never the generated `pk`/`sk`.
+
+## Conditions without placeholders
+
+Every `condition:`/`filter:` accepts a small DSL instead of a raw expression:
+
+```elixir
+Repo.put(order, condition: [pk: :not_exists])
+Repo.update(acct, [balance: {:decrement, 50}], condition: [balance: {:gte, 50}])
+Repo.query(%Order{user_id: "u"}, filter: {:and, [status: {:in, ["open", "paid"]}], {:not, [flagged: true]}})
+Repo.scan(Customer, filter: [{[:billing, :city], "Berlin"}, tags: {:contains, "vip"}])
+```
+
+Values are dumped with the field's type; placeholders (`#c0`, `:c0`) are
+generated so reserved words and odd attribute names are never a problem.
+
+## Nil, defaults and removal
+
+Nil fields are omitted from written items. Reading an item that lacks an
+attribute yields the struct default. To delete an attribute use
+`Repo.update(item, field: :remove)`; `Repo.update(item, field: nil)` stores an
+explicit `NULL`, which loads back as `nil` too but is visible to
+`attribute_exists`.
+
+## Vector search
+
+Store embeddings next to the data they describe and search them without a
+second database:
+
+```elixir
+defmodule Kb.Chunk do
+  use Dynamo.Schema
+
+  item do
+    table "kb"
+    field :doc_id, :string, partition_key: true
+    field :chunk_id, :string, sort_key: true
+    field :tenant, :string
+    field :lang, :string
+    field :text, :string
+    field :embedding, {:vector, 1024}
+
+    vector_index "Semantic",
+      field: :embedding,
+      distance: :cosine,
+      projection: :include,
+      projected_attributes: [:text, :lang],
+      partition_key: :tenant,
+      filters: [:lang]
+  end
+end
+
+embedding = MyApp.Embeddings.embed("how do I rotate credentials?")   # your model, e.g. Bedrock Titan
+
+{:ok, %{results: hits}} =
+  Repo.search_vectors(Kb.Chunk, "Semantic", embedding, top_k: 8, filter: [tenant: "acme", lang: "en"])
+```
+
+Decisions:
+
+- **Dimensions** must equal your embedding model's output; `{:vector, n}` checks
+  it on write. Fewer dimensions cost less to store and search.
+- **Distance**: `:cosine` for raw embeddings, `:dot_product` if you normalise to
+  unit vectors (same ranking, cheaper), `:euclidean` when magnitude matters.
+- **Partition key** on the index (`partition_key: :tenant`) scopes each search
+  to one value and raises throughput quotas per value. It becomes mandatory in
+  `filter:`. Inline `filters:` narrow further with equality/range conditions.
+- **Projection** decides what a search returns and how much a write costs. The
+  vector itself is never returned unless you list it in `projection:`.
+- Vector indexes require on-demand billing, are eventually consistent, and are
+  immutable once created (add a new index instead).
+- The item is a normal item: `get`, `query`, `update` all work on it. Updating
+  the vector attribute re-indexes it.
+
+## Custom types
+
+```elixir
+defmodule App.Type.Money do
+  use Dynamo.Type
+
+  def dump(%Money{amount: a, currency: c}), do: {:ok, %{"S" => "#{c}:#{a}"}}
+  def dump(_), do: :error
+
+  def load(%{"S" => s}) do
+    [c, a] = String.split(s, ":")
+    {:ok, %Money{amount: Decimal.new(a), currency: c}}
+  end
+
+  def load(_), do: :error
+end
+
+field :price, App.Type.Money
+```
+
+For values nested inside `:map`/`:list`/`:any` fields, implement `Dynamo.Encodable`
+instead (one-way: they load back as plain maps).
+
+## Checklist
+
+- [ ] List access patterns before choosing keys
+- [ ] Partition key has high cardinality (no dates, no statuses)
+- [ ] Sort key supports the range queries you listed
+- [ ] GSIs for remaining patterns; `:keys_only`/`:include` where possible
+- [ ] Items < 400 KB – reference S3 for blobs
+- [ ] TTL attribute (`:integer` epoch seconds) for ephemeral data
+- [ ] `entity_name` set explicitly (string) if the module might be renamed and data already exists
+
+---
+
+<!-- source: guides/STREAMING.md -->
+
+# Streaming, batches and transactions
+
+## Pages
+
+`query/2` and `scan/2` return one `%Dynamo.Page{}`:
+
+```elixir
+{:ok, page} = Repo.query(%Order{user_id: "u1"}, limit: 100)
+page.items                # [%Order{}]
+page.last_evaluated_key   # nil when done
+page.count                # items in this page
+Enum.map(page, & &1.total) # Page is Enumerable
+
+{:ok, next} = Repo.query(%Order{user_id: "u1"}, limit: 100, start_key: page.last_evaluated_key)
+```
+
+## Streams
+
+`Repo.stream/2` is a lazy `Stream` over all pages. Pass a struct to query or a
+schema module to scan.
+
+```elixir
+Repo.stream(%Order{user_id: "u1"}, page_size: 200)
+|> Stream.filter(&(&1.status == "open"))
+|> Stream.map(&notify/1)
+|> Stream.run()
+
+Repo.stream(User)
+|> Stream.chunk_every(25)
+|> Enum.each(fn chunk -> Repo.batch_write!(Enum.map(chunk, &migrate/1)) end)
+```
+
+Errors inside a stream are raised as `%Dynamo.Error{}` – wrap in `try` or let
+the calling process crash and be restarted.
+
+### Parallel scan
+
+`segments:` runs one task per segment under the repo's `Task.Supervisor`;
+`max_concurrency:` (default `segments`) bounds how many fetch at once. Items
+arrive interleaved; each task only fetches its next page after the previous one
+was consumed, so memory stays bounded by `segments × page_size`.
+
+```elixir
+Repo.stream(User, segments: 8, max_concurrency: 4, page_size: 500)
+|> Flow.from_enumerable(max_demand: 200)      # optional: Flow for CPU-heavy work
+|> Flow.map(&expensive/1)
+|> Enum.to_list()
+```
+
+Stopping early (`Enum.take/2`, an exception) stops the segment tasks.
+
+### `query_all` / `scan_all`
+
+Convenience for small result sets. `:limit` bounds the total.
+
+```elixir
+{:ok, orders} = Repo.query_all(%Order{user_id: "u1"}, limit: 500)
+```
+
+## Batches
+
+```elixir
+# BatchWriteItem: put structs and {:delete, struct}; chunked into 25 per request.
+# UnprocessedItems are retried with backoff (:batch_retries, default 5).
+{:ok, %{unprocessed: []}} = Repo.batch_write(new_users ++ Enum.map(stale, &{:delete, &1}))
+
+# BatchGetItem: keys of one schema, chunked into 100; UnprocessedKeys retried.
+{:ok, %{items: users, unprocessed_keys: []}} = Repo.batch_get(keys, consistent: true)
+```
+
+Any non-retryable error (`:access_denied`, `:resource_not_found`, …) aborts the
+batch and is returned. A non-empty `unprocessed`/`unprocessed_keys` after all
+retries means sustained throttling – back off at the application level.
+
+## Transactions
+
+```elixir
+Repo.transaction(
+  [
+    {:check, %Account{id: "src"}, "#b >= :amt", names: %{"#b" => "balance"}, values: %{amt: 100}},
+    {:update, %Account{id: "src"}, [balance: {:decrement, 100}]},
+    {:update, %Account{id: "dst"}, [balance: {:increment, 100}]},
+    {:put, %Transfer{id: "t1", amount: 100}, condition: "attribute_not_exists(pk)"}
+  ],
+  client_request_token: "transfer-t1"
+)
+```
+
+Wait – DynamoDB rejects two operations on the *same item* in one transaction,
+and so does `Dynamo.Request.transact_write/2` (before sending). Fold the check
+into the update's `condition:` instead:
+
+```elixir
+{:update, %Account{id: "src"}, [balance: {:decrement, 100}], condition: "#b >= :amt", names: %{"#b" => "balance"}, values: %{amt: 100}}
+```
+
+Use `client_request_token:` for idempotency when retrying after a timeout –
+DynamoDB de-duplicates for 10 minutes. This matters because the client itself
+retries transport timeouts: a plain `Repo.update(acct, balance: {:decrement, 50})`
+that times out may be applied twice. Either put it in a transaction with a
+token, or add a version guard:
+
+```elixir
+Repo.update(acct, [balance: {:decrement, 50}, version: {:increment, 1}], condition: [version: acct.version])
+```
+
+On failure:
+
+```elixir
+{:error, %Dynamo.Error{type: :transaction_canceled, cancellation_reasons: reasons}}
+# reasons: one per operation, e.g. [%{code: "None"}, %{code: "ConditionalCheckFailed", message: "..."}]
+```
+
+## Cost reminder
+
+Scans read every item in the table regardless of filters. Streaming bounds
+*memory*, not *read capacity*. Prefer queries; reserve scans for migrations and
+exports.
+
+---
+
+<!-- source: guides/TESTING.md -->
+
+# Testing applications that use Dynamo
+
+## Unit-test request building without I/O
+
+`Dynamo.Request` is pure, so you can assert on exactly what would be sent:
+
+```elixir
+test "orders are queried newest first" do
+  {:ok, {"Query", payload}} = Dynamo.Request.query(%Order{user_id: "u1"}, descending: true, limit: 10)
+  assert payload["ScanIndexForward"] == false
+  assert payload["Limit"] == 10
+end
+```
+
+Same for `Dynamo.Schema.dump/1`, `Dynamo.Schema.primary_key/1` and `Dynamo.Update.build/2`.
+
+## Stub the HTTP layer with `Req.Test`
+
+The repo accepts any `Req` option, including `plug:`. In `config/test.exs`:
+
+```elixir
+config :my_app, MyApp.Dynamo,
+  region: "us-east-1",
+  access_key_id: "test",
+  secret_access_key: "test",
+  req_options: [plug: {Req.Test, MyApp.Dynamo}]
+```
+
+Then in a test:
+
+```elixir
+test "get returns nil when the item is missing" do
+  Req.Test.stub(MyApp.Dynamo, fn conn ->
+    Req.Test.json(conn, %{})
+  end)
+
+  assert {:ok, nil} = MyApp.Dynamo.get(%User{id: "u1", email: "e"})
+end
+
+test "throttling surfaces as a retryable error" do
+  Req.Test.stub(MyApp.Dynamo, fn conn ->
+    conn
+    |> Plug.Conn.put_status(400)
+    |> Req.Test.json(%{"__type" => "com.amazonaws.dynamodb.v20120810#ProvisionedThroughputExceededException", "message" => "slow down"})
+  end)
+
+  assert {:error, %Dynamo.Error{type: :provisioned_throughput_exceeded, retryable?: true}} =
+           MyApp.Dynamo.put(user)
+end
+```
+
+Use real captured DynamoDB bodies in stubs – error `__type`s are namespaced and
+the message key varies between `message` and `Message`. `Dynamo.Error.from_aws/2`
+handles both, and your tests should exercise the real shape.
+
+## Use an in-memory fake
+
+This repository ships `test/support/fake_dynamo.ex`, a small in-memory DynamoDB
+implemented as a plug. It supports put/get/delete/update, query with sort-key
+conditions and pagination, scan with segments, batch write/get including
+`UnprocessedItems`, and transactions. Copy it into your project's
+`test/support/` and start your repo against it:
+
+```elixir
+setup do
+  {:ok, agent} = FakeDynamo.start_link()
+  start_supervised!({MyApp.Dynamo, req_options: [plug: FakeDynamo.plug(agent)], access_key_id: "t", secret_access_key: "t", region: "us-east-1"})
+  %{agent: agent}
+end
+```
+
+## The library's own live test
+
+`test/integration/live_test.exs` exercises every feature against a real
+endpoint, creating and deleting its own tables (`dynamo_livetest`,
+`dynamo_livetest_raw`):
+
+```bash
+# AWS (credentials from the default chain)
+eval "$(aws configure export-credentials --profile my-profile --format env)"
+AWS_REGION=eu-central-1 mix test --include integration test/integration/live_test.exs
+
+# DynamoDB Local
+DYNAMO_ENDPOINT=http://localhost:8000 mix test --include integration test/integration/live_test.exs
+```
+
+## Integration tests against DynamoDB Local
+
+```elixir
+# config/test.exs
+config :my_app, MyApp.Dynamo, endpoint: System.get_env("DYNAMO_ENDPOINT", "http://localhost:8000"), ...
+```
+
+Tag them `@tag :integration` and exclude by default (`ExUnit.start(exclude: [:integration])`).
+Create tables in `setup_all` with `mix dynamo.create_table --schema` or via
+`MyApp.Dynamo.request("CreateTable", payload)`.
+
+## Protocol consolidation
+
+Schemas defined inside test files implement `Dynamo.Encodable`. Elixir
+consolidates protocols after compilation, so add to `mix.exs`:
+
+```elixir
+consolidate_protocols: Mix.env() != :test
+```
+
+Otherwise test-only schemas cannot be nested inside `:map`/`:list`/`:any` fields
+(they still work as top-level items).
+
+---
+
+<!-- source: Agents.md -->
+
+# Dynamo Agent Guide
+
+A concise reference for AI agents and developers using the Dynamo library. Every
+snippet here compiles against the current API; if something in this file
+disagrees with the code, the code is right and this file has a bug.
+
+## Mental model
+
+```
+Schema  – typed fields + key layout. Pure. `Dynamo.Schema.primary_key/1`, `dump/1`, `load/2`.
+Request – pure builders: struct + opts -> {action, payload}. `Dynamo.Request`, `Dynamo.Update`.
+Client  – SigV4, retries, telemetry, error normalisation. `Dynamo.Client`.
+Repo    – supervised owner of client + credentials. The thing you call. `use Dynamo.Repo`.
+```
+
+All operations return `{:ok, value} | {:error, %Dynamo.Error{}}`. Nothing above
+the client ever sees a raw AWS error map.
+
+## Defining a schema
+
+```elixir
+defmodule MyApp.Order do
+  use Dynamo.Schema                       # opts: key_separator, partition_key_name, sort_key_name,
+                                          #       prefix_sort_key, raw_keys, omit_nil
+  item do
+    table "app"
+    entity_name "order"                   # default: underscored module basename
+
+    field :user_id, :string, partition_key: true
+    field :placed_at, :utc_datetime, sort_key: true
+    field :order_id, :string, sort_key: true
+    field :total, :decimal
+    field :status, :string, default: "pending"
+    field :version, :integer, default: 0
+
+    global_secondary_index "StatusIndex", partition_key: :status, sort_key: :placed_at
+  end
+end
+```
+
+Types: `:string :integer :float :decimal :boolean :binary :utc_datetime
+:naive_datetime :date :time :map :list :string_set :number_set :binary_set :any`,
+`{:list, type}`, `{:vector, n}` (embedding), an embedded schema module
+(`use Dynamo.Schema, embedded: true`), or a module implementing `Dynamo.Type`.
+
+Nil fields are omitted on write (`omit_nil: true`); `update(item, f: :remove)`
+deletes an attribute, `update(item, f: nil)` writes `NULL`.
+
+Generated keys: `pk = "order#<user_id>"`, `sk = "<placed_at>#<order_id>"`.
+Alternative: `partition_key [:a, :b]` / `sort_key [:c, :d]` instead of per-field flags.
+
+Compile-time errors for: missing `table`, no partition key, unknown option,
+unknown type, undefined field in a key/index, duplicate field/index.
+
+## Defining a repo
+
+```elixir
+defmodule MyApp.Dynamo do
+  use Dynamo.Repo, otp_app: :my_app
+end
+
+config :my_app, MyApp.Dynamo, region: "eu-central-1", endpoint: System.get_env("DYNAMO_ENDPOINT")
+children = [MyApp.Dynamo]
+```
+
+## Operations cheat sheet
+
+```elixir
+alias MyApp.Dynamo, as: Repo
+
+Repo.put(struct, condition: "attribute_not_exists(pk)")           # {:ok, struct}
+Repo.put(struct, condition: [pk: :not_exists, status: {:in, ["a", "b"]}])   # DSL → same expression
+Repo.put(struct, return_values: :all_old)                          # {:ok, old | nil}
+Repo.get(%Order{user_id: "u", placed_at: dt, order_id: "o"})       # {:ok, struct | nil}; full key required
+Repo.get(key, consistent: true, projection: [:total])
+Repo.delete(key)                                                   # {:ok, nil}
+Repo.delete(key, return_values: :all_old)                          # {:ok, old | nil}
+Repo.update(key, status: "paid", version: {:increment, 1})         # {:ok, nil}
+Repo.update(key, [tags: {:add, MapSet.new(["x"])}, tmp: :remove], return_values: :all_new)
+
+Repo.query(%Order{user_id: "u"})                                   # {:ok, %Dynamo.Page{}}
+Repo.query(%Order{user_id: "u"}, sort_key: {:begins_with, "2024-06"})
+Repo.query(%Order{user_id: "u"}, sort_key: {:between, "2024-01-01", "2024-12-31~"}, descending: true, limit: 50)
+Repo.query(%Order{user_id: "u", placed_at: dt})                    # struct sk fields => begins_with on partial sk
+Repo.query(%Order{user_id: "u", placed_at: dt}, sort_key: :none)   # ignore struct sk fields
+Repo.query(%Order{status: "paid"}, index: "StatusIndex", sort_key: {:gt, ~U[2024-01-01 00:00:00Z]})
+Repo.query(%Order{user_id: "u"}, filter: "#t > :m", names: %{"#t" => "total"}, values: %{m: 100})
+Repo.query(%Order{user_id: "u"}, filter: [total: {:gt, 100}])                # same, via Dynamo.Condition
+Repo.query(%Order{user_id: "u"}, filter: {:or, [status: "open"], [total: {:gte, 100}]})
+Repo.query(%Order{user_id: "u"}, limit: 50, start_key: page.last_evaluated_key)
+Repo.query_all(%Order{user_id: "u"}, limit: 1_000)                 # {:ok, [struct]}
+
+Repo.scan(Order, limit: 100)                                       # {:ok, %Dynamo.Page{}}
+Repo.stream(%Order{user_id: "u"}, page_size: 100)                  # lazy Stream (raises Dynamo.Error on failure)
+Repo.stream(Order, segments: 8, max_concurrency: 4)                # parallel scan
+
+Repo.batch_write(structs ++ [{:delete, s}])                        # {:ok, %{unprocessed: []}}
+Repo.batch_get([key1, key2])                                       # {:ok, %{items: [...], unprocessed_keys: []}}
+
+Repo.transaction([
+  {:update, %Acct{id: "a"}, [balance: {:decrement, 5}], condition: "#b >= :v", names: %{"#b" => "balance"}, values: %{v: 5}},
+  {:update, %Acct{id: "b"}, [balance: {:increment, 5}]},
+  {:put, %Ledger{id: "l1"}, condition: "attribute_not_exists(pk)"},
+  {:check, %Acct{id: "c"}, "attribute_exists(pk)"},
+  {:delete, %Hold{id: "h"}}
+], client_request_token: "idem-1")
+
+# vector search (schema declares `vector_index "Semantic", field: :embedding, partition_key: :tenant, filters: [:lang]`)
+Repo.search_vectors(Doc, "Semantic", embedding, top_k: 5, filter: [tenant: "t", lang: "en"])
+#=> {:ok, %{results: [{%Doc{}, score}, ...], consumed_capacity: ...}}
+
+Repo.request("DescribeTable", %{"TableName" => "app"})              # raw escape hatch
+```
+
+Update operators: plain value, `{:increment, n}`, `{:decrement, n}`, `{:add, n | set}`,
+`{:delete, set}`, `{:append, list}`, `{:prepend, list}`, `{:if_not_exists, v}`, `:remove`.
+Key fields cannot be updated (error) – delete and re-put.
+
+Expression options everywhere: `condition:`/`filter:` (raw string, or a
+`Dynamo.Condition` DSL: keyword list = AND of `field: value | {op, v} | :exists | ...`,
+`{:and | :or, a, b}`, `{:not, a}`, nested path as list), `projection:` (string or
+field list), `names:` (`%{"#n" => "attr"}`), `values:` (`%{v: elixir_value}`,
+encoded for you). `return_values: :none | :all_old | :all_new | :updated_old | :updated_new`.
+
+Retries: throttling/5xx are retried with backoff. Transport timeouts are retried
+too, so `{:increment, n}` updates can double-apply after a timeout – guard with a
+version `condition:` or use `transaction/2` + `client_request_token:`.
+
+## Errors
+
+```elixir
+%Dynamo.Error{type: atom, message: String.t, aws_type: "ConditionalCheckFailedException" | nil,
+              status: 400 | nil, retryable?: boolean, cancellation_reasons: [...] | nil, details: term}
+```
+
+Common `type`s: `:validation_error :resource_not_found :conditional_check_failed
+:provisioned_throughput_exceeded :throttled :access_denied :authentication_error
+:transaction_canceled :transaction_conflict :internal_server_error :transport_error
+:decode_error :no_credentials`. Retryable ones are retried by the client (3× default).
+
+Local validation failures (nil partition key, separator in a key value, unknown
+option, wrong type, updating a key field, >25 batch items, duplicate items in a
+transaction) return `{:error, %Dynamo.Error{type: :validation_error}}` *before*
+any request is sent.
+
+## Modelling rules of thumb
+
+1. **List access patterns first.** Every query needs a partition key; design keys from queries, not from entities.
+2. **High-cardinality partition keys.** Never a date or status alone. Combine (`partition_key [:tenant, :customer_id]`) or shard.
+3. **Sort keys drive ranges.** Put the dimension you range over first (ISO 8601 datetimes sort correctly). Prefix with a type string for single-partition adjacency lists.
+4. **GSIs for the second and third pattern.** Keys keep their field type (numbers stay `N`). Use `:keys_only`/`:include` to cut cost. No consistent reads on GSIs.
+5. **Single table:** several schemas share `table "app"`; `entity_name` disambiguates the `pk`. Child items in the parent's partition: `entity_name ParentModule` (compile-time link) + `field :kind, :string, sort_key: true, default: "child"`.
+6. **Items < 400 KB.** Store blobs in S3, keep the reference.
+7. **Unbounded lists don't belong in one item.** One item per element with a composite sort key.
+8. **Scans are for migrations.** They read every item; `stream/2` bounds memory, not cost.
+9. **Idempotency:** `client_request_token:` on transactions; `condition: "attribute_not_exists(pk)"` on creates.
+10. **Vectors:** `{:vector, n}` field + `vector_index`; `:cosine` for unnormalised embeddings, `:dot_product` for unit vectors. Add `partition_key:` to scope searches to a tenant (required in the filter). On-demand billing only; searches are eventually consistent.
+11. **Fail loud:** the library never writes `"empty"` or silently drops data. If you get a `:validation_error`, fix the data or the schema.
+
+## Testing
+
+- Request building is pure: assert on `Dynamo.Request.*` output directly.
+- Stub HTTP with `req_options: [plug: {Req.Test, MyRepo}]` in the repo config, or
+  copy `test/support/fake_dynamo.ex` (in-memory DynamoDB) from this repo.
+- Set `consolidate_protocols: Mix.env() != :test` in `mix.exs` if schemas are defined in tests.
+
+## Mix tasks
+
+```
+mix dynamo.create_table --schema MyApp.Order [--repo MyApp.Dynamo | --endpoint URL --region R]
+mix dynamo.create_table NAME --partition-key id --no-sort-key
+mix dynamo.list_tables [--name-contains x]
+mix dynamo.delete_table NAME [--force]
+mix dynamo.generate_schema NAME [--module M] [--output path] [--overwrite]
+```
+
+All exit non-zero on failure and honour the application's config.
+
+---
+
+<!-- source: CHANGELOG.md -->
+
+# Changelog
+
+## 0.2.0 – unreleased
+
+Complete rewrite. **Every public API changed.** The 0.1 line was a beta whose
+documented API did not match its implementation; 0.2 is what the docs promised.
+
+### Architecture
+
+- **`Dynamo.Repo`** – `use Dynamo.Repo, otp_app: :my_app` defines a supervised
+  repository that owns region, endpoint, credentials, retry policy and a
+  `Task.Supervisor`. All operations are called on the repo. `Dynamo.Table`,
+  `Dynamo.AWS`, `Dynamo.DynamoDB`, `Dynamo.Config`, `Dynamo.Logger`,
+  `Dynamo.Helper`, `Dynamo.ErrorHandler`, `Dynamo.Transaction`,
+  `Dynamo.Table.Stream(.Producer)` and `Dynamo.Encoder/Decoder` are removed.
+- **Typed fields** – `field :name, :type, opts`. 16 built-in types incl.
+  `:utc_datetime`, `:decimal`, `:binary`, sets; `Dynamo.Type` behaviour for
+  custom types. Encoding/decoding is schema-driven and round-trips.
+- **`Dynamo.Request`** – pure request builders returning `{action, payload}`,
+  unit-tested against the DynamoDB JSON shapes.
+- **`Dynamo.Client`** – SigV4 (correct `Host` with port), jittered exponential
+  retry for retryable errors, `:telemetry` events, error normalisation.
+- **`Dynamo.Credentials`** – static → env → ECS → IMDSv2 chain with a supervised,
+  single-flight refreshing cache.
+- **`Dynamo.Error`** – the only error type. AWS `__type`s are un-namespaced and
+  both `message`/`Message` are read, so `:resource_not_found`,
+  `:conditional_check_failed`, `:provisioned_throughput_exceeded`,
+  `:transaction_canceled` (with `cancellation_reasons`) etc. actually match.
+- **`Dynamo.Page`** – uniform result for `query`/`scan` with `last_evaluated_key`;
+  `Enumerable`.
+- **`Dynamo.Stream`** – lazy query/scan; `segments:` runs a genuinely parallel
+  scan with bounded concurrency and backpressure.
+- **`Dynamo.Update`** – SET/REMOVE/ADD/DELETE with `{:increment, n}`,
+  `{:decrement, n}`, `{:add, _}`, `{:delete, set}`, `{:append, l}`,
+  `{:prepend, l}`, `{:if_not_exists, v}`, `:remove`.
+- **`Dynamo.Condition`** – keyword/combinator DSL accepted by every
+  `condition:`/`filter:` option; generates names/values with the field's type.
+- **Embedded schemas** – `use Dynamo.Schema, embedded: true`; every schema is a
+  `Dynamo.Type`, so `field :address, MyApp.Address` and
+  `field :items, {:list, MyApp.Item}` round-trip with full typing.
+- **`{:list, type}`** parameterised lists.
+- **Vector search** – `{:vector, n}` field type, `vector_index` in the schema
+  DSL (distance, projection, partition key, inline filters),
+  `Repo.search_vectors/4`, `create_table --schema` emits `VectorIndexes`, and
+  the client routes `SearchVectors` to AWS's separate search endpoint.
+- `load/2` recovers key fields from `pk`/`sk` when a projection omitted them
+  (keys-only GSIs, vector indexes).
+- `entity_name ParentModule` – compile-time link for parent/child items.
+- `table/1` accepts compile-time expressions.
+- `mix dynamo.create_table --schema A --schema B` merges GSIs of a single-table design.
+- Credentials cache read path is lock-free (`:persistent_term`); only refreshes
+  go through the GenServer.
+- CI workflow (unit matrix + live suite against DynamoDB Local).
+
+### Bugs fixed (from the 0.1 review)
+
+- Composite sort keys were corrupted when a value contained the separator
+  (`2024-01-15` with `-` became `2024-15`). Keys are now built from values
+  directly; separator collisions are rejected.
+- Composite partition key fields declared with `field ..., partition_key: true`
+  were emitted in reverse order.
+- Nil partition-key fields silently became the string `"empty"`; now a
+  `:validation_error`.
+- AWS errors were never categorised (namespaced `__type`, lowercase `message`).
+- Transaction update operators produced invalid expressions (`SET a + :v`) and
+  expression attributes passed as documented were dropped.
+- `belongs_to` keys were applied in get/query but not delete/update/batch
+  get/transactions. `belongs_to` is removed; use `entity_name ParentModule`
+  (resolved at compile time) plus a typed sort key with a default prefix
+  (see guides/DATA_MODELLING.md).
+- Encoder/decoder treated any map with a key like `"S"`/`"N"`/`"M"` as an
+  already-encoded value, corrupting user data both ways. Pre-encoded values must
+  now be wrapped in `Dynamo.Raw`.
+- Binaries were typed `S` or `B` depending on UTF-8 validity; `:binary` is now
+  explicit and stable.
+- `:client` was ignored by query/batch write/parallel scan/streams; the repo owns
+  the client so every call uses the same configuration.
+- ETS credential cache was created lazily by arbitrary processes (race,
+  destroyed on owner exit); replaced by a supervised GenServer.
+- Batch writes reported total failure as `{:ok, processed_items: 0}`; hard
+  errors are now returned, `UnprocessedItems` retried with backoff.
+- `list_items` could not paginate; `query/2` returns `%Dynamo.Page{}`.
+- Query accumulation was O(n²) and unbounded; streams are lazy.
+- "Parallel" streaming was sequential `Stream.concat`; `scan_to_process` used an
+  un-awaited linked `Task.async` and mis-wrapped batch messages;
+  `producer_spec/2` called a non-existent function. All replaced by
+  `Dynamo.Stream`.
+- `Dynamo.Logger` wrote full item payloads to stdout on success only; replaced
+  by telemetry.
+- Mix tasks did not load the host app config, exited 0 on failure, and
+  `generate_schema` produced schemas that could not read the source table.
+  Fixed; `create_table --schema` derives keys and GSIs from a schema.
+- `lib/examples.ex` shipped example schemas in the library namespace; removed.
+- Tests: `table_stream_test.exs` did not compile; `mock`/meck removed in favour
+  of `Req.Test` plugs and an in-memory fake; property-based round-trip tests for
+  all types; golden tests for every request builder.
+
+### Migration
+
+| 0.1 | 0.2 |
+|---|---|
+| `Dynamo.Table.put_item(s)` | `MyRepo.put(s)` |
+| `Dynamo.Table.get_item(s)` | `MyRepo.get(s)` (full key required) |
+| `Dynamo.Table.list_items(s, sk_operator: :begins_with, sort_key: v)` | `MyRepo.query(s, sort_key: {:begins_with, v})` → `%Dynamo.Page{}` |
+| `Dynamo.Table.list_items(s, index_name: "X")` | `MyRepo.query(s, index: "X")` |
+| `Dynamo.Table.update_item(s, %{a: 1})` | `MyRepo.update(s, a: 1)` |
+| `Dynamo.Table.batch_write_item(list)` | `MyRepo.batch_write(list)` |
+| `Dynamo.Table.parallel_scan(M, segments: 4)` | `MyRepo.stream(M, segments: 4)` |
+| `Dynamo.Table.Stream.scan(M)` | `MyRepo.stream(M)` |
+| `Dynamo.Transaction.transact([...])` | `MyRepo.transaction([...])` (ops now `{:put, s, opts}` etc.) |
+| `table_name "t"` | `table "t"` |
+| `field :x` (untyped) | `field :x, :string` (or the real type) |
+| `belongs_to :parent, P, sk_strategy: :prefix` | `entity_name P` + `field :kind, :string, sort_key: true, default: "child"` |
+| `Dynamo.Config.put_process_config/1` | repo config / `use Dynamo.Schema, opts` |
+| `Dynamo.Logger.enable/0` | attach to `[:dynamo, :request, :stop]` |
+
+Stored keys are compatible for schemas that used the default `#` separator,
+single-field keys, default `pk`/`sk` names **and single-word module names**.
+The default entity name is now `Macro.underscore/1` of the module basename
+(`UserProfile` → `"user_profile"`); 0.1 lower-cased it (`"userprofile"`).
+Set `entity_name "userprofile"` explicitly on such schemas to keep reading
+existing data. Composite sort keys written by 0.1 with values containing the
+separator are corrupted and must be re-written.
+
+## 0.1.x
+
+Initial beta.
+
+---
+
+<!-- source: skills/dynamo-elixir/SKILL.md -->
+
+---
+name: dynamo-elixir
+description: Use Dynamo, the Ecto-inspired Repo and schema library for Amazon DynamoDB in Elixir. Covers defining typed schemas with composite keys, GSIs and vector indexes (DynamoDB native vector search), single-table design with entity_name, configuring a supervised Repo, put/get/update/delete, query with sort-key conditions and the condition DSL, pagination and streams, batches, transactions, error handling with %Dynamo.Error{}, testing with Req.Test plugs or DynamoDB Local, and the mix tasks. Use when a project depends on {:dynamo, github: "bmalum/dynamo"} or asks how to model or access DynamoDB from Elixir.
+version: 0.2.0
+tags: [elixir, dynamodb, aws, database, ecto, single-table-design]
+homepage: https://elixir-dynamodb.dev
+---
+
+# Working with Dynamo (Elixir + DynamoDB)
+
+Dynamo gives DynamoDB an Ecto shape: `Dynamo.Schema` for typed items,
+`Dynamo.Repo` as the supervised process you call, pure `Dynamo.Request`
+builders underneath, and one `%Dynamo.Error{}` for every failure. Docs:
+https://elixir-dynamodb.dev/docs/ (API reference, guides, changelog).
+
+Read `references/cheatsheet.md` for the compact API. Follow the workflow
+below in order; every step names the check that confirms it.
+
+## Workflow
+
+### 1. Confirm the version and the repo
+
+- `mix.exs` MUST contain `{:dynamo, github: "bmalum/dynamo"}` (0.2 API). If
+  code uses `Dynamo.Table.put_item`, `table_name`, `belongs_to` or untyped
+  `field :x`, it is the 0.1 API; migrate using the table in
+  `references/migration-0.1.md` before changing anything else.
+- Exactly one module SHOULD `use Dynamo.Repo, otp_app: :app`, be configured
+  under `config :app, MyApp.Dynamo, region: ..., endpoint: ...`, and be listed
+  in the application's supervision tree. Check: `MyApp.Dynamo.config()` returns
+  the config without raising "is not started".
+
+### 2. Model before coding
+
+- List access patterns first. Each `query` needs a partition key; each range
+  needs a sort key that sorts the way the query reads (ISO 8601 datetimes do).
+- Partition keys MUST be high-cardinality (never a date or status alone).
+- Prefer one table with several schemas. Distinguish entities with
+  `entity_name`; put child items in the parent's partition with
+  `entity_name ParentModule` plus a sort-key field with a default prefix
+  (`field :kind, :string, sort_key: true, default: "order"`).
+- Use GSIs for the second and third pattern; GSI keys keep the field's own
+  type, so numeric ranges work.
+- Keep items under 400 KB; store blobs in S3.
+
+### 3. Write the schema
+
+```elixir
+defmodule MyApp.Order do
+  use Dynamo.Schema
+
+  item do
+    table "app"
+    field :user_id, :string, partition_key: true
+    field :placed_at, :utc_datetime, sort_key: true
+    field :order_id, :string, sort_key: true
+    field :total, :decimal
+    field :status, :string, default: "pending"
+    global_secondary_index "StatusIndex", partition_key: :status, sort_key: :placed_at
+  end
+end
+```
+
+Rules the compiler enforces (do not work around them): a `table`, at least
+one partition key, known types, known options, fields referenced by keys and
+indexes exist. Use explicit types; `:any` loses dates and decimals. Nested
+data with types belongs in an embedded schema (`use Dynamo.Schema,
+embedded: true`) or `{:list, type}`, not in `:map`.
+
+Check: `Dynamo.Schema.primary_key(%MyApp.Order{user_id: "u", placed_at: dt,
+order_id: "o"})` returns `{:ok, %Dynamo.Key{pk: %{"S" => "order#u"}, ...}}`.
+Key values containing the separator (`#`) and nil partition keys return
+`{:error, %Dynamo.Error{type: :validation_error}}`; change the data or the
+separator, never suppress the error.
+
+### 4. Use the Repo
+
+- All operations return `{:ok, _} | {:error, %Dynamo.Error{}}`; use `!` variants only where a crash is the right outcome.
+- `get`, `delete`, `update` need the full key populated on the struct.
+- Prefer `condition: [field: {:op, value}]` over hand-written expression strings; the DSL types the values.
+- `update` never changes key fields; delete and re-put (in a transaction if atomic).
+- Counters: guard with a version condition or use `transaction/2` with `client_request_token:`; transport timeouts are retried and `{:increment, n}` is not idempotent.
+- Reads: `query/2` returns `%Dynamo.Page{}`; loop with `start_key: page.last_evaluated_key`, or use `stream/2` / `query_all/2` with `limit:`. Scans read the whole table; use `stream(Schema, segments: n)` for migrations only.
+- Batches: pass any number of items; the Repo chunks and retries unprocessed ones. Check `unprocessed == []`.
+
+### 4b. Vector search (when the project embeds text/images)
+
+- Declare `field :embedding, {:vector, n}` with `n` equal to the embedding model's output, plus `vector_index "Name", field: :embedding, distance: :cosine | :dot_product | :euclidean`.
+- Add `partition_key: :tenant` to the index when searches are always scoped; the search `filter:` MUST then include `[tenant: value]`. Add `filters: [...]` for attributes you filter on.
+- Project only what the UI needs (`projection: :include, projected_attributes: [...]`); the vector is never returned by default.
+- `Repo.search_vectors(Schema, "Name", embedding, top_k: k, filter: [...])` returns `{:ok, %{results: [{struct, score}, ...]}}`. Lower score is closer for cosine/euclidean, higher for dot product.
+- Tables with vector indexes MUST use on-demand billing; the index is eventually consistent, so do not assert a search result immediately after a write in tests without polling.
+
+### 5. Handle errors by type
+
+Match on `%Dynamo.Error{type: ...}`: `:conditional_check_failed`,
+`:resource_not_found`, `:validation_error`, `:transaction_canceled` (read
+`cancellation_reasons`), `:throttled` / `:provisioned_throughput_exceeded`
+(`retryable?: true`, already retried by the client). Never parse `message`.
+
+### 6. Test without AWS
+
+- Unit: assert on `Dynamo.Request.*` and `Dynamo.Schema.dump/1` output; both are pure.
+- Integration: configure `req_options: [plug: {Req.Test, MyApp.Dynamo}]` and stub responses with real DynamoDB JSON shapes, or run DynamoDB Local with `endpoint: "http://localhost:8000"`.
+- Add `consolidate_protocols: Mix.env() != :test` to `mix.exs` when schemas are defined in tests.
+
+### 7. Tables
+
+`mix dynamo.create_table --schema MyApp.Order --schema MyApp.User --repo MyApp.Dynamo`
+creates the table and merged GSIs for a single-table design. Never create
+tables from application code at boot.
+
+## Do not
+
+- Do not write `NULL` to "remove" an attribute; use `update(item, field: :remove)`.
+- Do not use `-` as `key_separator` with date sort keys (dates contain `-`); the library rejects it at runtime.
+- Do not read `Dynamo.Client` responses directly; go through the Repo.
+- Do not mock `Dynamo.Repo` or `Dynamo.Client` modules; stub HTTP.
+- Do not put example schemas in `lib/` of a library.
+
+## References
+
+| File | Use |
+|---|---|
+| `references/cheatsheet.md` | every operation and option on one page |
+| `references/migration-0.1.md` | mapping from the 0.1 API |
+| https://elixir-dynamodb.dev/docs/data_modelling.html | keys, GSIs, single-table, embedded schemas |
+| https://elixir-dynamodb.dev/docs/testing.html | Req.Test, in-memory fake, DynamoDB Local |

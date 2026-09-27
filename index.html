@@ -1,911 +1,623 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    
-    <!-- Primary Meta Tags -->
-    <title>Dynamo – Ecto-inspired Repo and schema DSL for DynamoDB in Elixir</title>
-    <meta name="title" content="Dynamo – Ecto-inspired Repo and schema DSL for DynamoDB in Elixir">
-    <meta name="description" content="Dynamo is an Ecto-inspired Repo and schema DSL for Amazon DynamoDB in Elixir: typed schemas, composite keys, a supervised Repo with retries and telemetry, and one normalised error type.">
-    <meta name="keywords" content="Elixir, DynamoDB, AWS, Database, DSL, Ecto, Type Safety, NoSQL, Amazon DynamoDB, Elixir Library, Database ORM, Schema Definition, Serverless">
-    <meta name="author" content="Martin Karrer">
-    <meta name="robots" content="index, follow">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://elixir-dynamodb.dev/">
-    <meta property="og:title" content="Dynamo - Elegant DynamoDB DSL for Elixir">
-    <meta property="og:description" content="Typed schemas, a supervised Repo, and one error type for Amazon DynamoDB in Elixir.">
-    <meta property="og:image" content="https://elixir-dynamodb.dev/og-image.png">
-    
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://elixir-dynamodb.dev/">
-    <meta name="twitter:title" content="Dynamo - Elegant DynamoDB DSL for Elixir">
-    <meta name="twitter:description" content="Typed schemas, a supervised Repo, and one error type for Amazon DynamoDB in Elixir.">
-    <meta name="twitter:image" content="https://elixir-dynamodb.dev/og-image.png">
-    
-    <!-- Enhanced Structured Data -->
-    <script type="application/ld+json">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Dynamo: DynamoDB for Elixir, the Ecto way</title>
+  <meta name="description" content="Dynamo is an Ecto-inspired Repo and schema library for Amazon DynamoDB in Elixir. Typed schemas, composite keys that round-trip, native vector search, a supervised Repo with retries and telemetry, and one error type.">
+  <meta name="author" content="Martin Karrer, karrer.solutions">
+  <link rel="canonical" href="https://elixir-dynamodb.dev/">
+  <link rel="author" href="https://karrer.solutions">
+  <link rel="alternate" type="text/plain" href="https://elixir-dynamodb.dev/llms.txt" title="llms.txt">
+  <meta name="keywords" content="Elixir DynamoDB library, DynamoDB Elixir, Ecto DynamoDB, Phoenix DynamoDB, single table design Elixir, DynamoDB schema Elixir, DynamoDB vector search Elixir, AWS Elixir">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://elixir-dynamodb.dev/">
+  <meta property="og:title" content="Dynamo: DynamoDB for Elixir, the Ecto way">
+  <meta property="og:description" content="Typed schemas, composite keys that round-trip, a supervised Repo, one error type. Open source, MIT.">
+  <meta property="og:site_name" content="Dynamo">
+  <meta property="og:image" content="https://elixir-dynamodb.dev/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Dynamo: an Elixir schema and the DynamoDB key it generates">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://elixir-dynamodb.dev/og-image.png">
+  <meta name="twitter:title" content="Dynamo: DynamoDB for Elixir, the Ecto way">
+  <meta name="twitter:description" content="Typed schemas, composite keys that round-trip, a supervised Repo, one error type. Open source, MIT.">
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
     {
-        "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
-        "name": "Dynamo",
-        "description": "Elegant DynamoDB DSL for Elixir - Type-safe, Ecto-inspired DSL for Amazon DynamoDB",
-        "applicationCategory": "DeveloperApplication",
-        "operatingSystem": "Cross-platform",
-        "programmingLanguage": "Elixir",
-        "url": "https://elixir-dynamodb.dev",
-        "codeRepository": "https://github.com/bmalum/dynamo",
-        "softwareVersion": "0.2.0",
-        "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
-        },
-        "author": {
-            "@type": "Organization",
-            "name": "Dynamo Community"
-        },
-        "keywords": "Elixir, DynamoDB, AWS, NoSQL, Database, DSL, Ecto, Type Safety",
-        "sameAs": [
-            "https://github.com/bmalum/dynamo",
-            "https://elixir-dynamodb.dev/docs/"
-        ],
-        "softwareRequirements": "Elixir >= 1.16, Erlang/OTP >= 26",
-        "releaseNotes": "0.2: Ecto-style Repo, typed schemas, embedded schemas, condition DSL, telemetry, real parallel scans",
-        "downloadUrl": "https://github.com/bmalum/dynamo",
-        "installUrl": "https://github.com/bmalum/dynamo#installation",
-        "screenshot": "https://elixir-dynamodb.dev/og-image.png",
-        "featureList": [
-            "Typed schema definition with embedded schemas",
-            "Ecto-inspired Repo API",
-            "Condition and filter expression DSL",
-            "Batch operations with automatic retries",
-            "Transactions with cancellation reasons",
-            "Parallel scan streams",
-            "Telemetry instrumentation",
-            "Mix tasks for table management"
-        ]
-    }
-    </script>
-    
-    <!-- Additional Structured Data for Organization -->
-    <script type="application/ld+json">
+      "@type": "Question",
+      "name": "Is Dynamo an ORM for DynamoDB?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. It is a Repo and schema layer in the spirit of Ecto: typed structs, generated composite keys and pure request builders, with DynamoDB's own model (partition and sort keys, GSIs, expressions) kept fully visible. There is no query planner and no lazy loading; every call maps to exactly one DynamoDB API action."
+      }
+    },
     {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "Dynamo Community",
-        "url": "https://elixir-dynamodb.dev",
-        "logo": "https://elixir-dynamodb.dev/logo.png",
-        "sameAs": [
-            "https://github.com/bmalum/dynamo"
-        ],
-        "contactPoint": {
-            "@type": "ContactPoint",
-            "contactType": "technical support",
-            "url": "https://github.com/bmalum/dynamo/issues"
-        }
-    }
-    </script>
-    
-    <!-- WebSite Structured Data for Search Box -->
-    <script type="application/ld+json">
+      "@type": "Question",
+      "name": "How does Dynamo compare to ExAws.Dynamo?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ExAws.Dynamo is a low-level API wrapper: you build request maps and decode responses yourself. Dynamo adds typed schemas that dump and load items, composite key generation, a supervised Repo with credential resolution and retries, a condition DSL, pagination and streams, and a single normalised error type. It talks to DynamoDB directly over Req with its own SigV4 signing and does not depend on ExAws."
+      }
+    },
     {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Dynamo - Elegant DynamoDB DSL for Elixir",
-        "url": "https://elixir-dynamodb.dev",
-        "description": "Ecto-inspired Repo and schema DSL for Amazon DynamoDB in Elixir",
-        "inLanguage": "en-US",
-        "isAccessibleForFree": true,
-        "potentialAction": {
-            "@type": "SearchAction",
-            "target": {
-                "@type": "EntryPoint",
-                "urlTemplate": "https://github.com/bmalum/dynamo/search?q={search_term_string}"
-            },
-            "query-input": "required name=search_term_string"
-        }
+      "@type": "Question",
+      "name": "Does it support single-table design?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Several schemas share one table; entity_name prefixes the partition key so items of different types never collide, and entity_name ParentModule puts child items into the parent's partition. Sort keys can carry a type prefix through a field default, and mix dynamo.create_table accepts several --schema flags to create one table with all indexes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How are DynamoDB errors reported?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Every failure is {:error, %Dynamo.Error{}} with a categorised type such as :conditional_check_failed, :resource_not_found, :throttled or :transaction_canceled, plus aws_type, HTTP status, retryable? and, for transactions, one cancellation reason per operation. Retryable errors are retried by the client with jittered exponential backoff before you see them."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I test code that uses Dynamo without AWS?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Request building is pure, so you can assert on Dynamo.Request output directly. For integration tests point the Repo at a Req.Test plug (req_options: [plug: {Req.Test, MyApp.Dynamo}]) or at DynamoDB Local via endpoint: \"http://localhost:8000\". The library ships an in-memory fake DynamoDB you can copy."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which Elixir and OTP versions are supported?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Elixir 1.16 and newer on OTP 26 and newer. Dependencies are Req, Jason and Telemetry; Decimal is optional and enables the :decimal type."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Dynamo support DynamoDB vector search?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Declare a {:vector, n} field and a vector_index (cosine, dot product or euclidean, optional partition key and inline filters) in the schema; mix dynamo.create_table creates the index and Repo.search_vectors/4 returns the top-k items as {struct, score} pairs. The client routes SearchVectors to AWS's separate search endpoint automatically. Vector indexes require on-demand billing and are eventually consistent."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can AI coding agents use Dynamo?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. The site publishes an agent skill (SKILL.md with a cheat sheet and a 0.1 migration guide) at /skills/dynamo-elixir/, an llms.txt index and the full documentation as one text file at /llms-full.txt. Copy the skill folder into your agent's skills directory."
+      }
     }
-    </script>
-    
-    <!-- Additional Meta Tags for SEO -->
-    <meta name="language" content="English">
-    <meta name="revisit-after" content="7 days">
-    <meta name="distribution" content="global">
-    <meta name="rating" content="general">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    
-    <!-- Enhanced SEO Meta Tags -->
-    <meta name="application-name" content="Dynamo">
-    <meta name="apple-mobile-web-app-title" content="Dynamo">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="format-detection" content="telephone=no">
-    
-    <!-- Geo and Location -->
-    <meta name="geo.region" content="US">
-    <meta name="geo.placename" content="Global">
-    
-    <!-- Content Classification -->
-    <meta name="category" content="Technology, Software Development, Database, Elixir">
-    <meta name="coverage" content="Worldwide">
-    <meta name="target" content="developers, software engineers, elixir developers">
-    
-    <!-- Social Media Optimization -->
-    <meta property="og:site_name" content="Dynamo">
-    <meta property="og:locale" content="en_US">
-    <meta property="article:author" content="Dynamo Community">
-    <meta property="article:publisher" content="https://elixir-dynamodb.dev">
-    
-    <!-- Twitter Enhanced -->
-    <meta name="twitter:site" content="@dynamo_elixir">
-    <meta name="twitter:creator" content="@dynamo_elixir">
-    
-    <!-- Search Engine Specific -->
-    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
-    <meta name="bingbot" content="index, follow">
-    <meta name="slurp" content="index, follow">
-    
-    <!-- Performance Optimization -->
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
-    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-    <link rel="dns-prefetch" href="https://github.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    
-    <!-- Resource Hints -->
-    <link rel="prefetch" href="https://github.com/bmalum/dynamo">
-    <link rel="prefetch" href="/docs/">
-    
-    <!-- Preload Critical Resources -->
-    <link rel="preload" href="styles.css" as="style">
-    <link rel="preload" href="script.js" as="script">
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" as="style">
-    
-    <!-- Module Preload for Modern Browsers -->
-    <link rel="modulepreload" href="script.js">
-    
-    <!-- Critical CSS Inlining Placeholder -->
-    <!-- Consider inlining critical CSS here for faster rendering -->
-    
-    <!-- Favicon and App Icons -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#3b82f6">
-    <meta name="msapplication-TileColor" content="#3b82f6">
-    <meta name="theme-color" content="#3b82f6">
-    
-    <!-- Web App Manifest -->
-    <link rel="manifest" href="/manifest.json">
-    
-    <!-- Fonts with font-display optimization -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    
-    <!-- Prism.js for syntax highlighting with performance optimization -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet"></noscript>
-    
-    <!-- Styles -->
-    <link rel="stylesheet" href="styles.css">
-    
-    <!-- Noscript Styles -->
-    <noscript>
-        <style>
-            .examples-noscript {
-                display: block !important;
-            }
-            .examples-content {
-                display: none;
-            }
-            .examples-tabs {
-                display: none;
-            }
-            .examples-noscript h3 {
-                color: #1f2937;
-                font-size: 1.25rem;
-                font-weight: 600;
-                margin: 2rem 0 1rem 0;
-                border-bottom: 2px solid #e5e7eb;
-                padding-bottom: 0.5rem;
-            }
-            .examples-noscript .code-block {
-                margin-bottom: 2rem;
-            }
-        </style>
-    </noscript>
+  ]
+}
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
+    "name": "Dynamo",
+    "description": "Ecto-inspired Repo and schema library for Amazon DynamoDB in Elixir",
+    "url": "https://elixir-dynamodb.dev",
+    "codeRepository": "https://github.com/bmalum/dynamo",
+    "programmingLanguage": "Elixir",
+    "runtimePlatform": "BEAM, Elixir 1.16+",
+    "license": "https://opensource.org/licenses/MIT",
+    "version": "0.2.0",
+    "keywords": "Elixir, DynamoDB, AWS, Ecto, single-table design, NoSQL, Phoenix, Repo, schema, vector search, embeddings, RAG",
+    "about": [
+      {"@type": "Thing", "name": "Amazon DynamoDB"},
+      {"@type": "Thing", "name": "Elixir programming language"}
+    ],
+    "author": {
+      "@type": "Person",
+      "name": "Martin Karrer",
+      "url": "https://karrer.solutions"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Karrer",
+      "url": "https://karrer.solutions"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Dynamo for Elixir",
+    "url": "https://elixir-dynamodb.dev/",
+    "inLanguage": "en",
+    "publisher": {"@type": "Organization", "name": "Karrer", "url": "https://karrer.solutions"}
+  }
+  </script>
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#f7f6f2">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Beta Banner -->
-    <div class="beta-banner">
-        🚀 Dynamo 0.2 is a complete rewrite: typed schemas and an Ecto-style Repo. See the <a href="/docs/changelog.html">changelog</a> for migration from 0.1.
-    </div>
-    
-    <!-- Navigation -->
-    <nav class="nav">
-        <div class="nav-container">
-            <div class="nav-brand">
-                <span class="nav-logo">⚡</span>
-                <span class="nav-title">Dynamo</span>
-            </div>
-            <div class="nav-links">
-                <a href="#features" class="nav-link">Features</a>
-                <a href="#examples" class="nav-link">Examples</a>
-                <a href="/docs/" class="nav-link">Docs</a>
-                <a href="https://github.com/bmalum/dynamo" class="nav-link nav-cta" target="_blank">GitHub</a>
-            </div>
-        </div>
-    </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <!-- Version Ribbon -->
-        <div class="version-ribbon" role="status" aria-label="Elixir version requirement">
-            <div class="ribbon-content">
-                Elixir 1.16+
-            </div>
-        </div>
-        
-        <div class="hero-container">
-            <div class="hero-content">
-                <h1 class="hero-title">
-                    DynamoDB the Ecto way <span class="hero-highlight">for Elixir</span>
-                </h1>
-                <p class="hero-description">
-                    Typed schemas with composite keys, a supervised Repo that owns credentials and retries,
-                    pure request builders you can unit-test, and a single <code>%Dynamo.Error{}</code> for every failure.
-                </p>
-                <div class="hero-actions">
-                    <a href="#get-started" class="btn btn-primary">Get Started</a>
-                    <a href="#examples" class="btn btn-secondary">View Examples</a>
-                </div>
-                <div class="hero-stats">
-                    <div class="stat">
-                        <span class="stat-number">16 types</span>
-                        <span class="stat-label">plus embedded schemas</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">1 error</span>
-                        <span class="stat-label">normalised, categorised</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">0 mocks</span>
-                        <span class="stat-label">test with Req plugs</span>
-                    </div>
-                </div>
-            </div>
-            <div class="hero-visual">
-                <div class="code-preview">
-                    <div class="code-header">
-                        <div class="code-dots">
-                            <span></span><span></span><span></span>
-                        </div>
-                        <span class="code-title">order.ex</span>
-                    </div>
-                    <pre class="code-content"><code class="language-elixir">defmodule MyApp.Order do
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="mark">#</span>dynamo</a>
+    <nav aria-label="Primary">
+      <a href="#story">How it works</a>
+      <a href="#vectors">Vectors</a>
+      <a href="#errors">Errors</a>
+      <a href="#design">Design</a>
+      <a href="#agents">Agents</a>
+      <a href="#start">Get started</a>
+      <a href="/docs/">Docs</a>
+      <a href="https://github.com/bmalum/dynamo">GitHub</a>
+    </nav>
+    <span class="release">v0.2.0 · MIT</span>
+  </div>
+</header>
+
+<main>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h1>DynamoDB for Elixir, the Ecto way.</h1>
+      <p class="lede">
+        Typed schemas that generate composite keys, a supervised Repo that owns
+        credentials and retries, request builders you can unit-test, and one
+        <code>%Dynamo.Error{}</code> for every failure.
+      </p>
+      <div class="actions">
+        <a class="btn primary" href="#start">Get started</a>
+        <a class="btn" href="/docs/">Read the docs</a>
+      </div>
+      <p class="install"><code>{:dynamo, github: "bmalum/dynamo"}</code></p>
+    </div>
+
+    <figure class="composer" aria-label="A schema and the DynamoDB key it produces">
+      <div class="filename"><span>lib/my_app/order.ex</span><span>Dynamo.Schema</span></div>
+<pre><span class="k">defmodule</span> <span class="m">MyApp.Order</span> <span class="k">do</span>
+  <span class="k">use</span> <span class="m">Dynamo.Schema</span>
+
+  item <span class="k">do</span>
+    table <span class="s">"app_data"</span>
+
+    field <span class="a">:user_id</span>,   <span class="a">:string</span>,       partition_key: <span class="a">true</span>
+    field <span class="a">:placed_at</span>, <span class="a">:utc_datetime</span>, sort_key: <span class="a">true</span>
+    field <span class="a">:order_id</span>,  <span class="a">:string</span>,       sort_key: <span class="a">true</span>
+    field <span class="a">:total</span>,     <span class="a">:decimal</span>
+    field <span class="a">:status</span>,    <span class="a">:string</span>, default: <span class="s">"pending"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c"># %MyApp.Order{user_id: "u1", order_id: "o1",</span>
+<span class="c">#              placed_at: ~U[2024-01-15 10:00:00Z]}</span></pre>
+      <div class="keys">
+        <div class="label">Dynamo.Schema.primary_key/1</div>
+        <div class="keyline hl-pk"><span class="name">pk</span><span class="part">"order</span><span class="part sep">#</span><span class="part">u1"</span></div>
+        <div class="from">entity_name <span class="sep">#</span> user_id</div>
+        <div class="keyline hl-sk" style="margin-top:.5rem"><span class="name">sk</span><span class="part">"2024-01-15T10:00:00Z</span><span class="part sep">#</span><span class="part">o1"</span></div>
+        <div class="from">placed_at <span class="sep">#</span> order_id. A nil partition key or a value containing <span class="sep">#</span> is an error, never a sentinel.</div>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<section id="story">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>One item, start to finish</h2>
+      <p class="muted">Every snippet below runs against the library's test suite. The same code appears in the README and guides.</p>
+    </div>
+
+    <div class="step">
+      <div class="text">
+        <h3>Define the repo once</h3>
+        <p>The Repo is a supervised process tree. It resolves credentials (config, environment, ECS, IMDSv2) and refreshes them before they expire, owns region and endpoint, retries throttling and 5xx with jittered backoff, and emits telemetry for every request.</p>
+        <p>Point it at DynamoDB Local in dev, at a <code>Req.Test</code> plug in tests, at AWS in prod. Nothing else changes.</p>
+      </div>
+      <div class="codewrap">
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+<pre class="code"><code class="language-elixir">defmodule MyApp.Dynamo do
+  use Dynamo.Repo, otp_app: :my_app
+end
+
+# config/runtime.exs
+config :my_app, MyApp.Dynamo,
+  region: System.get_env("AWS_REGION", "eu-central-1"),
+  endpoint: System.get_env("DYNAMO_ENDPOINT")
+
+# application.ex
+children = [MyApp.Dynamo]</code></pre>
+      </div>
+    </div>
+
+    <div class="step flip">
+      <div class="text">
+        <h3>Write it</h3>
+        <p>Fields are dumped with their declared type. Nil fields are omitted, so an item never carries <code>NULL</code> noise. The condition is a keyword list; Dynamo generates the expression, the placeholders and the typed values.</p>
+        <p>Embedded schemas and <code>{:list, type}</code> keep their types on the way back: dates stay dates, decimals stay decimals.</p>
+      </div>
+      <div class="codewrap">
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+<pre class="code"><code class="language-elixir">order = %MyApp.Order{
+  user_id: "u1",
+  placed_at: DateTime.utc_now(),
+  order_id: "o1",
+  total: Decimal.new("9.99")
+}
+
+{:ok, order} = MyApp.Dynamo.put(order, condition: [pk: :not_exists])
+
+# {:error, %Dynamo.Error{type: :conditional_check_failed}} if it existed</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="text">
+        <h3>Read it back</h3>
+        <p>Populated sort-key fields on the struct become a <code>begins_with</code> on the partial key, so "all of January" is one line. Pages carry <code>last_evaluated_key</code>; <code>stream/2</code> paginates lazily and <code>segments:</code> turns a scan into a genuinely parallel one with backpressure.</p>
+      </div>
+      <div class="codewrap">
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+<pre class="code"><code class="language-elixir">{:ok, %Dynamo.Page{items: orders, last_evaluated_key: key}} =
+  MyApp.Dynamo.query(%MyApp.Order{user_id: "u1"},
+    sort_key: {:between, "2024-01-01", "2024-01-31~"},
+    filter: [total: {:gt, Decimal.new("100")}],
+    descending: true,
+    limit: 50
+  )
+
+# January, via the struct: sk begins_with "2024-01"
+MyApp.Dynamo.query(%MyApp.Order{user_id: "u1",
+  placed_at: ~U[2024-01-01 00:00:00Z]})
+
+# index keys keep the field's type
+MyApp.Dynamo.query(%MyApp.Order{status: "shipped"},
+  index: "StatusIndex", sort_key: {:gt, ~U[2024-01-01 00:00:00Z]})
+
+MyApp.Dynamo.stream(MyApp.Order, segments: 8) |> Enum.count()</code></pre>
+      </div>
+    </div>
+
+    <div class="step flip">
+      <div class="text">
+        <h3>Change it</h3>
+        <p><code>SET</code>, <code>REMOVE</code>, <code>ADD</code> and <code>DELETE</code> are built from a keyword list. Key fields cannot be updated; that is a validation error before any request is sent, not a corrupted item afterwards.</p>
+        <p>The client retries transport timeouts, so guard counters with a version condition or use a transaction with an idempotency token.</p>
+      </div>
+      <div class="codewrap">
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+<pre class="code"><code class="language-elixir">{:ok, nil} =
+  MyApp.Dynamo.update(order,
+    [status: "shipped", version: {:increment, 1}],
+    condition: [version: order.version]
+  )
+
+# UpdateExpression:    SET #a0 = :v0, #a1 = #a1 + :v1
+# ConditionExpression: #c0 = :c1
+
+MyApp.Dynamo.update(order,
+  tags: {:add, MapSet.new(["gift"])},
+  legacy: :remove
+)</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="text">
+        <h3>Do several things atomically</h3>
+        <p>Transactions take the same structs and the same option names. On cancellation the error carries one reason per operation, in order, so you know which check failed.</p>
+      </div>
+      <div class="codewrap">
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+<pre class="code"><code class="language-elixir">MyApp.Dynamo.transaction(
+  [
+    {:update, %Account{id: "src"}, [balance: {:decrement, 100}],
+      condition: [balance: {:gte, 100}]},
+    {:update, %Account{id: "dst"}, [balance: {:increment, 100}]},
+    {:put, %Transfer{id: "t1", amount: 100}, condition: [id: :not_exists]}
+  ],
+  client_request_token: "transfer-t1"
+)
+
+# on failure:
+# {:error, %Dynamo.Error{type: :transaction_canceled,
+#   cancellation_reasons: [%{code: "ConditionalCheckFailed"},
+#                          %{code: "None"}, %{code: "None"}]}}</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="text">
+        <h3>What is actually stored</h3>
+        <p>No hidden magic in the table. The key attributes are plain strings you can read in the console, and any other client can query them. <code>raw_keys: true</code> maps tables you did not design around this layout.</p>
+      </div>
+      <div class="compare">
+        <figure>
+          <figcaption>DynamoDB item</figcaption>
+<pre class="code"><code class="language-json">{
+  "pk":        {"S": "order#u1"},
+  "sk":        {"S": "2024-01-15T10:00:00Z#o1"},
+  "user_id":   {"S": "u1"},
+  "placed_at": {"S": "2024-01-15T10:00:00Z"},
+  "order_id":  {"S": "o1"},
+  "total":     {"N": "9.99"},
+  "status":    {"S": "pending"},
+  "version":   {"N": "0"}
+}</code></pre>
+        </figure>
+        <figure>
+          <figcaption>What <code>get/2</code> returns</figcaption>
+<pre class="code"><code class="language-elixir">%MyApp.Order{
+  user_id: "u1",
+  placed_at: ~U[2024-01-15 10:00:00Z],
+  order_id: "o1",
+  total: Decimal.new("9.99"),
+  status: "pending",
+  version: 0
+}</code></pre>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="vectors">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Vector search, in the same table</h2>
+      <p class="muted">DynamoDB has native vector indexes since August 2026. Dynamo maps them onto a typed field and a schema declaration, and routes <code>SearchVectors</code> to the separate AWS endpoint it lives on.</p>
+    </div>
+    <div class="step" style="border-top:0;padding-top:0">
+      <div class="text">
+        <p>Declare <code>{:vector, n}</code> with your embedding model's dimensions and a <code>vector_index</code> with a distance function. A partition key on the index scopes every search to one tenant and raises its throughput quota; inline filters narrow further.</p>
+        <p>Results come back as <code>{struct, score}</code> pairs, most similar first. Only projected attributes are returned, and key fields are recovered from the item key, so you get real structs without a second lookup.</p>
+        <p><code>mix dynamo.create_table --schema</code> creates the index. Tables with vector indexes must be on-demand; the index is eventually consistent.</p>
+      </div>
+      <div class="codewrap">
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+<pre class="code"><code class="language-elixir">defmodule Kb.Chunk do
   use Dynamo.Schema
 
   item do
-    table "app_data"
+    table "kb"
+    field :doc_id, :string, partition_key: true
+    field :chunk_id, :string, sort_key: true
+    field :tenant, :string
+    field :lang, :string
+    field :text, :string
+    field :embedding, {:vector, 1024}
 
-    field :user_id, :string, partition_key: true
-    field :placed_at, :utc_datetime, sort_key: true
-    field :order_id, :string, sort_key: true
-    field :total, :decimal
-    field :status, :string, default: "pending"
-    field :version, :integer, default: 0
-
-    global_secondary_index "StatusIndex",
-      partition_key: :status, sort_key: :placed_at
+    vector_index "Semantic",
+      field: :embedding,
+      distance: :cosine,
+      projection: :include, projected_attributes: [:text, :lang],
+      partition_key: :tenant,
+      filters: [:lang]
   end
 end
 
+embedding = Bedrock.embed("how do I rotate credentials?")
+
+{:ok, %{results: hits}} =
+  Kb.Repo.search_vectors(Kb.Chunk, "Semantic", embedding,
+    top_k: 8,
+    filter: [tenant: "acme", lang: "en"]
+  )
+
+for {%Kb.Chunk{text: text}, score} &lt;- hits, do: IO.puts("#{score}  #{text}")</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="errors">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>When it fails, you get one shape</h2>
+      <p class="muted">AWS error bodies are normalised at the client boundary. Nothing above it sees a raw <code>__type</code>. Match on the atom; retryable errors are already retried for you.</p>
+    </div>
+    <div class="step wide" style="border-top:0;padding-top:0">
+      <div class="text">
+        <table class="errors">
+          <thead><tr><th>type</th><th>meaning</th></tr></thead>
+          <tbody>
+            <tr><td>:validation_error</td><td>local (nil key, unknown option, wrong type) or AWS</td></tr>
+            <tr><td>:conditional_check_failed</td><td>your <code>condition:</code> was false</td></tr>
+            <tr><td>:resource_not_found</td><td>table or index does not exist</td></tr>
+            <tr><td>:throttled</td><td>retried with backoff; <code>retryable?: true</code></td></tr>
+            <tr><td>:transaction_canceled</td><td>with <code>cancellation_reasons</code> per operation</td></tr>
+            <tr><td>:transport_error</td><td>timeout or connection failure, retried</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="codewrap">
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+<pre class="code"><code class="language-elixir">case MyApp.Dynamo.put(user, condition: [pk: :not_exists]) do
+  {:ok, user} ->
+    {:ok, user}
+
+  {:error, %Dynamo.Error{type: :conditional_check_failed}} ->
+    {:error, :already_exists}
+
+  {:error, %Dynamo.Error{retryable?: true} = e} ->
+    schedule_retry(e)
+
+  {:error, %Dynamo.Error{} = e} ->
+    Logger.error(Exception.message(e))
+end
+
+:telemetry.attach("dynamo", [:dynamo, :request, :stop],
+  fn _, %{duration: d}, meta, _ ->
+    ms = System.convert_time_unit(d, :native, :millisecond)
+    Logger.debug("#{meta.action} #{meta.table} #{ms}ms #{meta.result}")
+  end, nil)</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="design">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Four layers, one owner per decision</h2>
+      <p class="muted">Each layer can be tested without the one below it. Request building is pure; the test suite checks it against the exact JSON DynamoDB expects, and a live suite runs the same scenarios against AWS.</p>
+    </div>
+    <dl class="layers">
+      <dt>Dynamo.Schema</dt>
+      <dd>Typed fields, composite keys, embedded schemas, custom <code>Dynamo.Type</code>s. One <code>primary_key/1</code> used by every operation. Compile-time errors for a missing table, missing key, unknown option or type.</dd>
+      <dt>Dynamo.Request</dt>
+      <dd>Struct plus options in, <code>{action, payload}</code> out. No I/O. <code>Dynamo.Update</code> and <code>Dynamo.Condition</code> build the expressions.</dd>
+      <dt>Dynamo.Client</dt>
+      <dd>SigV4, retries with jittered backoff, telemetry, and the only place that reads an AWS error body.</dd>
+      <dt>Dynamo.Repo</dt>
+      <dd>The supervised owner of client and credentials, and the module you call. Batches are chunked and their unprocessed items retried; streams run under its Task.Supervisor.</dd>
+    </dl>
+  </div>
+</section>
+
+<section id="agents">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Made for coding agents too</h2>
+      <p class="muted">Kiro, Claude Code, Cursor and friends get a skill that encodes the workflow and the rules, not just the API. The same text is what the library's own maintainers work from.</p>
+    </div>
+    <div class="step" style="border-top:0;padding-top:0">
+      <div class="text">
+        <p>The <a href="/skills/dynamo-elixir/SKILL.md">dynamo-elixir skill</a> walks an agent through confirming the library version, modelling access patterns before writing a schema, using the Repo, matching on error types and testing without AWS. It links a one-page <a href="/skills/dynamo-elixir/references/cheatsheet.md">cheat sheet</a> and the <a href="/skills/dynamo-elixir/references/migration-0.1.md">0.1 to 0.2 migration table</a>.</p>
+        <p>For retrieval, <a href="/llms.txt">llms.txt</a> indexes everything and <a href="/llms-full.txt">llms-full.txt</a> holds the complete documentation in one file.</p>
+      </div>
+      <div class="codewrap">
+        <button class="copy" type="button" aria-label="Copy code">Copy</button>
+<pre class="code"><code class="language-bash"># Kiro
+mkdir -p .kiro/skills/dynamo-elixir/references
+curl -sSo .kiro/skills/dynamo-elixir/SKILL.md \
+  https://elixir-dynamodb.dev/skills/dynamo-elixir/SKILL.md
+curl -sSo .kiro/skills/dynamo-elixir/references/cheatsheet.md \
+  https://elixir-dynamodb.dev/skills/dynamo-elixir/references/cheatsheet.md
+
+# Claude Code: same files under .claude/skills/dynamo-elixir/</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Questions people ask</h2>
+    </div>
+    <div class="faq">
+      <div class="qa">
+        <h3>Is Dynamo an ORM for DynamoDB?</h3>
+        <p>No. It is a Repo and schema layer in the spirit of Ecto: typed structs, generated composite keys and pure request builders, with DynamoDB's own model (partition and sort keys, GSIs, expressions) kept fully visible. There is no query planner and no lazy loading; every call maps to exactly one DynamoDB API action.</p>
+      </div>
+      <div class="qa">
+        <h3>How does Dynamo compare to ExAws.Dynamo?</h3>
+        <p>ExAws.Dynamo is a low-level API wrapper: you build request maps and decode responses yourself. Dynamo adds typed schemas that dump and load items, composite key generation, a supervised Repo with credential resolution and retries, a condition DSL, pagination and streams, and a single normalised error type. It talks to DynamoDB directly over Req with its own SigV4 signing and does not depend on ExAws.</p>
+      </div>
+      <div class="qa">
+        <h3>Does it support single-table design?</h3>
+        <p>Yes. Several schemas share one table; entity_name prefixes the partition key so items of different types never collide, and entity_name ParentModule puts child items into the parent's partition. Sort keys can carry a type prefix through a field default, and mix dynamo.create_table accepts several --schema flags to create one table with all indexes.</p>
+      </div>
+      <div class="qa">
+        <h3>How are DynamoDB errors reported?</h3>
+        <p>Every failure is {:error, %Dynamo.Error{}} with a categorised type such as :conditional_check_failed, :resource_not_found, :throttled or :transaction_canceled, plus aws_type, HTTP status, retryable? and, for transactions, one cancellation reason per operation. Retryable errors are retried by the client with jittered exponential backoff before you see them.</p>
+      </div>
+      <div class="qa">
+        <h3>How do I test code that uses Dynamo without AWS?</h3>
+        <p>Request building is pure, so you can assert on Dynamo.Request output directly. For integration tests point the Repo at a Req.Test plug (req_options: [plug: {Req.Test, MyApp.Dynamo}]) or at DynamoDB Local via endpoint: "http://localhost:8000". The library ships an in-memory fake DynamoDB you can copy.</p>
+      </div>
+      <div class="qa">
+        <h3>Which Elixir and OTP versions are supported?</h3>
+        <p>Elixir 1.16 and newer on OTP 26 and newer. Dependencies are Req, Jason and Telemetry; Decimal is optional and enables the :decimal type.</p>
+      </div>
+      <div class="qa">
+        <h3>Does Dynamo support DynamoDB vector search?</h3>
+        <p>Yes. Declare a {:vector, n} field and a vector_index (cosine, dot product or euclidean, optional partition key and inline filters) in the schema; mix dynamo.create_table creates the index and Repo.search_vectors/4 returns the top-k items as {struct, score} pairs. The client routes SearchVectors to AWS's separate search endpoint automatically. Vector indexes require on-demand billing and are eventually consistent.</p>
+      </div>
+      <div class="qa">
+        <h3>Can AI coding agents use Dynamo?</h3>
+        <p>Yes. The site publishes an agent skill (SKILL.md with a cheat sheet and a 0.1 migration guide) at /skills/dynamo-elixir/, an llms.txt index and the full documentation as one text file at /llms-full.txt. Copy the skill folder into your agent's skills directory.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="start" class="start">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Get started</h2>
+      <p class="muted">Elixir 1.16 or newer. <code>decimal</code> is optional and enables the <code>:decimal</code> type.</p>
+    </div>
+    <ol>
+      <li>
+        <p>Add the dependency and configure a repo.</p>
+        <div class="codewrap">
+          <button class="copy" type="button" aria-label="Copy code">Copy</button>
+<pre class="code"><code class="language-elixir"># mix.exs
+{:dynamo, github: "bmalum/dynamo"},
+{:decimal, "~> 2.0"}
+
+# lib/my_app/dynamo.ex
 defmodule MyApp.Dynamo do
   use Dynamo.Repo, otp_app: :my_app
 end
 
-order = %MyApp.Order{user_id: "u1", placed_at: DateTime.utc_now(),
-                     order_id: "o1", total: Decimal.new("9.99")}
-
-{:ok, order} = MyApp.Dynamo.put(order)
-{:ok, page}  = MyApp.Dynamo.query(%MyApp.Order{user_id: "u1"},
-                 sort_key: {:gte, "2024-01-01"}, limit: 20)
-{:ok, nil}   = MyApp.Dynamo.update(order,
-                 status: "shipped", version: {:increment, 1})</code></pre>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" class="features">
-        <div class="features-container">
-            <div class="section-header">
-                <h2 class="section-title">Why Choose Dynamo?</h2>
-                <p class="section-description">
-                    Built for modern Elixir developers who want the power of DynamoDB 
-                    with the safety and elegance of structured schemas.
-                </p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🧬</div>
-                    <h3 class="feature-title">Typed Schemas</h3>
-                    <p class="feature-description">
-                        16 built-in types, <code>{:list, type}</code>, embedded schemas and custom <code>Dynamo.Type</code>s.
-                        Dates stay dates and decimals stay decimals on the way back.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔑</div>
-                    <h3 class="feature-title">Keys That Round-Trip</h3>
-                    <p class="feature-description">
-                        Composite partition and sort keys built from your fields. Nil keys and
-                        separator collisions are errors, never silent sentinels.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🏗️</div>
-                    <h3 class="feature-title">Supervised Repo</h3>
-                    <p class="feature-description">
-                        One process tree owns credentials (static → env → ECS → IMDS), region, endpoint,
-                        retries with backoff and telemetry. Multiple repos, multiple accounts.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎯</div>
-                    <h3 class="feature-title">Condition DSL</h3>
-                    <p class="feature-description">
-                        <code>condition: [pk: :not_exists, age: {:gte, 18}]</code> compiles to a DynamoDB expression
-                        with typed values and generated placeholders. Raw strings still work.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🚨</div>
-                    <h3 class="feature-title">One Error Type</h3>
-                    <p class="feature-description">
-                        Every failure is a <code>%Dynamo.Error{}</code> with a categorised <code>type</code>,
-                        <code>retryable?</code> and transaction cancellation reasons. Match on it, don't parse it.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🌊</div>
-                    <h3 class="feature-title">Streams &amp; Batches</h3>
-                    <p class="feature-description">
-                        Lazy paginated streams, genuinely parallel segmented scans with backpressure,
-                        batches chunked and retried for you, transactions with idempotency tokens.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📈</div>
-                    <h3 class="feature-title">Telemetry</h3>
-                    <p class="feature-description">
-                        <code>[:dynamo, :request, :stop]</code> with action, table, duration, status and consumed
-                        capacity. Plug it into your metrics in one line.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🧪</div>
-                    <h3 class="feature-title">Testable by Design</h3>
-                    <p class="feature-description">
-                        Request builders are pure functions. Point the Repo at a <code>Req.Test</code> plug or
-                        DynamoDB Local – no mocking of library modules.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🛠️</div>
-                    <h3 class="feature-title">Mix Tasks</h3>
-                    <p class="feature-description">
-                        Create tables and GSIs from your schemas, list and delete tables, generate a
-                        round-trip-safe schema from an existing table.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Code Examples Section -->
-    <section id="examples" class="examples">
-        <div class="examples-container">
-            <div class="section-header">
-                <h2 class="section-title">See It In Action</h2>
-                <p class="section-description">
-                    From simple CRUD operations to complex transactions, Dynamo makes it elegant.
-                </p>
-            </div>
-            <div class="examples-tabs">
-                <button class="tab-button active" data-tab="schema">Schema Definition</button>
-                <button class="tab-button" data-tab="crud">CRUD</button>
-                <button class="tab-button" data-tab="query">Queries & Streams</button>
-                <button class="tab-button" data-tab="batch">Batches & Transactions</button>
-                <button class="tab-button" data-tab="errors">Errors & Telemetry</button>
-            </div>
-
-            <!-- Noscript fallback for crawlers and users without JavaScript -->
-            <noscript>
-                <div class="examples-noscript">
-                    <h3>Schema Definition</h3>
-                    <div class="code-block">
-                        <pre><code class="language-elixir">defmodule MyApp.Address do
-  use Dynamo.Schema, embedded: true
-
-  item do
-    field :street, :string
-    field :city, :string
-    field :geo, {:list, :float}
-  end
-end
-
-defmodule MyApp.Product do
-  use Dynamo.Schema
-
-  item do
-    table "shop"
-
-    field :category, :string, partition_key: true
-    field :sku, :string, sort_key: true
-    field :name, :string
-    field :price, :decimal
-    field :stock, :integer, default: 0
-    field :tags, :string_set
-    field :warehouse, MyApp.Address
-  end
-end</code></pre>
-                    </div>
-
-                    <h3>CRUD</h3>
-                    <div class="code-block">
-                        <pre><code class="language-elixir">alias MyApp.{Dynamo, Product, Address}
-
-product = %Product{
-  category: "electronics", sku: "phone-1", name: "Phone",
-  price: Decimal.new("999.00"), tags: MapSet.new(["new"]),
-  warehouse: %Address{city: "Berlin", geo: [52.5, 13.4]}
-}
-
-# create – fails with :conditional_check_failed if it exists
-{:ok, product} = Dynamo.put(product, condition: [sku: :not_exists])
-
-# read – embedded struct and Decimal come back typed
-{:ok, %Product{warehouse: %Address{city: "Berlin"}}} =
-  Dynamo.get(%Product{category: "electronics", sku: "phone-1"})
-
-# update – SET / ADD / REMOVE built for you
-{:ok, nil} =
-  Dynamo.update(%Product{category: "electronics", sku: "phone-1"},
-    stock: {:increment, 5},
-    tags: {:add, MapSet.new(["sale"])}
-  )
-
-{:ok, nil} = Dynamo.delete(%Product{category: "electronics", sku: "phone-1"})</code></pre>
-                    </div>
-
-                    <h3>Queries & Streams</h3>
-                    <div class="code-block">
-                        <pre><code class="language-elixir"># one page, sort-key condition + typed filter
-{:ok, %Dynamo.Page{items: items, last_evaluated_key: key}} =
-  Dynamo.query(%Product{category: "electronics"},
-    sort_key: {:begins_with, "laptop-"},
-    filter: [price: {:gt, Decimal.new("200")}],
-    descending: true,
-    limit: 10
-  )
-
-# every page, bounded
-{:ok, products} = Dynamo.query_all(%Product{category: "electronics"}, limit: 100)
-
-# global secondary index – keys keep their field type
-Dynamo.query(%Order{status: "shipped"},
-  index: "StatusIndex",
-  sort_key: {:gt, ~U[2024-01-01 00:00:00Z]}
-)
-
-# lazy stream; segments: N makes it a real parallel scan
-Dynamo.stream(Product, segments: 4)
-|&gt; Stream.filter(&amp;(&amp;1.stock == 0))
-|&gt; Enum.count()</code></pre>
-                    </div>
-
-                    <h3>Batches & Transactions</h3>
-                    <div class="code-block">
-                        <pre><code class="language-elixir"># any number of items: chunked into 25, unprocessed retried with backoff
-{:ok, %{unprocessed: []}} =
-  Dynamo.batch_write([
-    %Product{category: "books", sku: "b1", name: "Elixir", price: Decimal.new("29")},
-    {:delete, %Product{category: "electronics", sku: "laptop-1"}}
-  ])
-
-{:ok, %{items: products}} =
-  Dynamo.batch_get([%Product{category: "books", sku: "b1"}])
-
-# atomic transfer with an idempotency token
-{:ok, _} =
-  Dynamo.transaction(
-    [
-      {:update, %Account{id: "src"}, [balance: {:decrement, 100}],
-        condition: [balance: {:gte, 100}]},
-      {:update, %Account{id: "dst"}, [balance: {:increment, 100}]},
-      {:put, %Transfer{id: "t1", amount: 100}, condition: [id: :not_exists]}
-    ],
-    client_request_token: "transfer-t1"
-  )
-
-# on cancellation you get per-item reasons
-# {:error, %Dynamo.Error{type: :transaction_canceled,
-#          cancellation_reasons: [%{code: "ConditionalCheckFailed"}, ...]}}</code></pre>
-                    </div>
-
-                    <h3>Errors & Telemetry</h3>
-                    <div class="code-block">
-                        <pre><code class="language-elixir">case Dynamo.put(user, condition: [pk: :not_exists]) do
-  {:ok, user} -&gt;
-    {:ok, user}
-
-  {:error, %Dynamo.Error{type: :conditional_check_failed}} -&gt;
-    {:error, :already_exists}
-
-  {:error, %Dynamo.Error{retryable?: true}} -&gt;
-    retry_later()
-
-  {:error, %Dynamo.Error{} = e} -&gt;
-    Logger.error(Exception.message(e))
-end
-
-# local validation happens before any request is sent
-{:error, %Dynamo.Error{type: :validation_error}} = Dynamo.put(%User{})
-
-# telemetry on every request
-:telemetry.attach("dynamo", [:dynamo, :request, :stop],
-  fn _, %{duration: d}, meta, _ -&gt;
-    ms = System.convert_time_unit(d, :native, :millisecond)
-    Logger.debug("dynamo #{meta.action} #{meta.table} #{ms}ms #{meta.result}")
-  end, nil)</code></pre>
-                    </div>
-
-                </div>
-            </noscript>
-            <div class="examples-content">
-                <div class="example-tab active" id="schema-tab">
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span class="code-title">Schema Definition</span>
-                            <button class="copy-btn" data-code="schema">Copy</button>
-                        </div>
-                        <pre><code class="language-elixir">defmodule MyApp.Address do
-  use Dynamo.Schema, embedded: true
-
-  item do
-    field :street, :string
-    field :city, :string
-    field :geo, {:list, :float}
-  end
-end
-
-defmodule MyApp.Product do
-  use Dynamo.Schema
-
-  item do
-    table "shop"
-
-    field :category, :string, partition_key: true
-    field :sku, :string, sort_key: true
-    field :name, :string
-    field :price, :decimal
-    field :stock, :integer, default: 0
-    field :tags, :string_set
-    field :warehouse, MyApp.Address
-  end
-end</code></pre>
-                    </div>
-                </div>
-                <div class="example-tab" id="crud-tab">
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span class="code-title">CRUD</span>
-                            <button class="copy-btn" data-code="crud">Copy</button>
-                        </div>
-                        <pre><code class="language-elixir">alias MyApp.{Dynamo, Product, Address}
-
-product = %Product{
-  category: "electronics", sku: "phone-1", name: "Phone",
-  price: Decimal.new("999.00"), tags: MapSet.new(["new"]),
-  warehouse: %Address{city: "Berlin", geo: [52.5, 13.4]}
-}
-
-# create – fails with :conditional_check_failed if it exists
-{:ok, product} = Dynamo.put(product, condition: [sku: :not_exists])
-
-# read – embedded struct and Decimal come back typed
-{:ok, %Product{warehouse: %Address{city: "Berlin"}}} =
-  Dynamo.get(%Product{category: "electronics", sku: "phone-1"})
-
-# update – SET / ADD / REMOVE built for you
-{:ok, nil} =
-  Dynamo.update(%Product{category: "electronics", sku: "phone-1"},
-    stock: {:increment, 5},
-    tags: {:add, MapSet.new(["sale"])}
-  )
-
-{:ok, nil} = Dynamo.delete(%Product{category: "electronics", sku: "phone-1"})</code></pre>
-                    </div>
-                </div>
-                <div class="example-tab" id="query-tab">
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span class="code-title">Queries & Streams</span>
-                            <button class="copy-btn" data-code="query">Copy</button>
-                        </div>
-                        <pre><code class="language-elixir"># one page, sort-key condition + typed filter
-{:ok, %Dynamo.Page{items: items, last_evaluated_key: key}} =
-  Dynamo.query(%Product{category: "electronics"},
-    sort_key: {:begins_with, "laptop-"},
-    filter: [price: {:gt, Decimal.new("200")}],
-    descending: true,
-    limit: 10
-  )
-
-# every page, bounded
-{:ok, products} = Dynamo.query_all(%Product{category: "electronics"}, limit: 100)
-
-# global secondary index – keys keep their field type
-Dynamo.query(%Order{status: "shipped"},
-  index: "StatusIndex",
-  sort_key: {:gt, ~U[2024-01-01 00:00:00Z]}
-)
-
-# lazy stream; segments: N makes it a real parallel scan
-Dynamo.stream(Product, segments: 4)
-|&gt; Stream.filter(&amp;(&amp;1.stock == 0))
-|&gt; Enum.count()</code></pre>
-                    </div>
-                </div>
-                <div class="example-tab" id="batch-tab">
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span class="code-title">Batches & Transactions</span>
-                            <button class="copy-btn" data-code="batch">Copy</button>
-                        </div>
-                        <pre><code class="language-elixir"># any number of items: chunked into 25, unprocessed retried with backoff
-{:ok, %{unprocessed: []}} =
-  Dynamo.batch_write([
-    %Product{category: "books", sku: "b1", name: "Elixir", price: Decimal.new("29")},
-    {:delete, %Product{category: "electronics", sku: "laptop-1"}}
-  ])
-
-{:ok, %{items: products}} =
-  Dynamo.batch_get([%Product{category: "books", sku: "b1"}])
-
-# atomic transfer with an idempotency token
-{:ok, _} =
-  Dynamo.transaction(
-    [
-      {:update, %Account{id: "src"}, [balance: {:decrement, 100}],
-        condition: [balance: {:gte, 100}]},
-      {:update, %Account{id: "dst"}, [balance: {:increment, 100}]},
-      {:put, %Transfer{id: "t1", amount: 100}, condition: [id: :not_exists]}
-    ],
-    client_request_token: "transfer-t1"
-  )
-
-# on cancellation you get per-item reasons
-# {:error, %Dynamo.Error{type: :transaction_canceled,
-#          cancellation_reasons: [%{code: "ConditionalCheckFailed"}, ...]}}</code></pre>
-                    </div>
-                </div>
-                <div class="example-tab" id="errors-tab">
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span class="code-title">Errors & Telemetry</span>
-                            <button class="copy-btn" data-code="errors">Copy</button>
-                        </div>
-                        <pre><code class="language-elixir">case Dynamo.put(user, condition: [pk: :not_exists]) do
-  {:ok, user} -&gt;
-    {:ok, user}
-
-  {:error, %Dynamo.Error{type: :conditional_check_failed}} -&gt;
-    {:error, :already_exists}
-
-  {:error, %Dynamo.Error{retryable?: true}} -&gt;
-    retry_later()
-
-  {:error, %Dynamo.Error{} = e} -&gt;
-    Logger.error(Exception.message(e))
-end
-
-# local validation happens before any request is sent
-{:error, %Dynamo.Error{type: :validation_error}} = Dynamo.put(%User{})
-
-# telemetry on every request
-:telemetry.attach("dynamo", [:dynamo, :request, :stop],
-  fn _, %{duration: d}, meta, _ -&gt;
-    ms = System.convert_time_unit(d, :native, :millisecond)
-    Logger.debug("dynamo #{meta.action} #{meta.table} #{ms}ms #{meta.result}")
-  end, nil)</code></pre>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Get Started Section -->
-    <section id="get-started" class="get-started">
-        <div class="get-started-container">
-            <div class="section-header">
-                <h2 class="section-title">Get Started in Minutes</h2>
-                <p class="section-description">
-                    Add Dynamo to your Elixir project and start building with confidence.
-                </p>
-            </div>
-            <div class="steps-grid">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <h3 class="step-title">Install &amp; configure</h3>
-                    <div class="code-block small">
-                        <pre><code class="language-elixir"># mix.exs
-{:dynamo, github: "bmalum/dynamo"},
-{:decimal, "~> 2.0"}  # optional
-
-# config/runtime.exs
+# config/dev.exs
+# DynamoDB Local: docker run -p 8000:8000 amazon/dynamodb-local
 config :my_app, MyApp.Dynamo,
-  region: "eu-central-1"</code></pre>
-                    </div>
-                </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <h3 class="step-title">Define a repo and a schema</h3>
-                    <div class="code-block small">
-                        <pre><code class="language-elixir">defmodule MyApp.Dynamo do
-  use Dynamo.Repo,
-    otp_app: :my_app
-end
-
-defmodule MyApp.User do
-  use Dynamo.Schema
-
-  item do
-    table "users"
-    field :id, :string,
-      partition_key: true
-    field :email, :string,
-      sort_key: true
-    field :name, :string
-  end
-end</code></pre>
-                    </div>
-                </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <h3 class="step-title">Supervise it and go</h3>
-                    <div class="code-block small">
-                        <pre><code class="language-elixir"># application.ex
-children = [MyApp.Dynamo]
-
-# $ mix dynamo.create_table \
-#     --schema MyApp.User \
-#     --repo MyApp.Dynamo
-
-{:ok, user} =
-  MyApp.Dynamo.put(%MyApp.User{
-    id: "u1",
-    email: "ann@example.com",
-    name: "Ann"
-  })</code></pre>
-                    </div>
-                </div>
-            </div>
+  region: "eu-central-1",
+  endpoint: "http://localhost:8000",
+  access_key_id: "local",
+  secret_access_key: "local"</code></pre>
         </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta">
-        <div class="cta-container">
-            <div class="cta-content">
-                <h2 class="cta-title">Read the code, not the marketing</h2>
-                <p class="cta-description">
-                    Every snippet on this page runs against the 0.2 test suite. The README, guides and
-                    <code>Agents.md</code> in the repository are kept in the same state.
-                </p>
-                <div class="cta-actions">
-                    <a href="https://github.com/bmalum/dynamo" class="btn btn-primary" target="_blank">
-                        View on GitHub
-                    </a>
-                    <a href="/docs/" class="btn btn-secondary">
-                        Read Documentation
-                    </a>
-                </div>
-            </div>
+      </li>
+      <li>
+        <p>Define a schema and create its table (indexes included) from it.</p>
+        <div class="codewrap">
+          <button class="copy" type="button" aria-label="Copy code">Copy</button>
+<pre class="code"><code class="language-bash">mix dynamo.create_table --schema MyApp.Order --repo MyApp.Dynamo</code></pre>
         </div>
-    </section>
+      </li>
+      <li>
+        <p>Add <code>MyApp.Dynamo</code> to your supervision tree and call it. Continue with the <a href="/docs/getting_started.html">getting-started guide</a>, <a href="/docs/data_modelling.html">data modelling</a> (single-table design, GSIs, embedded schemas) and <a href="/docs/testing.html">testing</a>.</p>
+      </li>
+    </ol>
+  </div>
+</section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <span class="footer-logo">⚡</span>
-                    <span class="footer-title">Dynamo</span>
-                </div>
-                <div class="footer-links">
-                    <a href="https://github.com/bmalum/dynamo" target="_blank">GitHub</a>
-                    <a href="/docs/">Documentation</a>
-                    <a href="/docs/getting_started.html">Getting Started</a>
-                    <a href="/docs/data_modelling.html">Data Modelling</a>
-                    <a href="/docs/changelog.html">Changelog</a>
-                    <a href="https://github.com/bmalum/dynamo/issues" target="_blank">Issues</a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024–2026 Martin Karrer. MIT License.</p>
-            </div>
-        </div>
-    </footer>
+</main>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-elixir.min.js" defer></script>
-    <script src="script.js" defer></script>
-    
-    <!-- Analytics Setup (Ready for implementation) -->
-    <!-- Google Analytics 4 -->
-    <!--
-    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'GA_MEASUREMENT_ID');
-    </script>
-    -->
-    
-    <!-- Google Tag Manager -->
-    <!--
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
-    -->
-    
-    <!-- Structured Data for Breadcrumbs -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-            {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Home",
-                "item": "https://elixir-dynamodb.dev"
-            },
-            {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "Features",
-                "item": "https://elixir-dynamodb.dev#features"
-            },
-            {
-                "@type": "ListItem",
-                "position": 3,
-                "name": "Examples",
-                "item": "https://elixir-dynamodb.dev#examples"
-            },
-            {
-                "@type": "ListItem",
-                "position": 4,
-                "name": "Get Started",
-                "item": "https://elixir-dynamodb.dev#get-started"
-            }
-        ]
-    }
-    </script>
+<footer>
+  <div class="wrap">
+    <nav aria-label="Footer">
+      <a href="/docs/">Documentation</a>
+      <a href="/docs/changelog.html">Changelog</a>
+      <a href="https://github.com/bmalum/dynamo">Source</a>
+      <a href="https://github.com/bmalum/dynamo/issues">Issues</a>
+      <a href="/skills/dynamo-elixir/SKILL.md">Agent skill</a>
+      <a href="/llms.txt">llms.txt</a>
+    </nav>
+    <p class="by">Built and maintained by Martin Karrer, <a href="https://karrer.solutions">karrer.solutions</a>. MIT licensed.</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-elixir.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js" defer></script>
+<script src="script.js" defer></script>
 </body>
 </html>

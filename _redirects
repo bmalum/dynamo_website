@@ -14,6 +14,9 @@ www.elixir-dynamodb.dev/* https://elixir-dynamodb.dev/:splat 301!
 /documentation /docs/ 302
 /guides /docs/getting_started.html 302
 /changelog /docs/changelog.html 302
+/skill /skills/dynamo-elixir/SKILL.md 302
+/skills /skills/dynamo-elixir/SKILL.md 302
+/karrer https://karrer.solutions 302
 
 # Issues and support
 /issues https://github.com/bmalum/dynamo/issues 302

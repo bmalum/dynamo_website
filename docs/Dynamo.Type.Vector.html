@@ -8,7 +8,7 @@
     <meta name="project" content="Dynamo v0.2.0">
 
 
-    <title>Dynamo.Type.Date — Dynamo v0.2.0</title>
+    <title>Dynamo.Type.Vector — Dynamo v0.2.0</title>
     <link rel="stylesheet" href="dist/html-elixir-P45HOAC7.css" />
 
 
@@ -122,19 +122,21 @@ Pages
 <div id="top-content">
   <h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type/builtin.ex#L184" title="View Source" class="icon-action" rel="help">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type/builtin.ex#L472" title="View Source" class="icon-action" rel="help">
         <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         <span class="sr-only">View Source</span>
       </a>
 
-    <span translate="no">Dynamo.Type.Date</span> 
+    <span translate="no">Dynamo.Type.Vector</span> 
     <small class="app-vsn" translate="no">(Dynamo v0.2.0)</small>
 
   </h1>
 
 
     <section id="moduledoc">
-<p><code class="inline">:date</code> – <code class="inline">S</code> ISO 8601 date.</p>
+<p><code class="inline">:vector</code> / <code class="inline">{:vector, dimensions}</code> – a list of floats stored as <code class="inline">L</code> of <code class="inline">N</code>,
+the format DynamoDB vector indexes expect. With a dimension the length is
+checked on dump and load.</p>
     </section>
 
 </div>
@@ -153,31 +155,17 @@ Pages
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#cast/1" data-no-tooltip translate="no">cast(value)</a>
+        <a href="#dump/2" data-no-tooltip translate="no">dump(dims, list)</a>
 
       </div>
-
-        <div class="summary-synopsis"><p>Callback implementation for <a href="Dynamo.Type.html#c:cast/1"><code class="inline">Dynamo.Type.cast/1</code></a>.</p></div>
 
     </div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#dump/1" data-no-tooltip translate="no">dump(d)</a>
+        <a href="#load/2" data-no-tooltip translate="no">load(dims, arg2)</a>
 
       </div>
-
-        <div class="summary-synopsis"><p>Callback implementation for <a href="Dynamo.Type.html#c:dump/1"><code class="inline">Dynamo.Type.dump/1</code></a>.</p></div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#load/1" data-no-tooltip translate="no">load(arg1)</a>
-
-      </div>
-
-        <div class="summary-synopsis"><p>Callback implementation for <a href="Dynamo.Type.html#c:load/1"><code class="inline">Dynamo.Type.load/1</code></a>.</p></div>
 
     </div>
 
@@ -194,15 +182,15 @@ Pages
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
-<section class="detail" id="cast/1">
+<section class="detail" id="dump/2">
 
   <div class="detail-header">
-    <a href="#cast/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
+    <a href="#dump/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
     </a>
-    <h1 class="signature" translate="no">cast(value)</h1>
+    <h1 class="signature" translate="no">dump(dims, list)</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type/builtin.ex#L186" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type/builtin.ex#L479" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -211,18 +199,18 @@ Pages
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="Dynamo.Type.html#c:cast/1"><code class="inline">Dynamo.Type.cast/1</code></a>.</p>
+
   </section>
 </section>
-<section class="detail" id="dump/1">
+<section class="detail" id="load/2">
 
   <div class="detail-header">
-    <a href="#dump/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
+    <a href="#load/2" class="detail-link" data-no-tooltip aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
     </a>
-    <h1 class="signature" translate="no">dump(d)</h1>
+    <h1 class="signature" translate="no">load(dims, arg2)</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type/builtin.ex#L188" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type/builtin.ex#L499" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -231,27 +219,7 @@ Pages
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="Dynamo.Type.html#c:dump/1"><code class="inline">Dynamo.Type.dump/1</code></a>.</p>
-  </section>
-</section>
-<section class="detail" id="load/1">
 
-  <div class="detail-header">
-    <a href="#load/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-    </a>
-    <h1 class="signature" translate="no">load(arg1)</h1>
-
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type/builtin.ex#L191" class="icon-action" rel="help" aria-label="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-<p>Callback implementation for <a href="Dynamo.Type.html#c:load/1"><code class="inline">Dynamo.Type.load/1</code></a>.</p>
   </section>
 </section>
 

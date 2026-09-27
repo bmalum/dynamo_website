@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-FC42D05D.js"></script>
+    <script src="dist/sidebar_items-79F15311.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-PVRIOB7F.js"></script>
 
@@ -164,7 +164,11 @@ scan with bounded concurrency and backpressure.</li><li><strong><a href="Dynamo.
 <code class="inline">{:prepend, l}</code>, <code class="inline">{:if_not_exists, v}</code>, <code class="inline">:remove</code>.</li><li><strong><a href="Dynamo.Condition.html"><code class="inline">Dynamo.Condition</code></a></strong> – keyword/combinator DSL accepted by every
 <code class="inline">condition:</code>/<code class="inline">filter:</code> option; generates names/values with the field's type.</li><li><strong>Embedded schemas</strong> – <code class="inline">use Dynamo.Schema, embedded: true</code>; every schema is a
 <a href="Dynamo.Type.html"><code class="inline">Dynamo.Type</code></a>, so <code class="inline">field :address, MyApp.Address</code> and
-<code class="inline">field :items, {:list, MyApp.Item}</code> round-trip with full typing.</li><li><strong><code class="inline">{:list, type}</code></strong> parameterised lists.</li><li><code class="inline">entity_name ParentModule</code> – compile-time link for parent/child items.</li><li><code class="inline">table/1</code> accepts compile-time expressions.</li><li><code class="inline">mix dynamo.create_table --schema A --schema B</code> merges GSIs of a single-table design.</li><li>Credentials cache read path is lock-free (<code class="inline">:persistent_term</code>); only refreshes
+<code class="inline">field :items, {:list, MyApp.Item}</code> round-trip with full typing.</li><li><strong><code class="inline">{:list, type}</code></strong> parameterised lists.</li><li><strong>Vector search</strong> – <code class="inline">{:vector, n}</code> field type, <code class="inline">vector_index</code> in the schema
+DSL (distance, projection, partition key, inline filters),
+<code class="inline">Repo.search_vectors/4</code>, <code class="inline">create_table --schema</code> emits <code class="inline">VectorIndexes</code>, and
+the client routes <code class="inline">SearchVectors</code> to AWS's separate search endpoint.</li><li><code class="inline">load/2</code> recovers key fields from <code class="inline">pk</code>/<code class="inline">sk</code> when a projection omitted them
+(keys-only GSIs, vector indexes).</li><li><code class="inline">entity_name ParentModule</code> – compile-time link for parent/child items.</li><li><code class="inline">table/1</code> accepts compile-time expressions.</li><li><code class="inline">mix dynamo.create_table --schema A --schema B</code> merges GSIs of a single-table design.</li><li>Credentials cache read path is lock-free (<code class="inline">:persistent_term</code>); only refreshes
 go through the GenServer.</li><li>CI workflow (unit matrix + live suite against DynamoDB Local).</li></ul><h3 id="bugs-fixed-from-the-0-1-review" class="section-heading">
   <a href="#bugs-fixed-from-the-0-1-review" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>

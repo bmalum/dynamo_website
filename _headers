@@ -42,6 +42,18 @@
 /docs/*
   Cache-Control: public, max-age=300, must-revalidate
 
+/skills/*
+  Cache-Control: public, max-age=300, must-revalidate
+  Content-Type: text/markdown; charset=utf-8
+
+/llms.txt
+  Cache-Control: public, max-age=300, must-revalidate
+  Content-Type: text/plain; charset=utf-8
+
+/llms-full.txt
+  Cache-Control: public, max-age=300, must-revalidate
+  Content-Type: text/plain; charset=utf-8
+
 /sitemap.xml
   Cache-Control: public, max-age=86400
   Content-Type: application/xml

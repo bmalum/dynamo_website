@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-FC42D05D.js"></script>
+    <script src="dist/sidebar_items-79F15311.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-PVRIOB7F.js"></script>
 
@@ -135,24 +135,24 @@ Pages
 
     <section id="moduledoc">
 <p>Defines a repository: a supervised process tree that owns the DynamoDB client
-(region, endpoint, credentials, retry policy) and exposes the operations.</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyApp.Dynamo</span><span class="w"> </span><span class="k" data-group-id="7919425344-1">do</span><span class="w">
+(region, endpoint, credentials, retry policy) and exposes the operations.</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyApp.Dynamo</span><span class="w"> </span><span class="k" data-group-id="6711601273-1">do</span><span class="w">
   </span><span class="kn">use</span><span class="w"> </span><span class="nc">Dynamo.Repo</span><span class="p">,</span><span class="w"> </span><span class="ss">otp_app</span><span class="p">:</span><span class="w"> </span><span class="ss">:my_app</span><span class="w">
-</span><span class="k" data-group-id="7919425344-1">end</span><span class="w">
+</span><span class="k" data-group-id="6711601273-1">end</span><span class="w">
 
 </span><span class="c1"># config/runtime.exs</span><span class="w">
 </span><span class="n">config</span><span class="w"> </span><span class="ss">:my_app</span><span class="p">,</span><span class="w"> </span><span class="nc">MyApp.Dynamo</span><span class="p">,</span><span class="w">
-  </span><span class="ss">region</span><span class="p">:</span><span class="w"> </span><span class="nc">System</span><span class="o">.</span><span class="n">get_env</span><span class="p" data-group-id="7919425344-2">(</span><span class="s">&quot;AWS_REGION&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;eu-central-1&quot;</span><span class="p" data-group-id="7919425344-2">)</span><span class="p">,</span><span class="w">
-  </span><span class="ss">endpoint</span><span class="p">:</span><span class="w"> </span><span class="nc">System</span><span class="o">.</span><span class="n">get_env</span><span class="p" data-group-id="7919425344-3">(</span><span class="s">&quot;DYNAMO_ENDPOINT&quot;</span><span class="p" data-group-id="7919425344-3">)</span><span class="w">   </span><span class="c1"># e.g. http://localhost:8000 for DynamoDB Local</span><span class="w">
+  </span><span class="ss">region</span><span class="p">:</span><span class="w"> </span><span class="nc">System</span><span class="o">.</span><span class="n">get_env</span><span class="p" data-group-id="6711601273-2">(</span><span class="s">&quot;AWS_REGION&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;eu-central-1&quot;</span><span class="p" data-group-id="6711601273-2">)</span><span class="p">,</span><span class="w">
+  </span><span class="ss">endpoint</span><span class="p">:</span><span class="w"> </span><span class="nc">System</span><span class="o">.</span><span class="n">get_env</span><span class="p" data-group-id="6711601273-3">(</span><span class="s">&quot;DYNAMO_ENDPOINT&quot;</span><span class="p" data-group-id="6711601273-3">)</span><span class="w">   </span><span class="c1"># e.g. http://localhost:8000 for DynamoDB Local</span><span class="w">
 
 </span><span class="c1"># application.ex</span><span class="w">
-</span><span class="n">children</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="7919425344-4">[</span><span class="nc">MyApp.Dynamo</span><span class="p" data-group-id="7919425344-4">]</span></code></pre><h2 id="module-configuration" class="section-heading">
+</span><span class="n">children</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="6711601273-4">[</span><span class="nc">MyApp.Dynamo</span><span class="p" data-group-id="6711601273-4">]</span></code></pre><h2 id="module-configuration" class="section-heading">
   <a href="#module-configuration" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
   </a>
   <span class="text">Configuration</span>
 </h2>
 <p>Read from <code class="inline">Application.get_env(otp_app, MyRepo)</code> and overridable via
-<code class="inline">init/1</code>:</p><ul><li><code class="inline">:region</code> (required unless <code class="inline">:endpoint</code> is given – then defaults to <code class="inline">&quot;us-east-1&quot;</code>)</li><li><code class="inline">:endpoint</code> – custom URL (DynamoDB Local, VPC endpoint)</li><li><code class="inline">:access_key_id</code>, <code class="inline">:secret_access_key</code>, <code class="inline">:session_token</code> – static credentials
+<code class="inline">init/1</code>:</p><ul><li><code class="inline">:region</code> (required unless <code class="inline">:endpoint</code> is given – then defaults to <code class="inline">&quot;us-east-1&quot;</code>)</li><li><code class="inline">:endpoint</code> – custom URL (DynamoDB Local, VPC endpoint)</li><li><code class="inline">:search_endpoint</code> – URL for <code class="inline">SearchVectors</code> (default <code class="inline">https://search-dynamodb.&lt;region&gt;.amazonaws.com</code>)</li><li><code class="inline">:access_key_id</code>, <code class="inline">:secret_access_key</code>, <code class="inline">:session_token</code> – static credentials
 (otherwise env → ECS → IMDS, see <a href="Dynamo.Credentials.html"><code class="inline">Dynamo.Credentials</code></a>)</li><li><code class="inline">:max_retries</code>, <code class="inline">:base_backoff_ms</code>, <code class="inline">:max_backoff_ms</code>, <code class="inline">:receive_timeout</code>,
 <code class="inline">:connect_timeout</code>, <code class="inline">:req_options</code>, <code class="inline">:telemetry_prefix</code> – see <a href="Dynamo.Client.html"><code class="inline">Dynamo.Client</code></a></li><li><code class="inline">:batch_retries</code> – how many times unprocessed batch items are retried (default 5)</li></ul><h2 id="module-operations" class="section-heading">
   <a href="#module-operations" class="hover-link">
@@ -163,7 +163,7 @@ Pages
 <p>Every function returns <code class="inline">{:ok, result} | {:error, %Dynamo.Error{}}</code> and has a
 bang variant that raises the error.</p><ul><li><a href="#put/2"><code class="inline">put/2</code></a>, <a href="#get/2"><code class="inline">get/2</code></a>, <a href="#delete/2"><code class="inline">delete/2</code></a>, <a href="#update/3"><code class="inline">update/3</code></a></li><li><a href="#query/2"><code class="inline">query/2</code></a>, <a href="#scan/2"><code class="inline">scan/2</code></a> → <code class="inline">%Dynamo.Page{}</code>; <a href="#query_all/2"><code class="inline">query_all/2</code></a>, <a href="#scan_all/2"><code class="inline">scan_all/2</code></a> →
 list (bounded by <code class="inline">:limit</code>); <code class="inline">stream/2</code> (see <a href="Dynamo.Stream.html"><code class="inline">Dynamo.Stream</code></a>)</li><li><a href="#batch_write/2"><code class="inline">batch_write/2</code></a>, <code class="inline">batch_get/2</code> – automatically chunked and unprocessed
-items retried with backoff</li><li><a href="#transaction/2"><code class="inline">transaction/2</code></a> – <code class="inline">TransactWriteItems</code></li><li><code class="inline">request/2</code> – raw action escape hatch</li></ul><p>Options are documented on <a href="Dynamo.Request.html"><code class="inline">Dynamo.Request</code></a>.</p>
+items retried with backoff</li><li><a href="#transaction/2"><code class="inline">transaction/2</code></a> – <code class="inline">TransactWriteItems</code></li><li><a href="#search_vectors/4"><code class="inline">search_vectors/4</code></a> – <code class="inline">SearchVectors</code> on a <code class="inline">vector_index</code></li><li><code class="inline">request/2</code> – raw action escape hatch</li></ul><p>Options are documented on <a href="Dynamo.Request.html"><code class="inline">Dynamo.Request</code></a>.</p>
     </section>
 
 </div>
@@ -318,6 +318,19 @@ data is exhausted). Without <code class="inline">:limit</code> this loads the wh
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#search_vectors/5" data-no-tooltip translate="no">search_vectors(repo, schema, index, vector, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Vector similarity search on a schema's <code class="inline">vector_index</code>. Returns the top-k
+items as <code class="inline">{struct, score}</code> pairs, most similar first. Score semantics follow
+the index distance function: lower is closer for <code class="inline">:cosine</code>/<code class="inline">:euclidean</code>,
+higher for <code class="inline">:dot_product</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#transaction/3" data-no-tooltip translate="no">transaction(repo, operations, opts \\ [])</a>
 
       </div>
@@ -359,7 +372,7 @@ On cancellation the returned error has <code class="inline">type: :transaction_c
     </a>
     <h1 class="signature" translate="no">result(t)</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L49" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L51" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -397,7 +410,7 @@ On cancellation the returned error has <code class="inline">type: :transaction_c
     </a>
     <h1 class="signature" translate="no">init(config)</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L51" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L53" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -435,7 +448,7 @@ On cancellation the returned error has <code class="inline">type: :transaction_c
     </a>
     <h1 class="signature" translate="no">batch_get(repo, structs, opts)</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L245" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L289" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -466,7 +479,7 @@ Items are returned in arbitrary order (DynamoDB does not preserve order).</p>
     </a>
     <h1 class="signature" translate="no">batch_write(repo, items, opts \\ [])</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L218" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L262" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -499,7 +512,7 @@ is returned.</p>
     </a>
     <h1 class="signature" translate="no">delete(repo, struct, opts \\ [])</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L152" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L160" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -527,7 +540,7 @@ is returned.</p>
     </a>
     <h1 class="signature" translate="no">get(repo, struct, opts \\ [])</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L140" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L148" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -555,7 +568,7 @@ is returned.</p>
     </a>
     <h1 class="signature" translate="no">put(repo, struct, opts \\ [])</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L131" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L139" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -583,7 +596,7 @@ is returned.</p>
     </a>
     <h1 class="signature" translate="no">query(repo, struct, opts \\ [])</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L170" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L178" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -611,7 +624,7 @@ is returned.</p>
     </a>
     <h1 class="signature" translate="no">query_all(repo, struct, opts \\ [])</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L192" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L236" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -639,7 +652,7 @@ data is exhausted). Without <code class="inline">:limit</code> this loads the wh
     </a>
     <h1 class="signature" translate="no">request(repo, action, payload)</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L127" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L135" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -667,7 +680,7 @@ data is exhausted). Without <code class="inline">:limit</code> this loads the wh
     </a>
     <h1 class="signature" translate="no">scan(repo, schema, opts \\ [])</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L179" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L187" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -695,7 +708,7 @@ data is exhausted). Without <code class="inline">:limit</code> this loads the wh
     </a>
     <h1 class="signature" translate="no">scan_all(repo, schema, opts \\ [])</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L198" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L242" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -713,6 +726,41 @@ data is exhausted). Without <code class="inline">:limit</code> this loads the wh
 <p>Scan all pages into a list (bounded by <code class="inline">:limit</code>). Expensive – prefer <code class="inline">stream/2</code>.</p>
   </section>
 </section>
+<section class="detail" id="search_vectors/5">
+
+    <span id="search_vectors/4"></span>
+
+  <div class="detail-header">
+    <a href="#search_vectors/5" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">search_vectors(repo, schema, index, vector, opts \\ [])</h1>
+
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L209" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> search_vectors(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), [<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">number</a>()], <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()) ::
+  <a href="#t:result/1">result</a>(%{results: [{<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">number</a>()}], consumed_capacity: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>() | nil})</pre>
+
+      </div>
+
+<p>Vector similarity search on a schema's <code class="inline">vector_index</code>. Returns the top-k
+items as <code class="inline">{struct, score}</code> pairs, most similar first. Score semantics follow
+the index distance function: lower is closer for <code class="inline">:cosine</code>/<code class="inline">:euclidean</code>,
+higher for <code class="inline">:dot_product</code>.</p><pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="0512351107-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="0512351107-2">%{</span><span class="ss">results</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0512351107-3">[</span><span class="p" data-group-id="0512351107-4">{</span><span class="p" data-group-id="0512351107-5">%</span><span class="nc" data-group-id="0512351107-5">Doc</span><span class="p" data-group-id="0512351107-5">{</span><span class="p" data-group-id="0512351107-5">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">doc</span><span class="p">,</span><span class="w"> </span><span class="mf">0.12</span><span class="p" data-group-id="0512351107-4">}</span><span class="p">,</span><span class="w"> </span><span class="n">...</span><span class="p" data-group-id="0512351107-3">]</span><span class="p">,</span><span class="w"> </span><span class="ss">consumed_capacity</span><span class="p">:</span><span class="w"> </span><span class="n">cc</span><span class="p" data-group-id="0512351107-2">}</span><span class="p" data-group-id="0512351107-1">}</span><span class="w"> </span><span class="o">=</span><span class="w">
+  </span><span class="nc">MyRepo</span><span class="o">.</span><span class="n">search_vectors</span><span class="p" data-group-id="0512351107-6">(</span><span class="nc">Doc</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Semantic&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">embedding</span><span class="p">,</span><span class="w"> </span><span class="ss">top_k</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="ss">filter</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0512351107-7">[</span><span class="ss">lang</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;en&quot;</span><span class="p" data-group-id="0512351107-7">]</span><span class="p" data-group-id="0512351107-6">)</span></code></pre><p>The vector index is eventually consistent; a freshly written item may not be
+found immediately. Projection determines which fields are populated on the
+returned structs (others keep their defaults).</p>
+  </section>
+</section>
 <section class="detail" id="transaction/3">
 
     <span id="transaction/2"></span>
@@ -723,7 +771,7 @@ data is exhausted). Without <code class="inline">:limit</code> this loads the wh
     </a>
     <h1 class="signature" translate="no">transaction(repo, operations, opts \\ [])</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L279" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L323" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -753,7 +801,7 @@ On cancellation the returned error has <code class="inline">type: :transaction_c
     </a>
     <h1 class="signature" translate="no">update(repo, struct, changes, opts \\ [])</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L161" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L169" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 

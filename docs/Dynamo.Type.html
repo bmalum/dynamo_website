@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-FC42D05D.js"></script>
+    <script src="dist/sidebar_items-79F15311.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-PVRIOB7F.js"></script>
 
@@ -135,15 +135,15 @@ Pages
 
     <section id="moduledoc">
 <p>Behaviour for schema field types.</p><p>A type converts between an Elixir value and a DynamoDB <em>attribute value</em>
-(<code class="inline">%{&quot;S&quot; =&gt; &quot;...&quot;}</code>, <code class="inline">%{&quot;N&quot; =&gt; &quot;1&quot;}</code>, …).</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyApp.Type.Money</span><span class="w"> </span><span class="k" data-group-id="2352888914-1">do</span><span class="w">
+(<code class="inline">%{&quot;S&quot; =&gt; &quot;...&quot;}</code>, <code class="inline">%{&quot;N&quot; =&gt; &quot;1&quot;}</code>, …).</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyApp.Type.Money</span><span class="w"> </span><span class="k" data-group-id="2034403431-1">do</span><span class="w">
   </span><span class="kn">use</span><span class="w"> </span><span class="nc">Dynamo.Type</span><span class="w">
 
-  </span><span class="kd">def</span><span class="w"> </span><span class="nf">dump</span><span class="p" data-group-id="2352888914-2">(</span><span class="p" data-group-id="2352888914-3">%</span><span class="nc" data-group-id="2352888914-3">Money</span><span class="p" data-group-id="2352888914-3">{</span><span class="p" data-group-id="2352888914-3">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m</span><span class="p" data-group-id="2352888914-2">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="2352888914-4">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2352888914-5">%{</span><span class="s">&quot;N&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nc">Money</span><span class="o">.</span><span class="n">to_string</span><span class="p" data-group-id="2352888914-6">(</span><span class="n">m</span><span class="p" data-group-id="2352888914-6">)</span><span class="p" data-group-id="2352888914-5">}</span><span class="p" data-group-id="2352888914-4">}</span><span class="w">
-  </span><span class="kd">def</span><span class="w"> </span><span class="nf">dump</span><span class="p" data-group-id="2352888914-7">(</span><span class="bp">_</span><span class="p" data-group-id="2352888914-7">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="ss">:error</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">dump</span><span class="p" data-group-id="2034403431-2">(</span><span class="p" data-group-id="2034403431-3">%</span><span class="nc" data-group-id="2034403431-3">Money</span><span class="p" data-group-id="2034403431-3">{</span><span class="p" data-group-id="2034403431-3">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m</span><span class="p" data-group-id="2034403431-2">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="2034403431-4">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2034403431-5">%{</span><span class="s">&quot;N&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nc">Money</span><span class="o">.</span><span class="n">to_string</span><span class="p" data-group-id="2034403431-6">(</span><span class="n">m</span><span class="p" data-group-id="2034403431-6">)</span><span class="p" data-group-id="2034403431-5">}</span><span class="p" data-group-id="2034403431-4">}</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">dump</span><span class="p" data-group-id="2034403431-7">(</span><span class="bp">_</span><span class="p" data-group-id="2034403431-7">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="ss">:error</span><span class="w">
 
-  </span><span class="kd">def</span><span class="w"> </span><span class="nf">load</span><span class="p" data-group-id="2352888914-8">(</span><span class="p" data-group-id="2352888914-9">%{</span><span class="s">&quot;N&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">n</span><span class="p" data-group-id="2352888914-9">}</span><span class="p" data-group-id="2352888914-8">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="2352888914-10">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="nc">Money</span><span class="o">.</span><span class="n">parse!</span><span class="p" data-group-id="2352888914-11">(</span><span class="n">n</span><span class="p" data-group-id="2352888914-11">)</span><span class="p" data-group-id="2352888914-10">}</span><span class="w">
-  </span><span class="kd">def</span><span class="w"> </span><span class="nf">load</span><span class="p" data-group-id="2352888914-12">(</span><span class="bp">_</span><span class="p" data-group-id="2352888914-12">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="ss">:error</span><span class="w">
-</span><span class="k" data-group-id="2352888914-1">end</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">load</span><span class="p" data-group-id="2034403431-8">(</span><span class="p" data-group-id="2034403431-9">%{</span><span class="s">&quot;N&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">n</span><span class="p" data-group-id="2034403431-9">}</span><span class="p" data-group-id="2034403431-8">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="2034403431-10">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="nc">Money</span><span class="o">.</span><span class="n">parse!</span><span class="p" data-group-id="2034403431-11">(</span><span class="n">n</span><span class="p" data-group-id="2034403431-11">)</span><span class="p" data-group-id="2034403431-10">}</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">load</span><span class="p" data-group-id="2034403431-12">(</span><span class="bp">_</span><span class="p" data-group-id="2034403431-12">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="ss">:error</span><span class="w">
+</span><span class="k" data-group-id="2034403431-1">end</span><span class="w">
 
 </span><span class="n">field</span><span class="w"> </span><span class="ss">:price</span><span class="p">,</span><span class="w"> </span><span class="nc">MyApp.Type.Money</span></code></pre><h2 id="module-built-in-types" class="section-heading">
   <a href="#module-built-in-types" class="hover-link">
@@ -151,7 +151,7 @@ Pages
   </a>
   <span class="text">Built-in types</span>
 </h2>
-<table><thead><tr><th style="text-align: left;">Atom</th><th style="text-align: left;">Elixir value</th><th style="text-align: left;">DynamoDB</th></tr></thead><tbody><tr><td style="text-align: left;"><code class="inline">:string</code></td><td style="text-align: left;"><code class="inline">String.t()</code></td><td style="text-align: left;"><code class="inline">S</code></td></tr><tr><td style="text-align: left;"><code class="inline">:integer</code></td><td style="text-align: left;"><code class="inline">integer()</code></td><td style="text-align: left;"><code class="inline">N</code></td></tr><tr><td style="text-align: left;"><code class="inline">:float</code></td><td style="text-align: left;"><code class="inline">float()</code></td><td style="text-align: left;"><code class="inline">N</code></td></tr><tr><td style="text-align: left;"><code class="inline">:decimal</code></td><td style="text-align: left;"><code class="inline">Decimal.t()</code> (optional dep)</td><td style="text-align: left;"><code class="inline">N</code></td></tr><tr><td style="text-align: left;"><code class="inline">:boolean</code></td><td style="text-align: left;"><code class="inline">boolean()</code></td><td style="text-align: left;"><code class="inline">BOOL</code></td></tr><tr><td style="text-align: left;"><code class="inline">:binary</code></td><td style="text-align: left;"><code class="inline">binary()</code></td><td style="text-align: left;"><code class="inline">B</code></td></tr><tr><td style="text-align: left;"><code class="inline">:utc_datetime</code></td><td style="text-align: left;"><code class="inline">DateTime.t()</code> (ISO 8601)</td><td style="text-align: left;"><code class="inline">S</code></td></tr><tr><td style="text-align: left;"><code class="inline">:naive_datetime</code></td><td style="text-align: left;"><code class="inline">NaiveDateTime.t()</code></td><td style="text-align: left;"><code class="inline">S</code></td></tr><tr><td style="text-align: left;"><code class="inline">:date</code></td><td style="text-align: left;"><code class="inline">Date.t()</code></td><td style="text-align: left;"><code class="inline">S</code></td></tr><tr><td style="text-align: left;"><code class="inline">:time</code></td><td style="text-align: left;"><code class="inline">Time.t()</code></td><td style="text-align: left;"><code class="inline">S</code></td></tr><tr><td style="text-align: left;"><code class="inline">:map</code></td><td style="text-align: left;"><code class="inline">map()</code> (string keys)</td><td style="text-align: left;"><code class="inline">M</code></td></tr><tr><td style="text-align: left;"><code class="inline">:list</code></td><td style="text-align: left;"><code class="inline">list()</code></td><td style="text-align: left;"><code class="inline">L</code></td></tr><tr><td style="text-align: left;"><code class="inline">:string_set</code></td><td style="text-align: left;"><code class="inline">MapSet.t(String.t())</code></td><td style="text-align: left;"><code class="inline">SS</code></td></tr><tr><td style="text-align: left;"><code class="inline">:number_set</code></td><td style="text-align: left;"><code class="inline">MapSet.t(number())</code></td><td style="text-align: left;"><code class="inline">NS</code></td></tr><tr><td style="text-align: left;"><code class="inline">:binary_set</code></td><td style="text-align: left;"><code class="inline">MapSet.t(binary())</code></td><td style="text-align: left;"><code class="inline">BS</code></td></tr><tr><td style="text-align: left;"><code class="inline">:any</code></td><td style="text-align: left;">inferred via <a href="Dynamo.Encodable.html"><code class="inline">Dynamo.Encodable</code></a></td><td style="text-align: left;">any</td></tr><tr><td style="text-align: left;"><code class="inline">{:list, type}</code></td><td style="text-align: left;"><code class="inline">[type]</code></td><td style="text-align: left;"><code class="inline">L</code></td></tr><tr><td style="text-align: left;">a <a href="Dynamo.Schema.html"><code class="inline">Dynamo.Schema</code></a></td><td style="text-align: left;">that struct (embedded)</td><td style="text-align: left;"><code class="inline">M</code></td></tr></tbody></table><p><code class="inline">nil</code> is handled uniformly: it dumps to <code class="inline">%{&quot;NULL&quot; =&gt; true}</code> and loads back to
+<table><thead><tr><th style="text-align: left;">Atom</th><th style="text-align: left;">Elixir value</th><th style="text-align: left;">DynamoDB</th></tr></thead><tbody><tr><td style="text-align: left;"><code class="inline">:string</code></td><td style="text-align: left;"><code class="inline">String.t()</code></td><td style="text-align: left;"><code class="inline">S</code></td></tr><tr><td style="text-align: left;"><code class="inline">:integer</code></td><td style="text-align: left;"><code class="inline">integer()</code></td><td style="text-align: left;"><code class="inline">N</code></td></tr><tr><td style="text-align: left;"><code class="inline">:float</code></td><td style="text-align: left;"><code class="inline">float()</code></td><td style="text-align: left;"><code class="inline">N</code></td></tr><tr><td style="text-align: left;"><code class="inline">:decimal</code></td><td style="text-align: left;"><code class="inline">Decimal.t()</code> (optional dep)</td><td style="text-align: left;"><code class="inline">N</code></td></tr><tr><td style="text-align: left;"><code class="inline">:boolean</code></td><td style="text-align: left;"><code class="inline">boolean()</code></td><td style="text-align: left;"><code class="inline">BOOL</code></td></tr><tr><td style="text-align: left;"><code class="inline">:binary</code></td><td style="text-align: left;"><code class="inline">binary()</code></td><td style="text-align: left;"><code class="inline">B</code></td></tr><tr><td style="text-align: left;"><code class="inline">:utc_datetime</code></td><td style="text-align: left;"><code class="inline">DateTime.t()</code> (ISO 8601)</td><td style="text-align: left;"><code class="inline">S</code></td></tr><tr><td style="text-align: left;"><code class="inline">:naive_datetime</code></td><td style="text-align: left;"><code class="inline">NaiveDateTime.t()</code></td><td style="text-align: left;"><code class="inline">S</code></td></tr><tr><td style="text-align: left;"><code class="inline">:date</code></td><td style="text-align: left;"><code class="inline">Date.t()</code></td><td style="text-align: left;"><code class="inline">S</code></td></tr><tr><td style="text-align: left;"><code class="inline">:time</code></td><td style="text-align: left;"><code class="inline">Time.t()</code></td><td style="text-align: left;"><code class="inline">S</code></td></tr><tr><td style="text-align: left;"><code class="inline">:map</code></td><td style="text-align: left;"><code class="inline">map()</code> (string keys)</td><td style="text-align: left;"><code class="inline">M</code></td></tr><tr><td style="text-align: left;"><code class="inline">:list</code></td><td style="text-align: left;"><code class="inline">list()</code></td><td style="text-align: left;"><code class="inline">L</code></td></tr><tr><td style="text-align: left;"><code class="inline">:string_set</code></td><td style="text-align: left;"><code class="inline">MapSet.t(String.t())</code></td><td style="text-align: left;"><code class="inline">SS</code></td></tr><tr><td style="text-align: left;"><code class="inline">:number_set</code></td><td style="text-align: left;"><code class="inline">MapSet.t(number())</code></td><td style="text-align: left;"><code class="inline">NS</code></td></tr><tr><td style="text-align: left;"><code class="inline">:binary_set</code></td><td style="text-align: left;"><code class="inline">MapSet.t(binary())</code></td><td style="text-align: left;"><code class="inline">BS</code></td></tr><tr><td style="text-align: left;"><code class="inline">:any</code></td><td style="text-align: left;">inferred via <a href="Dynamo.Encodable.html"><code class="inline">Dynamo.Encodable</code></a></td><td style="text-align: left;">any</td></tr><tr><td style="text-align: left;"><code class="inline">{:list, type}</code></td><td style="text-align: left;"><code class="inline">[type]</code></td><td style="text-align: left;"><code class="inline">L</code></td></tr><tr><td style="text-align: left;"><code class="inline">:vector</code>, <code class="inline">{:vector, n}</code></td><td style="text-align: left;"><code class="inline">[float()]</code> (embedding)</td><td style="text-align: left;"><code class="inline">L</code> of <code class="inline">N</code></td></tr><tr><td style="text-align: left;">a <a href="Dynamo.Schema.html"><code class="inline">Dynamo.Schema</code></a></td><td style="text-align: left;">that struct (embedded)</td><td style="text-align: left;"><code class="inline">M</code></td></tr></tbody></table><p><code class="inline">nil</code> is handled uniformly: it dumps to <code class="inline">%{&quot;NULL&quot; =&gt; true}</code> and loads back to
 <code class="inline">nil</code> for every type. Fields that are <code class="inline">nil</code> are omitted from written items by
 default (see <a href="Dynamo.Schema.html"><code class="inline">Dynamo.Schema</code></a>).</p>
     </section>
@@ -302,7 +302,7 @@ default (see <a href="Dynamo.Schema.html"><code class="inline">Dynamo.Schema</co
     </a>
     <h1 class="signature" translate="no">dynamo_value()</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type.ex#L48" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type.ex#L49" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -340,7 +340,7 @@ default (see <a href="Dynamo.Schema.html"><code class="inline">Dynamo.Schema</co
     </a>
     <h1 class="signature" translate="no">cast(term)</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type.ex#L57" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type.ex#L58" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -368,7 +368,7 @@ default (see <a href="Dynamo.Schema.html"><code class="inline">Dynamo.Schema</co
     </a>
     <h1 class="signature" translate="no">dump(term)</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type.ex#L51" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type.ex#L52" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -394,7 +394,7 @@ default (see <a href="Dynamo.Schema.html"><code class="inline">Dynamo.Schema</co
     </a>
     <h1 class="signature" translate="no">load(dynamo_value)</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type.ex#L54" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type.ex#L55" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -432,7 +432,7 @@ default (see <a href="Dynamo.Schema.html"><code class="inline">Dynamo.Schema</co
     </a>
     <h1 class="signature" translate="no">builtin()</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type.ex#L89" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type.ex#L90" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -452,7 +452,7 @@ default (see <a href="Dynamo.Schema.html"><code class="inline">Dynamo.Schema</co
     </a>
     <h1 class="signature" translate="no">dump(type, value)</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type.ex#L121" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type.ex#L128" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -480,7 +480,7 @@ default (see <a href="Dynamo.Schema.html"><code class="inline">Dynamo.Schema</co
     </a>
     <h1 class="signature" translate="no">dump!(type, value, field \\ &quot;value&quot;)</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type.ex#L126" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type.ex#L133" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -506,7 +506,7 @@ default (see <a href="Dynamo.Schema.html"><code class="inline">Dynamo.Schema</co
     </a>
     <h1 class="signature" translate="no">load(type, value)</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type.ex#L140" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type.ex#L147" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -534,7 +534,7 @@ default (see <a href="Dynamo.Schema.html"><code class="inline">Dynamo.Schema</co
     </a>
     <h1 class="signature" translate="no">load!(type, value, field \\ &quot;value&quot;)</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type.ex#L147" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type.ex#L154" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 
@@ -554,7 +554,7 @@ default (see <a href="Dynamo.Schema.html"><code class="inline">Dynamo.Schema</co
     </a>
     <h1 class="signature" translate="no">resolve!(type)</h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type.ex#L96" class="icon-action" rel="help" aria-label="View Source">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type.ex#L97" class="icon-action" rel="help" aria-label="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
      </a>
 

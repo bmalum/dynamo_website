@@ -1,8 +1,14 @@
 User-agent: *
 Allow: /
 
-# Sitemap
-Sitemap: https://elixir-dynamodb.dev/sitemap.xml
+# AI crawlers are welcome; start with /llms.txt
+User-agent: GPTBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
 
-# Crawl-delay for respectful crawling
-Crawl-delay: 1
+Sitemap: https://elixir-dynamodb.dev/sitemap.xml
