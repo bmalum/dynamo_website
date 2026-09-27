@@ -51,3 +51,7 @@ TXT
 } > llms-full.txt
 
 echo "docs, skills and llms.txt updated from $(git -C "$LIB" rev-parse --short HEAD) ($(git -C "$LIB" rev-parse --abbrev-ref HEAD))"
+
+# cache-bust styles.css / script.js references in index.html
+css=$(shasum styles.css | cut -c1-8); js=$(shasum script.js | cut -c1-8)
+sed -i '' -E "s|href=\"styles\.css(\?v=[0-9a-f]+)?\"|href=\"styles.css?v=$css\"|; s|src=\"script\.js(\?v=[0-9a-f]+)?\"|src=\"script.js?v=$js\"|" index.html
