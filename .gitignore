@@ -21,10 +21,10 @@ Thumbs.db
 # Ignore the dynamo library directory (separate repo)
 dynamo/
 
-# Ignore build artifacts
-dist/
-build/
-out/
+# Ignore build artifacts (but not docs/dist, which is ExDoc's asset folder)
+/dist/
+/build/
+/out/
 
 # Ignore node modules if any
 node_modules/
