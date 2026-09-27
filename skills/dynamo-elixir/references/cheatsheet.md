@@ -175,3 +175,10 @@ mix dynamo.generate_schema NAME [--module M] [--output path] [--overwrite]
 ```
 
 All exit non-zero on failure and honour the application's config.
+
+## Maintaining the library itself
+
+See `skills/dynamo-maintainer/SKILL.md`: invariants, test tiers (unit, property,
+live AWS), adding a feature end to end, release checklist, known traps. The
+website (`../dynamo_website/AGENTS.md`) is regenerated from this repo with
+`./build-docs.sh`.

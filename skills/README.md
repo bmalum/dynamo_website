@@ -8,3 +8,8 @@ https://elixir-dynamodb.dev/skills/dynamo-elixir/SKILL.md.
 
 `references/cheatsheet.md` is a copy of `Agents.md`; regenerate with
 `cp Agents.md skills/dynamo-elixir/references/cheatsheet.md` when it changes.
+
+`dynamo-maintainer/` is for agents (and people) changing this library:
+invariants, test tiers incl. the live AWS suite, how to add a feature end to
+end, the release/Hex checklist, and the traps found during the 0.2 rewrite.
+It is published alongside the user skill but is not meant for application code.
