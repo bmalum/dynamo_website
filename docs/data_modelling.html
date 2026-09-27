@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.35.1">
+    <meta name="project" content="Dynamo v0.2.0">
+
+
+    <title>Data modelling with Dynamo — Dynamo v0.2.0</title>
+    <link rel="stylesheet" href="dist/html-elixir-P45HOAC7.css" />
+
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
+    <script src="dist/sidebar_items-FC42D05D.js"></script>
+    <script src="docs_config.js"></script>
+    <script async src="dist/html-PVRIOB7F.js"></script>
+
+  </head>
+  <body data-type="extras" class="page-extra">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
+Dynamo
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v0.2.0
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+      <li>
+        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
+Pages
+        </button>
+      </li>
+
+        <li>
+          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
+            Modules
+          </button>
+        </li>
+
+
+        <li>
+          <button id="tasks-list-tab-button" role="tab" data-type="tasks" aria-controls="tasks-tab-panel" aria-selected="false" tabindex="-1">
+            <span translate="no">Mix</span> Tasks
+          </button>
+        </li>
+
+    </ul>
+  </div>
+
+  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+    <ul id="extras-full-list" class="full-list"></ul>
+  </div>
+
+    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
+      <ul id="modules-full-list" class="full-list"></ul>
+    </div>
+
+
+    <div id="tasks-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="tasks-list-tab-button" hidden>
+      <ul id="tasks-full-list" class="full-list"></ul>
+    </div>
+
+</nav>
+
+<main class="content">
+  <output role="status" id="toast"></output>
+
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Dynamo</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <h1>
+
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/guides/DATA_MODELLING.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+
+    <span>Data modelling with Dynamo</span>
+  </h1>
+
+<h2 id="composite-keys" class="section-heading">
+  <a href="#composite-keys" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Composite keys</span>
+</h2>
+<p>Key fields are joined in declaration order with <code class="inline">key_separator</code> (default <code class="inline">#</code>).
+The partition key is prefixed with the entity name so several entity types can
+share a table.</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">Shop.Order</span><span class="w"> </span><span class="k" data-group-id="4502869523-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Dynamo.Schema</span><span class="w">
+
+  </span><span class="n">item</span><span class="w"> </span><span class="k" data-group-id="4502869523-2">do</span><span class="w">
+    </span><span class="n">table</span><span class="w"> </span><span class="s">&quot;shop&quot;</span><span class="w">
+    </span><span class="n">entity_name</span><span class="w"> </span><span class="s">&quot;order&quot;</span><span class="w">
+
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:tenant</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:customer_id</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:placed_at</span><span class="p">,</span><span class="w"> </span><span class="ss">:utc_datetime</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:order_id</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:total</span><span class="p">,</span><span class="w"> </span><span class="ss">:decimal</span><span class="w">
+
+    </span><span class="n">partition_key</span><span class="w"> </span><span class="p" data-group-id="4502869523-3">[</span><span class="ss">:tenant</span><span class="p">,</span><span class="w"> </span><span class="ss">:customer_id</span><span class="p" data-group-id="4502869523-3">]</span><span class="w">
+    </span><span class="n">sort_key</span><span class="w"> </span><span class="p" data-group-id="4502869523-4">[</span><span class="ss">:placed_at</span><span class="p">,</span><span class="w"> </span><span class="ss">:order_id</span><span class="p" data-group-id="4502869523-4">]</span><span class="w">
+  </span><span class="k" data-group-id="4502869523-2">end</span><span class="w">
+</span><span class="k" data-group-id="4502869523-1">end</span><span class="w">
+
+</span><span class="p" data-group-id="4502869523-5">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p" data-group-id="4502869523-5">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Dynamo.Schema</span><span class="o">.</span><span class="n">primary_key</span><span class="p" data-group-id="4502869523-6">(</span><span class="p" data-group-id="4502869523-7">%</span><span class="nc" data-group-id="4502869523-7">Shop.Order</span><span class="p" data-group-id="4502869523-7">{</span><span class="ss">tenant</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;acme&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">customer_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;c1&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">placed_at</span><span class="p">:</span><span class="w"> </span><span class="ld">~U[2024-01-15 10:00:00Z]</span><span class="p">,</span><span class="w"> </span><span class="ss">order_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;o1&quot;</span><span class="p" data-group-id="4502869523-7">}</span><span class="p" data-group-id="4502869523-6">)</span><span class="w">
+</span><span class="n">key</span><span class="o">.</span><span class="n">pk</span><span class="w">  </span><span class="c1">#=&gt; %{&quot;S&quot; =&gt; &quot;order#acme#c1&quot;}</span><span class="w">
+</span><span class="n">key</span><span class="o">.</span><span class="n">sk</span><span class="w">  </span><span class="c1">#=&gt; %{&quot;S&quot; =&gt; &quot;2024-01-15T10:00:00Z#o1&quot;}</span></code></pre><p>Rules:</p><ul><li>All partition key fields must be non-nil. <code class="inline">{:error, %Dynamo.Error{type: :validation_error}}</code> otherwise.</li><li>Sort key fields may be partially populated (prefix). <code class="inline">%Shop.Order{tenant: &quot;acme&quot;, customer_id: &quot;c1&quot;, placed_at: dt}</code> gives <code class="inline">sk = &quot;2024-01-15T10:00:00Z&quot;</code>, which <code class="inline">query/2</code> turns into <code class="inline">begins_with</code>.</li><li>A value containing the separator is rejected. Keep <code class="inline">#</code> unless your data contains it.</li><li><code class="inline">prefix_sort_key: true</code> renders <code class="inline">&quot;placed_at#2024-…#order_id#o1&quot;</code> if you want self-describing keys.</li></ul><h2 id="sort-key-strategies" class="section-heading">
+  <a href="#sort-key-strategies" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Sort key strategies</span>
+</h2>
+<p><strong>Time ordering</strong> – put an ISO 8601 datetime first; <code class="inline">descending: true</code> gives newest first.</p><pre><code class="makeup elixir" translate="no"><span class="nc">Repo</span><span class="o">.</span><span class="n">query</span><span class="p" data-group-id="8300619261-1">(</span><span class="p" data-group-id="8300619261-2">%</span><span class="nc" data-group-id="8300619261-2">Shop.Order</span><span class="p" data-group-id="8300619261-2">{</span><span class="ss">tenant</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;acme&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">customer_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;c1&quot;</span><span class="p" data-group-id="8300619261-2">}</span><span class="p">,</span><span class="w"> </span><span class="ss">sort_key</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8300619261-3">{</span><span class="ss">:gte</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;2024-01-01&quot;</span><span class="p" data-group-id="8300619261-3">}</span><span class="p">,</span><span class="w"> </span><span class="ss">descending</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p" data-group-id="8300619261-1">)</span></code></pre><p><strong>Type prefix in a single partition</strong> – <code class="inline">sort_key [:kind, :id]</code> with <code class="inline">kind</code> as <code class="inline">&quot;PROFILE&quot;</code>, <code class="inline">&quot;ORDER&quot;</code>, <code class="inline">&quot;ADDRESS&quot;</code>:</p><pre><code class="makeup elixir" translate="no"><span class="nc">Repo</span><span class="o">.</span><span class="n">query</span><span class="p" data-group-id="0062429915-1">(</span><span class="p" data-group-id="0062429915-2">%</span><span class="nc" data-group-id="0062429915-2">Account.Item</span><span class="p" data-group-id="0062429915-2">{</span><span class="ss">account_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a1&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">kind</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ORDER&quot;</span><span class="p" data-group-id="0062429915-2">}</span><span class="p" data-group-id="0062429915-1">)</span><span class="w">           </span><span class="c1"># begins_with &quot;ORDER&quot;</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">query</span><span class="p" data-group-id="0062429915-3">(</span><span class="p" data-group-id="0062429915-4">%</span><span class="nc" data-group-id="0062429915-4">Account.Item</span><span class="p" data-group-id="0062429915-4">{</span><span class="ss">account_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a1&quot;</span><span class="p" data-group-id="0062429915-4">}</span><span class="p">,</span><span class="w"> </span><span class="ss">sort_key</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0062429915-5">{</span><span class="ss">:eq</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;PROFILE&quot;</span><span class="p" data-group-id="0062429915-5">}</span><span class="p" data-group-id="0062429915-3">)</span></code></pre><p><strong>Range with BETWEEN</strong> – composite string keys compare lexicographically, so an
+upper bound like <code class="inline">&quot;2024-01-31&quot;</code> excludes <code class="inline">&quot;2024-01-31T10:00:00Z#o1&quot;</code>. Append <code class="inline">~</code>
+(0x7E, above every character that can follow) to make the bound inclusive:</p><pre><code class="makeup elixir" translate="no"><span class="nc">Repo</span><span class="o">.</span><span class="n">query</span><span class="p" data-group-id="8236433865-1">(</span><span class="p" data-group-id="8236433865-2">%</span><span class="nc" data-group-id="8236433865-2">Shop.Order</span><span class="p" data-group-id="8236433865-2">{</span><span class="n">...</span><span class="p" data-group-id="8236433865-2">}</span><span class="p">,</span><span class="w"> </span><span class="ss">sort_key</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8236433865-3">{</span><span class="ss">:between</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;2024-01-01&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;2024-01-31~&quot;</span><span class="p" data-group-id="8236433865-3">}</span><span class="p" data-group-id="8236433865-1">)</span></code></pre><h2 id="global-secondary-indexes" class="section-heading">
+  <a href="#global-secondary-indexes" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Global secondary indexes</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="n">item</span><span class="w"> </span><span class="k" data-group-id="0399423671-1">do</span><span class="w">
+  </span><span class="n">table</span><span class="w"> </span><span class="s">&quot;shop&quot;</span><span class="w">
+  </span><span class="n">field</span><span class="w"> </span><span class="ss">:order_id</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="p">,</span><span class="w"> </span><span class="ss">partition_key</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="w">
+  </span><span class="n">field</span><span class="w"> </span><span class="ss">:status</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="w">
+  </span><span class="n">field</span><span class="w"> </span><span class="ss">:placed_at</span><span class="p">,</span><span class="w"> </span><span class="ss">:utc_datetime</span><span class="w">
+  </span><span class="n">field</span><span class="w"> </span><span class="ss">:total</span><span class="p">,</span><span class="w"> </span><span class="ss">:decimal</span><span class="w">
+
+  </span><span class="n">global_secondary_index</span><span class="w"> </span><span class="s">&quot;StatusIndex&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">partition_key</span><span class="p">:</span><span class="w"> </span><span class="ss">:status</span><span class="p">,</span><span class="w"> </span><span class="ss">sort_key</span><span class="p">:</span><span class="w"> </span><span class="ss">:placed_at</span><span class="w">
+  </span><span class="n">global_secondary_index</span><span class="w"> </span><span class="s">&quot;TotalIndex&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">partition_key</span><span class="p">:</span><span class="w"> </span><span class="ss">:status</span><span class="p">,</span><span class="w"> </span><span class="ss">sort_key</span><span class="p">:</span><span class="w"> </span><span class="ss">:total</span><span class="p">,</span><span class="w"> </span><span class="ss">projection</span><span class="p">:</span><span class="w"> </span><span class="ss">:keys_only</span><span class="w">
+</span><span class="k" data-group-id="0399423671-1">end</span></code></pre><p>GSI key attributes are the raw field values with their own types – no entity
+prefix, no separator. Numbers stay <code class="inline">N</code>, so range conditions work numerically:</p><pre><code class="makeup elixir" translate="no"><span class="nc">Repo</span><span class="o">.</span><span class="n">query</span><span class="p" data-group-id="8178504768-1">(</span><span class="p" data-group-id="8178504768-2">%</span><span class="nc" data-group-id="8178504768-2">Shop.Order</span><span class="p" data-group-id="8178504768-2">{</span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;paid&quot;</span><span class="p" data-group-id="8178504768-2">}</span><span class="p">,</span><span class="w"> </span><span class="ss">index</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;TotalIndex&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">sort_key</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8178504768-3">{</span><span class="ss">:gt</span><span class="p">,</span><span class="w"> </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="8178504768-4">(</span><span class="s">&quot;100&quot;</span><span class="p" data-group-id="8178504768-4">)</span><span class="p" data-group-id="8178504768-3">}</span><span class="p" data-group-id="8178504768-1">)</span></code></pre><p><code class="inline">mix dynamo.create_table --schema Shop.Order</code> creates the indexes with the right
+attribute types. Consistent reads are rejected on GSIs (DynamoDB does not support them).</p><h2 id="single-table-design" class="section-heading">
+  <a href="#single-table-design" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Single-table design</span>
+</h2>
+<p>Several schemas can point at the same table; the entity prefix keeps them apart:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">App.User</span><span class="w"> </span><span class="k" data-group-id="0866568783-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Dynamo.Schema</span><span class="w">
+  </span><span class="n">item</span><span class="w"> </span><span class="k" data-group-id="0866568783-2">do</span><span class="w">
+    </span><span class="n">table</span><span class="w"> </span><span class="s">&quot;app&quot;</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:id</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="p">,</span><span class="w"> </span><span class="ss">partition_key</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:email</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="w">
+  </span><span class="k" data-group-id="0866568783-2">end</span><span class="w">
+</span><span class="k" data-group-id="0866568783-1">end</span><span class="w">
+
+</span><span class="kd">defmodule</span><span class="w"> </span><span class="nc">App.Session</span><span class="w"> </span><span class="k" data-group-id="0866568783-3">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Dynamo.Schema</span><span class="w">
+  </span><span class="n">item</span><span class="w"> </span><span class="k" data-group-id="0866568783-4">do</span><span class="w">
+    </span><span class="n">table</span><span class="w"> </span><span class="s">&quot;app&quot;</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:user_id</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="p">,</span><span class="w"> </span><span class="ss">partition_key</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="w">      </span><span class="c1"># pk = &quot;session#&lt;user_id&gt;&quot;</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:token</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="p">,</span><span class="w"> </span><span class="ss">sort_key</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:expires_at</span><span class="p">,</span><span class="w"> </span><span class="ss">:utc_datetime</span><span class="w">
+  </span><span class="k" data-group-id="0866568783-4">end</span><span class="w">
+</span><span class="k" data-group-id="0866568783-3">end</span></code></pre><p>To store child items <em>under the parent's partition</em> (adjacency list), point the
+child's <code class="inline">entity_name</code> at the parent module and put the type in the sort key:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">App.Order</span><span class="w"> </span><span class="k" data-group-id="4581661997-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Dynamo.Schema</span><span class="w">
+  </span><span class="n">item</span><span class="w"> </span><span class="k" data-group-id="4581661997-2">do</span><span class="w">
+    </span><span class="n">table</span><span class="w"> </span><span class="s">&quot;app&quot;</span><span class="w">
+    </span><span class="n">entity_name</span><span class="w"> </span><span class="nc">App.User</span><span class="w">                                </span><span class="c1"># pk = &quot;user#&lt;id&gt;&quot; – inherited from App.User</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:id</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="p">,</span><span class="w"> </span><span class="ss">partition_key</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="w">             </span><span class="c1"># the parent&#39;s id</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:kind</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="p">,</span><span class="w"> </span><span class="ss">sort_key</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w"> </span><span class="ss">default</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;order&quot;</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:order_id</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="p">,</span><span class="w"> </span><span class="ss">sort_key</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:total</span><span class="p">,</span><span class="w"> </span><span class="ss">:decimal</span><span class="w">
+  </span><span class="k" data-group-id="4581661997-2">end</span><span class="w">
+</span><span class="k" data-group-id="4581661997-1">end</span><span class="w">
+
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">query</span><span class="p" data-group-id="4581661997-3">(</span><span class="p" data-group-id="4581661997-4">%</span><span class="nc" data-group-id="4581661997-4">App.Order</span><span class="p" data-group-id="4581661997-4">{</span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;u1&quot;</span><span class="p" data-group-id="4581661997-4">}</span><span class="p" data-group-id="4581661997-3">)</span><span class="w">                       </span><span class="c1"># all orders of u1: begins_with(sk, &quot;order&quot;)</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">get</span><span class="p" data-group-id="4581661997-5">(</span><span class="p" data-group-id="4581661997-6">%</span><span class="nc" data-group-id="4581661997-6">App.User</span><span class="p" data-group-id="4581661997-6">{</span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;u1&quot;</span><span class="p" data-group-id="4581661997-6">}</span><span class="p" data-group-id="4581661997-5">)</span><span class="w">                          </span><span class="c1"># the parent, with its own sort key</span></code></pre><p><code class="inline">entity_name App.User</code> is resolved at compile time, so renaming the parent
+moves both entities together and a typo is a compile error. The string form
+(<code class="inline">entity_name &quot;user&quot;</code>) does the same thing without the compile-time link.
+Give the parent a fixed sort-key value too (e.g. <code class="inline">field :kind, default: &quot;profile&quot;</code>)
+so parent and children never collide in the sort-key space. If two kinds share
+a prefix (<code class="inline">&quot;order&quot;</code>, <code class="inline">&quot;order_note&quot;</code>), query with an explicit
+<code class="inline">sort_key: {:begins_with, &quot;order#&quot;}</code>.</p><h2 id="existing-tables" class="section-heading">
+  <a href="#existing-tables" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Existing tables</span>
+</h2>
+<p>For a table you did not design around this layout:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">Legacy.Customer</span><span class="w"> </span><span class="k" data-group-id="4239744591-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Dynamo.Schema</span><span class="p">,</span><span class="w"> </span><span class="ss">raw_keys</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="w">
+
+  </span><span class="n">item</span><span class="w"> </span><span class="k" data-group-id="4239744591-2">do</span><span class="w">
+    </span><span class="n">table</span><span class="w"> </span><span class="s">&quot;Customers&quot;</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:CustomerId</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="p">,</span><span class="w"> </span><span class="ss">partition_key</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="w">    </span><span class="c1"># attribute names are used as-is</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:Version</span><span class="p">,</span><span class="w"> </span><span class="ss">:integer</span><span class="p">,</span><span class="w"> </span><span class="ss">sort_key</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:Name</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="w">
+  </span><span class="k" data-group-id="4239744591-2">end</span><span class="w">
+</span><span class="k" data-group-id="4239744591-1">end</span></code></pre><p><code class="inline">mix dynamo.generate_schema Customers</code> writes this for you after sampling the table.</p><h2 id="embedded-schemas" class="section-heading">
+  <a href="#embedded-schemas" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Embedded schemas</span>
+</h2>
+<p>Nested structures keep their types when you declare them as embedded schemas:</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">Shop.Address</span><span class="w"> </span><span class="k" data-group-id="7115654419-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Dynamo.Schema</span><span class="p">,</span><span class="w"> </span><span class="ss">embedded</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="w">       </span><span class="c1"># no table, keys or indexes</span><span class="w">
+
+  </span><span class="n">item</span><span class="w"> </span><span class="k" data-group-id="7115654419-2">do</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:street</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:city</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:geo</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7115654419-3">{</span><span class="ss">:list</span><span class="p">,</span><span class="w"> </span><span class="ss">:float</span><span class="p" data-group-id="7115654419-3">}</span><span class="w">
+  </span><span class="k" data-group-id="7115654419-2">end</span><span class="w">
+</span><span class="k" data-group-id="7115654419-1">end</span><span class="w">
+
+</span><span class="kd">defmodule</span><span class="w"> </span><span class="nc">Shop.Customer</span><span class="w"> </span><span class="k" data-group-id="7115654419-4">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Dynamo.Schema</span><span class="w">
+  </span><span class="n">item</span><span class="w"> </span><span class="k" data-group-id="7115654419-5">do</span><span class="w">
+    </span><span class="n">table</span><span class="w"> </span><span class="s">&quot;shop&quot;</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:id</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="p">,</span><span class="w"> </span><span class="ss">partition_key</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:billing</span><span class="p">,</span><span class="w"> </span><span class="nc">Shop.Address</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:shipping</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7115654419-6">{</span><span class="ss">:list</span><span class="p">,</span><span class="w"> </span><span class="nc">Shop.Address</span><span class="p" data-group-id="7115654419-6">}</span><span class="p">,</span><span class="w"> </span><span class="ss">default</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="7115654419-7">[</span><span class="p" data-group-id="7115654419-7">]</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:prices</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7115654419-8">{</span><span class="ss">:list</span><span class="p">,</span><span class="w"> </span><span class="ss">:decimal</span><span class="p" data-group-id="7115654419-8">}</span><span class="w">
+  </span><span class="k" data-group-id="7115654419-5">end</span><span class="w">
+</span><span class="k" data-group-id="7115654419-4">end</span></code></pre><p>A <code class="inline">:map</code> field would hand you string-keyed maps with floats and strings back;
+an embedded schema gives you <code class="inline">%Shop.Address{}</code> with <a href="https://hexdocs.pm/decimal/2.4.1/Decimal.html"><code class="inline">Decimal</code></a>/<a href="https://hexdocs.pm/elixir/Date.html"><code class="inline">Date</code></a> values
+intact. Any table schema can be embedded as well – only its declared fields
+are stored, never the generated <code class="inline">pk</code>/<code class="inline">sk</code>.</p><h2 id="conditions-without-placeholders" class="section-heading">
+  <a href="#conditions-without-placeholders" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Conditions without placeholders</span>
+</h2>
+<p>Every <code class="inline">condition:</code>/<code class="inline">filter:</code> accepts a small DSL instead of a raw expression:</p><pre><code class="makeup elixir" translate="no"><span class="nc">Repo</span><span class="o">.</span><span class="n">put</span><span class="p" data-group-id="8357825724-1">(</span><span class="n">order</span><span class="p">,</span><span class="w"> </span><span class="ss">condition</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8357825724-2">[</span><span class="ss">pk</span><span class="p">:</span><span class="w"> </span><span class="ss">:not_exists</span><span class="p" data-group-id="8357825724-2">]</span><span class="p" data-group-id="8357825724-1">)</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">update</span><span class="p" data-group-id="8357825724-3">(</span><span class="n">acct</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8357825724-4">[</span><span class="ss">balance</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8357825724-5">{</span><span class="ss">:decrement</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p" data-group-id="8357825724-5">}</span><span class="p" data-group-id="8357825724-4">]</span><span class="p">,</span><span class="w"> </span><span class="ss">condition</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8357825724-6">[</span><span class="ss">balance</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8357825724-7">{</span><span class="ss">:gte</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p" data-group-id="8357825724-7">}</span><span class="p" data-group-id="8357825724-6">]</span><span class="p" data-group-id="8357825724-3">)</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">query</span><span class="p" data-group-id="8357825724-8">(</span><span class="p" data-group-id="8357825724-9">%</span><span class="nc" data-group-id="8357825724-9">Order</span><span class="p" data-group-id="8357825724-9">{</span><span class="ss">user_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;u&quot;</span><span class="p" data-group-id="8357825724-9">}</span><span class="p">,</span><span class="w"> </span><span class="ss">filter</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8357825724-10">{</span><span class="ss">:and</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8357825724-11">[</span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8357825724-12">{</span><span class="ss">:in</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8357825724-13">[</span><span class="s">&quot;open&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;paid&quot;</span><span class="p" data-group-id="8357825724-13">]</span><span class="p" data-group-id="8357825724-12">}</span><span class="p" data-group-id="8357825724-11">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8357825724-14">{</span><span class="ss">:not</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8357825724-15">[</span><span class="ss">flagged</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p" data-group-id="8357825724-15">]</span><span class="p" data-group-id="8357825724-14">}</span><span class="p" data-group-id="8357825724-10">}</span><span class="p" data-group-id="8357825724-8">)</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">scan</span><span class="p" data-group-id="8357825724-16">(</span><span class="nc">Customer</span><span class="p">,</span><span class="w"> </span><span class="ss">filter</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8357825724-17">[</span><span class="p" data-group-id="8357825724-18">{</span><span class="p" data-group-id="8357825724-19">[</span><span class="ss">:billing</span><span class="p">,</span><span class="w"> </span><span class="ss">:city</span><span class="p" data-group-id="8357825724-19">]</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Berlin&quot;</span><span class="p" data-group-id="8357825724-18">}</span><span class="p">,</span><span class="w"> </span><span class="ss">tags</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8357825724-20">{</span><span class="ss">:contains</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;vip&quot;</span><span class="p" data-group-id="8357825724-20">}</span><span class="p" data-group-id="8357825724-17">]</span><span class="p" data-group-id="8357825724-16">)</span></code></pre><p>Values are dumped with the field's type; placeholders (<code class="inline">#c0</code>, <code class="inline">:c0</code>) are
+generated so reserved words and odd attribute names are never a problem.</p><h2 id="nil-defaults-and-removal" class="section-heading">
+  <a href="#nil-defaults-and-removal" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Nil, defaults and removal</span>
+</h2>
+<p>Nil fields are omitted from written items. Reading an item that lacks an
+attribute yields the struct default. To delete an attribute use
+<code class="inline">Repo.update(item, field: :remove)</code>; <code class="inline">Repo.update(item, field: nil)</code> stores an
+explicit <code class="inline">NULL</code>, which loads back as <code class="inline">nil</code> too but is visible to
+<code class="inline">attribute_exists</code>.</p><h2 id="custom-types" class="section-heading">
+  <a href="#custom-types" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Custom types</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">App.Type.Money</span><span class="w"> </span><span class="k" data-group-id="6445216579-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Dynamo.Type</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">dump</span><span class="p" data-group-id="6445216579-2">(</span><span class="p" data-group-id="6445216579-3">%</span><span class="nc" data-group-id="6445216579-3">Money</span><span class="p" data-group-id="6445216579-3">{</span><span class="ss">amount</span><span class="p">:</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="ss">currency</span><span class="p">:</span><span class="w"> </span><span class="n">c</span><span class="p" data-group-id="6445216579-3">}</span><span class="p" data-group-id="6445216579-2">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="6445216579-4">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="6445216579-5">%{</span><span class="s">&quot;S&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;</span><span class="si" data-group-id="6445216579-6">#{</span><span class="n">c</span><span class="si" data-group-id="6445216579-6">}</span><span class="s">:</span><span class="si" data-group-id="6445216579-7">#{</span><span class="n">a</span><span class="si" data-group-id="6445216579-7">}</span><span class="s">&quot;</span><span class="p" data-group-id="6445216579-5">}</span><span class="p" data-group-id="6445216579-4">}</span><span class="w">
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">dump</span><span class="p" data-group-id="6445216579-8">(</span><span class="bp">_</span><span class="p" data-group-id="6445216579-8">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="ss">:error</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">load</span><span class="p" data-group-id="6445216579-9">(</span><span class="p" data-group-id="6445216579-10">%{</span><span class="s">&quot;S&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="n">s</span><span class="p" data-group-id="6445216579-10">}</span><span class="p" data-group-id="6445216579-9">)</span><span class="w"> </span><span class="k" data-group-id="6445216579-11">do</span><span class="w">
+    </span><span class="p" data-group-id="6445216579-12">[</span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p" data-group-id="6445216579-12">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">String</span><span class="o">.</span><span class="n">split</span><span class="p" data-group-id="6445216579-13">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;:&quot;</span><span class="p" data-group-id="6445216579-13">)</span><span class="w">
+    </span><span class="p" data-group-id="6445216579-14">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="6445216579-15">%</span><span class="nc" data-group-id="6445216579-15">Money</span><span class="p" data-group-id="6445216579-15">{</span><span class="ss">amount</span><span class="p">:</span><span class="w"> </span><span class="nc">Decimal</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="6445216579-16">(</span><span class="n">a</span><span class="p" data-group-id="6445216579-16">)</span><span class="p">,</span><span class="w"> </span><span class="ss">currency</span><span class="p">:</span><span class="w"> </span><span class="n">c</span><span class="p" data-group-id="6445216579-15">}</span><span class="p" data-group-id="6445216579-14">}</span><span class="w">
+  </span><span class="k" data-group-id="6445216579-11">end</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">load</span><span class="p" data-group-id="6445216579-17">(</span><span class="bp">_</span><span class="p" data-group-id="6445216579-17">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="ss">:error</span><span class="w">
+</span><span class="k" data-group-id="6445216579-1">end</span><span class="w">
+
+</span><span class="n">field</span><span class="w"> </span><span class="ss">:price</span><span class="p">,</span><span class="w"> </span><span class="nc">App.Type.Money</span></code></pre><p>For values nested inside <code class="inline">:map</code>/<code class="inline">:list</code>/<code class="inline">:any</code> fields, implement <a href="Dynamo.Encodable.html"><code class="inline">Dynamo.Encodable</code></a>
+instead (one-way: they load back as plain maps).</p><h2 id="checklist" class="section-heading">
+  <a href="#checklist" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Checklist</span>
+</h2>
+<ul><li>[ ] List access patterns before choosing keys</li><li>[ ] Partition key has high cardinality (no dates, no statuses)</li><li>[ ] Sort key supports the range queries you listed</li><li>[ ] GSIs for remaining patterns; <code class="inline">:keys_only</code>/<code class="inline">:include</code> where possible</li><li>[ ] Items &lt; 400 KB – reference S3 for blobs</li><li>[ ] TTL attribute (<code class="inline">:integer</code> epoch seconds) for ephemeral data</li><li>[ ] <code class="inline">entity_name</code> set explicitly (string) if the module might be renamed and data already exists</li></ul>
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="getting_started.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+Getting started
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="streaming.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Streaming, batches and transactions
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/dynamo/0.2.0" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/dynamo/0.2.0">Hex Preview</a>
+
+              (<a href="https://preview.hex.pm/preview/dynamo/0.2.0/show/guides/DATA_MODELLING.md">current file</a>)
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.35.1) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

@@ -10,8 +10,10 @@ www.elixir-dynamodb.dev/* https://elixir-dynamodb.dev/:splat 301!
 /repo https://github.com/bmalum/dynamo 302
 
 # Documentation redirects
-/docs https://hexdocs.pm/dynamo 302
-/documentation https://hexdocs.pm/dynamo 302
+/docs /docs/index.html 200
+/documentation /docs/ 302
+/guides /docs/getting_started.html 302
+/changelog /docs/changelog.html 302
 
 # Issues and support
 /issues https://github.com/bmalum/dynamo/issues 302

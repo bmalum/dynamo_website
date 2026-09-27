@@ -39,6 +39,9 @@
   Cache-Control: public, max-age=0, must-revalidate
   Content-Type: text/html; charset=utf-8
 
+/docs/*
+  Cache-Control: public, max-age=300, must-revalidate
+
 /sitemap.xml
   Cache-Control: public, max-age=86400
   Content-Type: application/xml

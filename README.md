@@ -27,6 +27,16 @@ npx serve .
 
 Then open [localhost:8000](http://localhost:8000)
 
+## 📚 Docs
+
+`/docs` is the ExDoc output of the library (README, guides, module docs),
+served at [elixir-dynamodb.dev/docs](https://elixir-dynamodb.dev/docs/) until
+the package is on Hex. Regenerate after a library change:
+
+```bash
+./build-docs.sh ../dynamo
+```
+
 ## ✅ Keeping snippets honest
 
 Every code snippet on the page is exercised against the library's test suite

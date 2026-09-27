@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.35.1">
+    <meta name="project" content="Dynamo v0.2.0">
+
+
+    <title>API Reference — Dynamo v0.2.0</title>
+    <link rel="stylesheet" href="dist/html-elixir-P45HOAC7.css" />
+
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
+    <script src="dist/sidebar_items-FC42D05D.js"></script>
+    <script src="docs_config.js"></script>
+    <script async src="dist/html-PVRIOB7F.js"></script>
+
+  </head>
+  <body data-type="extras" class="page-extra">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
+Dynamo
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v0.2.0
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+      <li>
+        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
+Pages
+        </button>
+      </li>
+
+        <li>
+          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
+            Modules
+          </button>
+        </li>
+
+
+        <li>
+          <button id="tasks-list-tab-button" role="tab" data-type="tasks" aria-controls="tasks-tab-panel" aria-selected="false" tabindex="-1">
+            <span translate="no">Mix</span> Tasks
+          </button>
+        </li>
+
+    </ul>
+  </div>
+
+  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+    <ul id="extras-full-list" class="full-list"></ul>
+  </div>
+
+    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
+      <ul id="modules-full-list" class="full-list"></ul>
+    </div>
+
+
+    <div id="tasks-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="tasks-list-tab-button" hidden>
+      <ul id="tasks-full-list" class="full-list"></ul>
+    </div>
+
+</nav>
+
+<main class="content">
+  <output role="status" id="toast"></output>
+
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Dynamo</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <h1>
+
+      <a href="https://github.com/bmalum/dynamo" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+
+    <span>API Reference <small class="app-vsn">Dynamo v0.2.0</small></span>
+  </h1>
+
+
+  <section class="details-list">
+    <h2 id="modules" class="section-heading">
+  <a href="#modules" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Modules</span>
+</h2>
+
+    <div class="summary">
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Client.html" translate="no">Dynamo.Client</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Low-level DynamoDB HTTP client: SigV4 signing, retries with jittered
+exponential backoff, error normalisation and telemetry.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Condition.html" translate="no">Dynamo.Condition</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Builds <code class="inline">ConditionExpression</code> / <code class="inline">FilterExpression</code> strings from Elixir terms,
+generating attribute-name and value placeholders so you never write
+<code class="inline">names:</code>/<code class="inline">values:</code> by hand.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Credentials.html" translate="no">Dynamo.Credentials</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>AWS credential resolution.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Credentials.Cache.html" translate="no">Dynamo.Credentials.Cache</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Long-lived owner of resolved credentials for a repo. Started by the repo
+supervisor.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Encodable.html" translate="no">Dynamo.Encodable</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Protocol used by the <code class="inline">:any</code> type (and nested <code class="inline">:map</code>/<code class="inline">:list</code> values) to encode
+structs and custom values that have no explicit field type.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Error.html" translate="no">Dynamo.Error</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>The single error type returned by every Dynamo operation.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Key.html" translate="no">Dynamo.Key</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>A resolved DynamoDB primary key for a table or index.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Page.html" translate="no">Dynamo.Page</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>A page of results from <code class="inline">query</code>/<code class="inline">scan</code>.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Raw.html" translate="no">Dynamo.Raw</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Wraps a value that is <em>already</em> in DynamoDB attribute-value format so the
+encoder passes it through untouched.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Repo.html" translate="no">Dynamo.Repo</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Defines a repository: a supervised process tree that owns the DynamoDB client
+(region, endpoint, credentials, retry policy) and exposes the operations.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Request.html" translate="no">Dynamo.Request</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Pure builders for DynamoDB request payloads.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Schema.html" translate="no">Dynamo.Schema</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Defines a DynamoDB item schema with typed fields, keys and indexes.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Stream.html" translate="no">Dynamo.Stream</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Lazy streams over paginated <code class="inline">Query</code>/<code class="inline">Scan</code> results.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Type.html" translate="no">Dynamo.Type</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Behaviour for schema field types.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Type.Any.html" translate="no">Dynamo.Type.Any</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p><code class="inline">:any</code> – type inferred from the Elixir value on dump and from the DynamoDB
+tag on load. Uses the <a href="Dynamo.Encodable.html"><code class="inline">Dynamo.Encodable</code></a> protocol for structs and custom
+values. Use an explicit type when you can; <code class="inline">:any</code> cannot round-trip atoms,
+dates or decimals, and always loads numbers as integers/floats.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Type.Binary.html" translate="no">Dynamo.Type.Binary</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p><code class="inline">:binary</code> – <code class="inline">B</code> (base64 on the wire). Never inferred; always explicit.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Type.BinarySet.html" translate="no">Dynamo.Type.BinarySet</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p><code class="inline">:binary_set</code> – <code class="inline">BS</code> (base64 on the wire). Empty sets dump to <code class="inline">NULL</code>.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Type.Boolean.html" translate="no">Dynamo.Type.Boolean</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p><code class="inline">:boolean</code> – <code class="inline">BOOL</code>.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Type.Date.html" translate="no">Dynamo.Type.Date</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p><code class="inline">:date</code> – <code class="inline">S</code> ISO 8601 date.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Type.Decimal.html" translate="no">Dynamo.Type.Decimal</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p><code class="inline">:decimal</code> – <code class="inline">N</code>, using the optional <code class="inline">decimal</code> dependency for exact
+arbitrary-precision numbers (the correct choice for money).</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Type.Float.html" translate="no">Dynamo.Type.Float</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p><code class="inline">:float</code> – <code class="inline">N</code>. Integers are accepted on dump.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Type.Integer.html" translate="no">Dynamo.Type.Integer</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p><code class="inline">:integer</code> – <code class="inline">N</code>.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Type.List.html" translate="no">Dynamo.Type.List</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p><code class="inline">:list</code> – <code class="inline">L</code>. Elements are encoded with <a href="Dynamo.Type.Any.html"><code class="inline">Dynamo.Type.Any</code></a>.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Type.Map.html" translate="no">Dynamo.Type.Map</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p><code class="inline">:map</code> – <code class="inline">M</code>. Values are encoded with <a href="Dynamo.Type.Any.html"><code class="inline">Dynamo.Type.Any</code></a> (inferred). Keys are
+converted to strings on dump and stay strings on load.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Type.NaiveDateTime.html" translate="no">Dynamo.Type.NaiveDateTime</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p><code class="inline">:naive_datetime</code> – <code class="inline">S</code> ISO 8601 without offset.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Type.NumberSet.html" translate="no">Dynamo.Type.NumberSet</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p><code class="inline">:number_set</code> – <code class="inline">NS</code>. Empty sets dump to <code class="inline">NULL</code>.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Type.String.html" translate="no">Dynamo.Type.String</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p><code class="inline">:string</code> – <code class="inline">S</code>. Atoms (other than booleans/nil) are accepted on dump and become strings.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Type.StringSet.html" translate="no">Dynamo.Type.StringSet</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p><code class="inline">:string_set</code> – <code class="inline">SS</code>. Empty sets dump to <code class="inline">NULL</code> (DynamoDB rejects empty sets).</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Type.Time.html" translate="no">Dynamo.Type.Time</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p><code class="inline">:time</code> – <code class="inline">S</code> ISO 8601 time.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Type.TypedList.html" translate="no">Dynamo.Type.TypedList</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p><code class="inline">{:list, type}</code> – <code class="inline">L</code> whose elements are all dumped/loaded with <code class="inline">type</code>.
+Resolved by <a href="Dynamo.Type.html#resolve!/1"><code class="inline">Dynamo.Type.resolve!/1</code></a>; not used directly.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Type.UTCDateTime.html" translate="no">Dynamo.Type.UTCDateTime</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p><code class="inline">:utc_datetime</code> – <code class="inline">S</code> ISO 8601 with <code class="inline">Z</code>. Stored in UTC; sorts lexicographically.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Dynamo.Update.html" translate="no">Dynamo.Update</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Builds DynamoDB <code class="inline">UpdateExpression</code>s from a keyword list or map of changes.</p></div>
+
+</div>
+
+    </div>
+  </section>
+
+
+  <section class="details-list">
+    <h2 id="mix-tasks" class="section-heading">
+  <a href="#mix-tasks" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Mix Tasks</span>
+</h2>
+
+    <div class="summary">
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Mix.Tasks.Dynamo.CreateTable.html" translate="no">mix dynamo.create_table</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Creates a DynamoDB table and waits until it is ACTIVE.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Mix.Tasks.Dynamo.DeleteTable.html" translate="no">mix dynamo.delete_table</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Deletes a DynamoDB table after confirmation.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Mix.Tasks.Dynamo.GenerateSchema.html" translate="no">mix dynamo.generate_schema</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Inspects a table (key schema, GSIs and a sample of items) and writes a
+schema module that can read the existing items back.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Mix.Tasks.Dynamo.ListTables.html" translate="no">mix dynamo.list_tables</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Lists tables, following pagination.</p></div>
+
+</div>
+
+    </div>
+  </section>
+
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="readme.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Dynamo
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/dynamo/0.2.0" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/dynamo/0.2.0">Hex Preview</a>
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.35.1) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

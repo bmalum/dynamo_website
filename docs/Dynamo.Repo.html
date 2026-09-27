@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.35.1">
+    <meta name="project" content="Dynamo v0.2.0">
+
+
+    <title>Dynamo.Repo — Dynamo v0.2.0</title>
+    <link rel="stylesheet" href="dist/html-elixir-P45HOAC7.css" />
+
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
+    <script src="dist/sidebar_items-FC42D05D.js"></script>
+    <script src="docs_config.js"></script>
+    <script async src="dist/html-PVRIOB7F.js"></script>
+
+  </head>
+  <body data-type="modules" class="page-behaviour">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
+Dynamo
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v0.2.0
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+      <li>
+        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
+Pages
+        </button>
+      </li>
+
+        <li>
+          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
+            Modules
+          </button>
+        </li>
+
+
+        <li>
+          <button id="tasks-list-tab-button" role="tab" data-type="tasks" aria-controls="tasks-tab-panel" aria-selected="false" tabindex="-1">
+            <span translate="no">Mix</span> Tasks
+          </button>
+        </li>
+
+    </ul>
+  </div>
+
+  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+    <ul id="extras-full-list" class="full-list"></ul>
+  </div>
+
+    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
+      <ul id="modules-full-list" class="full-list"></ul>
+    </div>
+
+
+    <div id="tasks-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="tasks-list-tab-button" hidden>
+      <ul id="tasks-full-list" class="full-list"></ul>
+    </div>
+
+</nav>
+
+<main class="content">
+  <output role="status" id="toast"></output>
+
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Dynamo</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <h1>
+
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+    <span translate="no">Dynamo.Repo</span> <small>behaviour</small>
+    <small class="app-vsn" translate="no">(Dynamo v0.2.0)</small>
+
+  </h1>
+
+
+    <section id="moduledoc">
+<p>Defines a repository: a supervised process tree that owns the DynamoDB client
+(region, endpoint, credentials, retry policy) and exposes the operations.</p><pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyApp.Dynamo</span><span class="w"> </span><span class="k" data-group-id="7919425344-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Dynamo.Repo</span><span class="p">,</span><span class="w"> </span><span class="ss">otp_app</span><span class="p">:</span><span class="w"> </span><span class="ss">:my_app</span><span class="w">
+</span><span class="k" data-group-id="7919425344-1">end</span><span class="w">
+
+</span><span class="c1"># config/runtime.exs</span><span class="w">
+</span><span class="n">config</span><span class="w"> </span><span class="ss">:my_app</span><span class="p">,</span><span class="w"> </span><span class="nc">MyApp.Dynamo</span><span class="p">,</span><span class="w">
+  </span><span class="ss">region</span><span class="p">:</span><span class="w"> </span><span class="nc">System</span><span class="o">.</span><span class="n">get_env</span><span class="p" data-group-id="7919425344-2">(</span><span class="s">&quot;AWS_REGION&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;eu-central-1&quot;</span><span class="p" data-group-id="7919425344-2">)</span><span class="p">,</span><span class="w">
+  </span><span class="ss">endpoint</span><span class="p">:</span><span class="w"> </span><span class="nc">System</span><span class="o">.</span><span class="n">get_env</span><span class="p" data-group-id="7919425344-3">(</span><span class="s">&quot;DYNAMO_ENDPOINT&quot;</span><span class="p" data-group-id="7919425344-3">)</span><span class="w">   </span><span class="c1"># e.g. http://localhost:8000 for DynamoDB Local</span><span class="w">
+
+</span><span class="c1"># application.ex</span><span class="w">
+</span><span class="n">children</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="7919425344-4">[</span><span class="nc">MyApp.Dynamo</span><span class="p" data-group-id="7919425344-4">]</span></code></pre><h2 id="module-configuration" class="section-heading">
+  <a href="#module-configuration" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Configuration</span>
+</h2>
+<p>Read from <code class="inline">Application.get_env(otp_app, MyRepo)</code> and overridable via
+<code class="inline">init/1</code>:</p><ul><li><code class="inline">:region</code> (required unless <code class="inline">:endpoint</code> is given – then defaults to <code class="inline">&quot;us-east-1&quot;</code>)</li><li><code class="inline">:endpoint</code> – custom URL (DynamoDB Local, VPC endpoint)</li><li><code class="inline">:access_key_id</code>, <code class="inline">:secret_access_key</code>, <code class="inline">:session_token</code> – static credentials
+(otherwise env → ECS → IMDS, see <a href="Dynamo.Credentials.html"><code class="inline">Dynamo.Credentials</code></a>)</li><li><code class="inline">:max_retries</code>, <code class="inline">:base_backoff_ms</code>, <code class="inline">:max_backoff_ms</code>, <code class="inline">:receive_timeout</code>,
+<code class="inline">:connect_timeout</code>, <code class="inline">:req_options</code>, <code class="inline">:telemetry_prefix</code> – see <a href="Dynamo.Client.html"><code class="inline">Dynamo.Client</code></a></li><li><code class="inline">:batch_retries</code> – how many times unprocessed batch items are retried (default 5)</li></ul><h2 id="module-operations" class="section-heading">
+  <a href="#module-operations" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Operations</span>
+</h2>
+<p>Every function returns <code class="inline">{:ok, result} | {:error, %Dynamo.Error{}}</code> and has a
+bang variant that raises the error.</p><ul><li><a href="#put/2"><code class="inline">put/2</code></a>, <a href="#get/2"><code class="inline">get/2</code></a>, <a href="#delete/2"><code class="inline">delete/2</code></a>, <a href="#update/3"><code class="inline">update/3</code></a></li><li><a href="#query/2"><code class="inline">query/2</code></a>, <a href="#scan/2"><code class="inline">scan/2</code></a> → <code class="inline">%Dynamo.Page{}</code>; <a href="#query_all/2"><code class="inline">query_all/2</code></a>, <a href="#scan_all/2"><code class="inline">scan_all/2</code></a> →
+list (bounded by <code class="inline">:limit</code>); <code class="inline">stream/2</code> (see <a href="Dynamo.Stream.html"><code class="inline">Dynamo.Stream</code></a>)</li><li><a href="#batch_write/2"><code class="inline">batch_write/2</code></a>, <code class="inline">batch_get/2</code> – automatically chunked and unprocessed
+items retried with backoff</li><li><a href="#transaction/2"><code class="inline">transaction/2</code></a> – <code class="inline">TransactWriteItems</code></li><li><code class="inline">request/2</code> – raw action escape hatch</li></ul><p>Options are documented on <a href="Dynamo.Request.html"><code class="inline">Dynamo.Request</code></a>.</p>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h1>
+<div class="summary-types summary">
+  <h2>
+    <a href="#types">Types</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:result/1" data-no-tooltip translate="no">result(t)</a>
+
+      </div>
+
+    </div>
+
+</div>
+<div class="summary-callbacks summary">
+  <h2>
+    <a href="#callbacks">Callbacks</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:init/1" data-no-tooltip translate="no">init(config)</a>
+
+      </div>
+
+    </div>
+
+</div>
+<div class="summary-functions summary">
+  <h2>
+    <a href="#functions">Functions</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#batch_get/3" data-no-tooltip translate="no">batch_get(repo, structs, opts)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>BatchGetItem for any number of structs of one schema. Chunks into 100,
+retries <code class="inline">UnprocessedKeys</code>. Returns <code class="inline">{:ok, %{items: [struct], unprocessed_keys: [key_map]}}</code>.
+Items are returned in arbitrary order (DynamoDB does not preserve order).</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#batch_write/3" data-no-tooltip translate="no">batch_write(repo, items, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>BatchWriteItem for any number of structs / <code class="inline">{:delete, struct}</code> tuples.
+Chunks into 25, retries <code class="inline">UnprocessedItems</code> with backoff up to
+<code class="inline">:batch_retries</code> times. Returns <code class="inline">{:ok, %{unprocessed: [raw_requests]}}</code> –
+<code class="inline">unprocessed</code> is empty on full success. Any non-retryable error aborts and
+is returned.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#delete/3" data-no-tooltip translate="no">delete(repo, struct, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>DeleteItem. <code class="inline">{:ok, nil}</code> or, with <code class="inline">return_values: :all_old</code>, <code class="inline">{:ok, old_struct | nil}</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#get/3" data-no-tooltip translate="no">get(repo, struct, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>GetItem. <code class="inline">{:ok, struct}</code> or <code class="inline">{:ok, nil}</code> when not found.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#put/3" data-no-tooltip translate="no">put(repo, struct, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>PutItem. Returns the struct; with <code class="inline">return_values: :all_old</code> returns the previous item (or nil).</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#query/3" data-no-tooltip translate="no">query(repo, struct, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Query one page.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#query_all/3" data-no-tooltip translate="no">query_all(repo, struct, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Query all pages into a list. <code class="inline">:limit</code> bounds the total number of items
+returned (pages are requested until that many items are collected or the
+data is exhausted). Without <code class="inline">:limit</code> this loads the whole partition.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#request/3" data-no-tooltip translate="no">request(repo, action, payload)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Raw escape hatch.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#scan/3" data-no-tooltip translate="no">scan(repo, schema, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Scan one page.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#scan_all/3" data-no-tooltip translate="no">scan_all(repo, schema, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Scan all pages into a list (bounded by <code class="inline">:limit</code>). Expensive – prefer <code class="inline">stream/2</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#transaction/3" data-no-tooltip translate="no">transaction(repo, operations, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>TransactWriteItems. See <a href="Dynamo.Request.html#transact_write/2"><code class="inline">Dynamo.Request.transact_write/2</code></a> for operation shapes.
+On cancellation the returned error has <code class="inline">type: :transaction_canceled</code> and
+<code class="inline">cancellation_reasons</code> (one per operation, in order).</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#update/4" data-no-tooltip translate="no">update(repo, struct, changes, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>UpdateItem. Returns <code class="inline">{:ok, nil}</code> unless <code class="inline">return_values:</code> asks for attributes.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="types" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Types</span>
+    </h1>
+    <div class="types-list">
+<section class="detail" id="t:result/1">
+
+  <div class="detail-header">
+    <a href="#t:result/1" class="detail-link" data-no-tooltip aria-label="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">result(t)</h1>
+
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L49" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> result(t) :: {:ok, t} | {:error, <a href="Dynamo.Error.html#t:t/0">Dynamo.Error.t</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="callbacks" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#callbacks">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Callbacks</span>
+    </h1>
+    <div class="callbacks-list">
+<section class="detail" id="c:init/1">
+
+  <div class="detail-header">
+    <a href="#c:init/1" class="detail-link" data-no-tooltip aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">init(config)</h1>
+
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L51" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> init(config :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()) :: {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="functions" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h1>
+    <div class="functions-list">
+<section class="detail" id="batch_get/3">
+
+  <div class="detail-header">
+    <a href="#batch_get/3" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">batch_get(repo, structs, opts)</h1>
+
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L245" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> batch_get(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>()], <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()) ::
+  <a href="#t:result/1">result</a>(%{items: [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>()], unprocessed_keys: [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]})</pre>
+
+      </div>
+
+<p>BatchGetItem for any number of structs of one schema. Chunks into 100,
+retries <code class="inline">UnprocessedKeys</code>. Returns <code class="inline">{:ok, %{items: [struct], unprocessed_keys: [key_map]}}</code>.
+Items are returned in arbitrary order (DynamoDB does not preserve order).</p>
+  </section>
+</section>
+<section class="detail" id="batch_write/3">
+
+    <span id="batch_write/2"></span>
+
+  <div class="detail-header">
+    <a href="#batch_write/3" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">batch_write(repo, items, opts \\ [])</h1>
+
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L218" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> batch_write(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>() | {:delete, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>()}], <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()) ::
+  <a href="#t:result/1">result</a>(%{unprocessed: [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]})</pre>
+
+      </div>
+
+<p>BatchWriteItem for any number of structs / <code class="inline">{:delete, struct}</code> tuples.
+Chunks into 25, retries <code class="inline">UnprocessedItems</code> with backoff up to
+<code class="inline">:batch_retries</code> times. Returns <code class="inline">{:ok, %{unprocessed: [raw_requests]}}</code> –
+<code class="inline">unprocessed</code> is empty on full success. Any non-retryable error aborts and
+is returned.</p>
+  </section>
+</section>
+<section class="detail" id="delete/3">
+
+    <span id="delete/2"></span>
+
+  <div class="detail-header">
+    <a href="#delete/3" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">delete(repo, struct, opts \\ [])</h1>
+
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L152" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> delete(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()) :: <a href="#t:result/1">result</a>(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>() | nil)</pre>
+
+      </div>
+
+<p>DeleteItem. <code class="inline">{:ok, nil}</code> or, with <code class="inline">return_values: :all_old</code>, <code class="inline">{:ok, old_struct | nil}</code>.</p>
+  </section>
+</section>
+<section class="detail" id="get/3">
+
+    <span id="get/2"></span>
+
+  <div class="detail-header">
+    <a href="#get/3" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">get(repo, struct, opts \\ [])</h1>
+
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L140" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> get(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()) :: <a href="#t:result/1">result</a>(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>() | nil)</pre>
+
+      </div>
+
+<p>GetItem. <code class="inline">{:ok, struct}</code> or <code class="inline">{:ok, nil}</code> when not found.</p>
+  </section>
+</section>
+<section class="detail" id="put/3">
+
+    <span id="put/2"></span>
+
+  <div class="detail-header">
+    <a href="#put/3" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">put(repo, struct, opts \\ [])</h1>
+
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L131" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> put(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()) :: <a href="#t:result/1">result</a>(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>() | nil)</pre>
+
+      </div>
+
+<p>PutItem. Returns the struct; with <code class="inline">return_values: :all_old</code> returns the previous item (or nil).</p>
+  </section>
+</section>
+<section class="detail" id="query/3">
+
+    <span id="query/2"></span>
+
+  <div class="detail-header">
+    <a href="#query/3" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">query(repo, struct, opts \\ [])</h1>
+
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L170" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> query(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()) :: <a href="#t:result/1">result</a>(<a href="Dynamo.Page.html#t:t/0">Dynamo.Page.t</a>())</pre>
+
+      </div>
+
+<p>Query one page.</p>
+  </section>
+</section>
+<section class="detail" id="query_all/3">
+
+    <span id="query_all/2"></span>
+
+  <div class="detail-header">
+    <a href="#query_all/3" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">query_all(repo, struct, opts \\ [])</h1>
+
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L192" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> query_all(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()) :: <a href="#t:result/1">result</a>([<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>()])</pre>
+
+      </div>
+
+<p>Query all pages into a list. <code class="inline">:limit</code> bounds the total number of items
+returned (pages are requested until that many items are collected or the
+data is exhausted). Without <code class="inline">:limit</code> this loads the whole partition.</p>
+  </section>
+</section>
+<section class="detail" id="request/3">
+
+  <div class="detail-header">
+    <a href="#request/3" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">request(repo, action, payload)</h1>
+
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L127" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> request(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) :: <a href="#t:result/1">result</a>(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>())</pre>
+
+      </div>
+
+<p>Raw escape hatch.</p>
+  </section>
+</section>
+<section class="detail" id="scan/3">
+
+    <span id="scan/2"></span>
+
+  <div class="detail-header">
+    <a href="#scan/3" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">scan(repo, schema, opts \\ [])</h1>
+
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L179" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> scan(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()) :: <a href="#t:result/1">result</a>(<a href="Dynamo.Page.html#t:t/0">Dynamo.Page.t</a>())</pre>
+
+      </div>
+
+<p>Scan one page.</p>
+  </section>
+</section>
+<section class="detail" id="scan_all/3">
+
+    <span id="scan_all/2"></span>
+
+  <div class="detail-header">
+    <a href="#scan_all/3" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">scan_all(repo, schema, opts \\ [])</h1>
+
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L198" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> scan_all(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()) :: <a href="#t:result/1">result</a>([<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>()])</pre>
+
+      </div>
+
+<p>Scan all pages into a list (bounded by <code class="inline">:limit</code>). Expensive – prefer <code class="inline">stream/2</code>.</p>
+  </section>
+</section>
+<section class="detail" id="transaction/3">
+
+    <span id="transaction/2"></span>
+
+  <div class="detail-header">
+    <a href="#transaction/3" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">transaction(repo, operations, opts \\ [])</h1>
+
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L279" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> transaction(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">tuple</a>()], <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()) :: <a href="#t:result/1">result</a>(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>())</pre>
+
+      </div>
+
+<p>TransactWriteItems. See <a href="Dynamo.Request.html#transact_write/2"><code class="inline">Dynamo.Request.transact_write/2</code></a> for operation shapes.
+On cancellation the returned error has <code class="inline">type: :transaction_canceled</code> and
+<code class="inline">cancellation_reasons</code> (one per operation, in order).</p>
+  </section>
+</section>
+<section class="detail" id="update/4">
+
+    <span id="update/3"></span>
+
+  <div class="detail-header">
+    <a href="#update/4" class="detail-link" data-no-tooltip aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <h1 class="signature" translate="no">update(repo, struct, changes, opts \\ [])</h1>
+
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/repo.ex#L161" class="icon-action" rel="help" aria-label="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> update(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">module</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>() | <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()) ::
+  <a href="#t:result/1">result</a>(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>() | nil)</pre>
+
+      </div>
+
+<p>UpdateItem. Returns <code class="inline">{:ok, nil}</code> unless <code class="inline">return_values:</code> asks for attributes.</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/dynamo/0.2.0" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/dynamo/0.2.0">Hex Preview</a>
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.35.1) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

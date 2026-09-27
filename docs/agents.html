@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.35.1">
+    <meta name="project" content="Dynamo v0.2.0">
+
+
+    <title>Dynamo Agent Guide — Dynamo v0.2.0</title>
+    <link rel="stylesheet" href="dist/html-elixir-P45HOAC7.css" />
+
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
+    <script src="dist/sidebar_items-FC42D05D.js"></script>
+    <script src="docs_config.js"></script>
+    <script async src="dist/html-PVRIOB7F.js"></script>
+
+  </head>
+  <body data-type="extras" class="page-extra">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
+Dynamo
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v0.2.0
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+      <li>
+        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
+Pages
+        </button>
+      </li>
+
+        <li>
+          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
+            Modules
+          </button>
+        </li>
+
+
+        <li>
+          <button id="tasks-list-tab-button" role="tab" data-type="tasks" aria-controls="tasks-tab-panel" aria-selected="false" tabindex="-1">
+            <span translate="no">Mix</span> Tasks
+          </button>
+        </li>
+
+    </ul>
+  </div>
+
+  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+    <ul id="extras-full-list" class="full-list"></ul>
+  </div>
+
+    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
+      <ul id="modules-full-list" class="full-list"></ul>
+    </div>
+
+
+    <div id="tasks-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="tasks-list-tab-button" hidden>
+      <ul id="tasks-full-list" class="full-list"></ul>
+    </div>
+
+</nav>
+
+<main class="content">
+  <output role="status" id="toast"></output>
+
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Dynamo</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <h1>
+
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/Agents.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+
+    <span>Dynamo Agent Guide</span>
+  </h1>
+
+<p>A concise reference for AI agents and developers using the Dynamo library. Every
+snippet here compiles against the current API; if something in this file
+disagrees with the code, the code is right and this file has a bug.</p><h2 id="mental-model" class="section-heading">
+  <a href="#mental-model" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Mental model</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="nc">Schema</span><span class="w">  </span><span class="err">–</span><span class="w"> </span><span class="n">typed</span><span class="w"> </span><span class="n">fields</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="n">layout</span><span class="o">.</span><span class="w"> </span><span class="nc">Pure</span><span class="o">.</span><span class="w"> </span><span class="err">`</span><span class="nc">Dynamo.Schema</span><span class="o">.</span><span class="n">primary_key</span><span class="o">/</span><span class="mi">1</span><span class="err">`</span><span class="p">,</span><span class="w"> </span><span class="err">`</span><span class="n">dump</span><span class="o">/</span><span class="mi">1</span><span class="err">`</span><span class="p">,</span><span class="w"> </span><span class="err">`</span><span class="n">load</span><span class="o">/</span><span class="mi">2</span><span class="err">`</span><span class="o">.</span><span class="w">
+</span><span class="nc">Request</span><span class="w"> </span><span class="err">–</span><span class="w"> </span><span class="n">pure</span><span class="w"> </span><span class="ss">builders</span><span class="p">:</span><span class="w"> </span><span class="n">struct</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">opts</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p" data-group-id="8130726167-1">{</span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="n">payload</span><span class="p" data-group-id="8130726167-1">}</span><span class="o">.</span><span class="w"> </span><span class="err">`</span><span class="nc">Dynamo.Request</span><span class="err">`</span><span class="p">,</span><span class="w"> </span><span class="err">`</span><span class="nc">Dynamo.Update</span><span class="err">`</span><span class="o">.</span><span class="w">
+</span><span class="nc">Client</span><span class="w">  </span><span class="err">–</span><span class="w"> </span><span class="nc">SigV4</span><span class="p">,</span><span class="w"> </span><span class="n">retries</span><span class="p">,</span><span class="w"> </span><span class="n">telemetry</span><span class="p">,</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="n">normalisation</span><span class="o">.</span><span class="w"> </span><span class="err">`</span><span class="nc">Dynamo.Client</span><span class="err">`</span><span class="o">.</span><span class="w">
+</span><span class="nc">Repo</span><span class="w">    </span><span class="err">–</span><span class="w"> </span><span class="n">supervised</span><span class="w"> </span><span class="n">owner</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">client</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">credentials</span><span class="o">.</span><span class="w"> </span><span class="nc">The</span><span class="w"> </span><span class="n">thing</span><span class="w"> </span><span class="n">you</span><span class="w"> </span><span class="n">call</span><span class="o">.</span><span class="w"> </span><span class="err">`</span><span class="kn">use</span><span class="w"> </span><span class="nc">Dynamo.Repo</span><span class="err">`</span><span class="o">.</span></code></pre><p>All operations return <code class="inline">{:ok, value} | {:error, %Dynamo.Error{}}</code>. Nothing above
+the client ever sees a raw AWS error map.</p><h2 id="defining-a-schema" class="section-heading">
+  <a href="#defining-a-schema" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Defining a schema</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyApp.Order</span><span class="w"> </span><span class="k" data-group-id="4534845734-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Dynamo.Schema</span><span class="w">                       </span><span class="c1"># opts: key_separator, partition_key_name, sort_key_name,</span><span class="w">
+                                          </span><span class="c1">#       prefix_sort_key, raw_keys, omit_nil</span><span class="w">
+  </span><span class="n">item</span><span class="w"> </span><span class="k" data-group-id="4534845734-2">do</span><span class="w">
+    </span><span class="n">table</span><span class="w"> </span><span class="s">&quot;app&quot;</span><span class="w">
+    </span><span class="n">entity_name</span><span class="w"> </span><span class="s">&quot;order&quot;</span><span class="w">                   </span><span class="c1"># default: underscored module basename</span><span class="w">
+
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:user_id</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="p">,</span><span class="w"> </span><span class="ss">partition_key</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:placed_at</span><span class="p">,</span><span class="w"> </span><span class="ss">:utc_datetime</span><span class="p">,</span><span class="w"> </span><span class="ss">sort_key</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:order_id</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="p">,</span><span class="w"> </span><span class="ss">sort_key</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:total</span><span class="p">,</span><span class="w"> </span><span class="ss">:decimal</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:status</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="p">,</span><span class="w"> </span><span class="ss">default</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;pending&quot;</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:version</span><span class="p">,</span><span class="w"> </span><span class="ss">:integer</span><span class="p">,</span><span class="w"> </span><span class="ss">default</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+
+    </span><span class="n">global_secondary_index</span><span class="w"> </span><span class="s">&quot;StatusIndex&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">partition_key</span><span class="p">:</span><span class="w"> </span><span class="ss">:status</span><span class="p">,</span><span class="w"> </span><span class="ss">sort_key</span><span class="p">:</span><span class="w"> </span><span class="ss">:placed_at</span><span class="w">
+  </span><span class="k" data-group-id="4534845734-2">end</span><span class="w">
+</span><span class="k" data-group-id="4534845734-1">end</span></code></pre><p>Types: <code class="inline">:string :integer :float :decimal :boolean :binary :utc_datetime :naive_datetime :date :time :map :list :string_set :number_set :binary_set :any</code>,
+<code class="inline">{:list, type}</code>, an embedded schema module (<code class="inline">use Dynamo.Schema, embedded: true</code>),
+or a module implementing <a href="Dynamo.Type.html"><code class="inline">Dynamo.Type</code></a>.</p><p>Nil fields are omitted on write (<code class="inline">omit_nil: true</code>); <code class="inline">update(item, f: :remove)</code>
+deletes an attribute, <code class="inline">update(item, f: nil)</code> writes <code class="inline">NULL</code>.</p><p>Generated keys: <code class="inline">pk = &quot;order#&lt;user_id&gt;&quot;</code>, <code class="inline">sk = &quot;&lt;placed_at&gt;#&lt;order_id&gt;&quot;</code>.
+Alternative: <code class="inline">partition_key [:a, :b]</code> / <code class="inline">sort_key [:c, :d]</code> instead of per-field flags.</p><p>Compile-time errors for: missing <code class="inline">table</code>, no partition key, unknown option,
+unknown type, undefined field in a key/index, duplicate field/index.</p><h2 id="defining-a-repo" class="section-heading">
+  <a href="#defining-a-repo" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Defining a repo</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyApp.Dynamo</span><span class="w"> </span><span class="k" data-group-id="5888838309-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Dynamo.Repo</span><span class="p">,</span><span class="w"> </span><span class="ss">otp_app</span><span class="p">:</span><span class="w"> </span><span class="ss">:my_app</span><span class="w">
+</span><span class="k" data-group-id="5888838309-1">end</span><span class="w">
+
+</span><span class="n">config</span><span class="w"> </span><span class="ss">:my_app</span><span class="p">,</span><span class="w"> </span><span class="nc">MyApp.Dynamo</span><span class="p">,</span><span class="w"> </span><span class="ss">region</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;eu-central-1&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">endpoint</span><span class="p">:</span><span class="w"> </span><span class="nc">System</span><span class="o">.</span><span class="n">get_env</span><span class="p" data-group-id="5888838309-2">(</span><span class="s">&quot;DYNAMO_ENDPOINT&quot;</span><span class="p" data-group-id="5888838309-2">)</span><span class="w">
+</span><span class="n">children</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="5888838309-3">[</span><span class="nc">MyApp.Dynamo</span><span class="p" data-group-id="5888838309-3">]</span></code></pre><h2 id="operations-cheat-sheet" class="section-heading">
+  <a href="#operations-cheat-sheet" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Operations cheat sheet</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="kn">alias</span><span class="w"> </span><span class="nc">MyApp.Dynamo</span><span class="p">,</span><span class="w"> </span><span class="ss">as</span><span class="p">:</span><span class="w"> </span><span class="nc">Repo</span><span class="w">
+
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">put</span><span class="p" data-group-id="3972422587-1">(</span><span class="n">struct</span><span class="p">,</span><span class="w"> </span><span class="ss">condition</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;attribute_not_exists(pk)&quot;</span><span class="p" data-group-id="3972422587-1">)</span><span class="w">           </span><span class="c1"># {:ok, struct}</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">put</span><span class="p" data-group-id="3972422587-2">(</span><span class="n">struct</span><span class="p">,</span><span class="w"> </span><span class="ss">condition</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3972422587-3">[</span><span class="ss">pk</span><span class="p">:</span><span class="w"> </span><span class="ss">:not_exists</span><span class="p">,</span><span class="w"> </span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3972422587-4">{</span><span class="ss">:in</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3972422587-5">[</span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;b&quot;</span><span class="p" data-group-id="3972422587-5">]</span><span class="p" data-group-id="3972422587-4">}</span><span class="p" data-group-id="3972422587-3">]</span><span class="p" data-group-id="3972422587-2">)</span><span class="w">   </span><span class="c1"># DSL → same expression</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">put</span><span class="p" data-group-id="3972422587-6">(</span><span class="n">struct</span><span class="p">,</span><span class="w"> </span><span class="ss">return_values</span><span class="p">:</span><span class="w"> </span><span class="ss">:all_old</span><span class="p" data-group-id="3972422587-6">)</span><span class="w">                          </span><span class="c1"># {:ok, old | nil}</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">get</span><span class="p" data-group-id="3972422587-7">(</span><span class="p" data-group-id="3972422587-8">%</span><span class="nc" data-group-id="3972422587-8">Order</span><span class="p" data-group-id="3972422587-8">{</span><span class="ss">user_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;u&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">placed_at</span><span class="p">:</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="ss">order_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;o&quot;</span><span class="p" data-group-id="3972422587-8">}</span><span class="p" data-group-id="3972422587-7">)</span><span class="w">       </span><span class="c1"># {:ok, struct | nil}; full key required</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">get</span><span class="p" data-group-id="3972422587-9">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="ss">consistent</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w"> </span><span class="ss">projection</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3972422587-10">[</span><span class="ss">:total</span><span class="p" data-group-id="3972422587-10">]</span><span class="p" data-group-id="3972422587-9">)</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">delete</span><span class="p" data-group-id="3972422587-11">(</span><span class="n">key</span><span class="p" data-group-id="3972422587-11">)</span><span class="w">                                                   </span><span class="c1"># {:ok, nil}</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">delete</span><span class="p" data-group-id="3972422587-12">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="ss">return_values</span><span class="p">:</span><span class="w"> </span><span class="ss">:all_old</span><span class="p" data-group-id="3972422587-12">)</span><span class="w">                          </span><span class="c1"># {:ok, old | nil}</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">update</span><span class="p" data-group-id="3972422587-13">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;paid&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">version</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3972422587-14">{</span><span class="ss">:increment</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="3972422587-14">}</span><span class="p" data-group-id="3972422587-13">)</span><span class="w">         </span><span class="c1"># {:ok, nil}</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">update</span><span class="p" data-group-id="3972422587-15">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3972422587-16">[</span><span class="ss">tags</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3972422587-17">{</span><span class="ss">:add</span><span class="p">,</span><span class="w"> </span><span class="nc">MapSet</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="3972422587-18">(</span><span class="p" data-group-id="3972422587-19">[</span><span class="s">&quot;x&quot;</span><span class="p" data-group-id="3972422587-19">]</span><span class="p" data-group-id="3972422587-18">)</span><span class="p" data-group-id="3972422587-17">}</span><span class="p">,</span><span class="w"> </span><span class="ss">tmp</span><span class="p">:</span><span class="w"> </span><span class="ss">:remove</span><span class="p" data-group-id="3972422587-16">]</span><span class="p">,</span><span class="w"> </span><span class="ss">return_values</span><span class="p">:</span><span class="w"> </span><span class="ss">:all_new</span><span class="p" data-group-id="3972422587-15">)</span><span class="w">
+
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">query</span><span class="p" data-group-id="3972422587-20">(</span><span class="p" data-group-id="3972422587-21">%</span><span class="nc" data-group-id="3972422587-21">Order</span><span class="p" data-group-id="3972422587-21">{</span><span class="ss">user_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;u&quot;</span><span class="p" data-group-id="3972422587-21">}</span><span class="p" data-group-id="3972422587-20">)</span><span class="w">                                   </span><span class="c1"># {:ok, %Dynamo.Page{}}</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">query</span><span class="p" data-group-id="3972422587-22">(</span><span class="p" data-group-id="3972422587-23">%</span><span class="nc" data-group-id="3972422587-23">Order</span><span class="p" data-group-id="3972422587-23">{</span><span class="ss">user_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;u&quot;</span><span class="p" data-group-id="3972422587-23">}</span><span class="p">,</span><span class="w"> </span><span class="ss">sort_key</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3972422587-24">{</span><span class="ss">:begins_with</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;2024-06&quot;</span><span class="p" data-group-id="3972422587-24">}</span><span class="p" data-group-id="3972422587-22">)</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">query</span><span class="p" data-group-id="3972422587-25">(</span><span class="p" data-group-id="3972422587-26">%</span><span class="nc" data-group-id="3972422587-26">Order</span><span class="p" data-group-id="3972422587-26">{</span><span class="ss">user_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;u&quot;</span><span class="p" data-group-id="3972422587-26">}</span><span class="p">,</span><span class="w"> </span><span class="ss">sort_key</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3972422587-27">{</span><span class="ss">:between</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;2024-01-01&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;2024-12-31~&quot;</span><span class="p" data-group-id="3972422587-27">}</span><span class="p">,</span><span class="w"> </span><span class="ss">descending</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w"> </span><span class="ss">limit</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span><span class="p" data-group-id="3972422587-25">)</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">query</span><span class="p" data-group-id="3972422587-28">(</span><span class="p" data-group-id="3972422587-29">%</span><span class="nc" data-group-id="3972422587-29">Order</span><span class="p" data-group-id="3972422587-29">{</span><span class="ss">user_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;u&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">placed_at</span><span class="p">:</span><span class="w"> </span><span class="n">dt</span><span class="p" data-group-id="3972422587-29">}</span><span class="p" data-group-id="3972422587-28">)</span><span class="w">                    </span><span class="c1"># struct sk fields =&gt; begins_with on partial sk</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">query</span><span class="p" data-group-id="3972422587-30">(</span><span class="p" data-group-id="3972422587-31">%</span><span class="nc" data-group-id="3972422587-31">Order</span><span class="p" data-group-id="3972422587-31">{</span><span class="ss">user_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;u&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">placed_at</span><span class="p">:</span><span class="w"> </span><span class="n">dt</span><span class="p" data-group-id="3972422587-31">}</span><span class="p">,</span><span class="w"> </span><span class="ss">sort_key</span><span class="p">:</span><span class="w"> </span><span class="ss">:none</span><span class="p" data-group-id="3972422587-30">)</span><span class="w">   </span><span class="c1"># ignore struct sk fields</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">query</span><span class="p" data-group-id="3972422587-32">(</span><span class="p" data-group-id="3972422587-33">%</span><span class="nc" data-group-id="3972422587-33">Order</span><span class="p" data-group-id="3972422587-33">{</span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;paid&quot;</span><span class="p" data-group-id="3972422587-33">}</span><span class="p">,</span><span class="w"> </span><span class="ss">index</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;StatusIndex&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">sort_key</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3972422587-34">{</span><span class="ss">:gt</span><span class="p">,</span><span class="w"> </span><span class="ld">~U[2024-01-01 00:00:00Z]</span><span class="p" data-group-id="3972422587-34">}</span><span class="p" data-group-id="3972422587-32">)</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">query</span><span class="p" data-group-id="3972422587-35">(</span><span class="p" data-group-id="3972422587-36">%</span><span class="nc" data-group-id="3972422587-36">Order</span><span class="p" data-group-id="3972422587-36">{</span><span class="ss">user_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;u&quot;</span><span class="p" data-group-id="3972422587-36">}</span><span class="p">,</span><span class="w"> </span><span class="ss">filter</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;#t &gt; :m&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">names</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3972422587-37">%{</span><span class="s">&quot;#t&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;total&quot;</span><span class="p" data-group-id="3972422587-37">}</span><span class="p">,</span><span class="w"> </span><span class="ss">values</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3972422587-38">%{</span><span class="ss">m</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="p" data-group-id="3972422587-38">}</span><span class="p" data-group-id="3972422587-35">)</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">query</span><span class="p" data-group-id="3972422587-39">(</span><span class="p" data-group-id="3972422587-40">%</span><span class="nc" data-group-id="3972422587-40">Order</span><span class="p" data-group-id="3972422587-40">{</span><span class="ss">user_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;u&quot;</span><span class="p" data-group-id="3972422587-40">}</span><span class="p">,</span><span class="w"> </span><span class="ss">filter</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3972422587-41">[</span><span class="ss">total</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3972422587-42">{</span><span class="ss">:gt</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p" data-group-id="3972422587-42">}</span><span class="p" data-group-id="3972422587-41">]</span><span class="p" data-group-id="3972422587-39">)</span><span class="w">                </span><span class="c1"># same, via Dynamo.Condition</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">query</span><span class="p" data-group-id="3972422587-43">(</span><span class="p" data-group-id="3972422587-44">%</span><span class="nc" data-group-id="3972422587-44">Order</span><span class="p" data-group-id="3972422587-44">{</span><span class="ss">user_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;u&quot;</span><span class="p" data-group-id="3972422587-44">}</span><span class="p">,</span><span class="w"> </span><span class="ss">filter</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3972422587-45">{</span><span class="ss">:or</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3972422587-46">[</span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;open&quot;</span><span class="p" data-group-id="3972422587-46">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3972422587-47">[</span><span class="ss">total</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3972422587-48">{</span><span class="ss">:gte</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p" data-group-id="3972422587-48">}</span><span class="p" data-group-id="3972422587-47">]</span><span class="p" data-group-id="3972422587-45">}</span><span class="p" data-group-id="3972422587-43">)</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">query</span><span class="p" data-group-id="3972422587-49">(</span><span class="p" data-group-id="3972422587-50">%</span><span class="nc" data-group-id="3972422587-50">Order</span><span class="p" data-group-id="3972422587-50">{</span><span class="ss">user_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;u&quot;</span><span class="p" data-group-id="3972422587-50">}</span><span class="p">,</span><span class="w"> </span><span class="ss">limit</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="ss">start_key</span><span class="p">:</span><span class="w"> </span><span class="n">page</span><span class="o">.</span><span class="n">last_evaluated_key</span><span class="p" data-group-id="3972422587-49">)</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">query_all</span><span class="p" data-group-id="3972422587-51">(</span><span class="p" data-group-id="3972422587-52">%</span><span class="nc" data-group-id="3972422587-52">Order</span><span class="p" data-group-id="3972422587-52">{</span><span class="ss">user_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;u&quot;</span><span class="p" data-group-id="3972422587-52">}</span><span class="p">,</span><span class="w"> </span><span class="ss">limit</span><span class="p">:</span><span class="w"> </span><span class="mi">1_000</span><span class="p" data-group-id="3972422587-51">)</span><span class="w">                 </span><span class="c1"># {:ok, [struct]}</span><span class="w">
+
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">scan</span><span class="p" data-group-id="3972422587-53">(</span><span class="nc">Order</span><span class="p">,</span><span class="w"> </span><span class="ss">limit</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="p" data-group-id="3972422587-53">)</span><span class="w">                                       </span><span class="c1"># {:ok, %Dynamo.Page{}}</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">stream</span><span class="p" data-group-id="3972422587-54">(</span><span class="p" data-group-id="3972422587-55">%</span><span class="nc" data-group-id="3972422587-55">Order</span><span class="p" data-group-id="3972422587-55">{</span><span class="ss">user_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;u&quot;</span><span class="p" data-group-id="3972422587-55">}</span><span class="p">,</span><span class="w"> </span><span class="ss">page_size</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="p" data-group-id="3972422587-54">)</span><span class="w">                  </span><span class="c1"># lazy Stream (raises Dynamo.Error on failure)</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">stream</span><span class="p" data-group-id="3972422587-56">(</span><span class="nc">Order</span><span class="p">,</span><span class="w"> </span><span class="ss">segments</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="ss">max_concurrency</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p" data-group-id="3972422587-56">)</span><span class="w">                </span><span class="c1"># parallel scan</span><span class="w">
+
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">batch_write</span><span class="p" data-group-id="3972422587-57">(</span><span class="n">structs</span><span class="w"> </span><span class="o">++</span><span class="w"> </span><span class="p" data-group-id="3972422587-58">[</span><span class="p" data-group-id="3972422587-59">{</span><span class="ss">:delete</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p" data-group-id="3972422587-59">}</span><span class="p" data-group-id="3972422587-58">]</span><span class="p" data-group-id="3972422587-57">)</span><span class="w">                        </span><span class="c1"># {:ok, %{unprocessed: []}}</span><span class="w">
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">batch_get</span><span class="p" data-group-id="3972422587-60">(</span><span class="p" data-group-id="3972422587-61">[</span><span class="n">key1</span><span class="p">,</span><span class="w"> </span><span class="n">key2</span><span class="p" data-group-id="3972422587-61">]</span><span class="p" data-group-id="3972422587-60">)</span><span class="w">                                       </span><span class="c1"># {:ok, %{items: [...], unprocessed_keys: []}}</span><span class="w">
+
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">transaction</span><span class="p" data-group-id="3972422587-62">(</span><span class="p" data-group-id="3972422587-63">[</span><span class="w">
+  </span><span class="p" data-group-id="3972422587-64">{</span><span class="ss">:update</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3972422587-65">%</span><span class="nc" data-group-id="3972422587-65">Acct</span><span class="p" data-group-id="3972422587-65">{</span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;a&quot;</span><span class="p" data-group-id="3972422587-65">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3972422587-66">[</span><span class="ss">balance</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3972422587-67">{</span><span class="ss">:decrement</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p" data-group-id="3972422587-67">}</span><span class="p" data-group-id="3972422587-66">]</span><span class="p">,</span><span class="w"> </span><span class="ss">condition</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;#b &gt;= :v&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">names</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3972422587-68">%{</span><span class="s">&quot;#b&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;balance&quot;</span><span class="p" data-group-id="3972422587-68">}</span><span class="p">,</span><span class="w"> </span><span class="ss">values</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3972422587-69">%{</span><span class="ss">v</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p" data-group-id="3972422587-69">}</span><span class="p" data-group-id="3972422587-64">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="3972422587-70">{</span><span class="ss">:update</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3972422587-71">%</span><span class="nc" data-group-id="3972422587-71">Acct</span><span class="p" data-group-id="3972422587-71">{</span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;b&quot;</span><span class="p" data-group-id="3972422587-71">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3972422587-72">[</span><span class="ss">balance</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3972422587-73">{</span><span class="ss">:increment</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p" data-group-id="3972422587-73">}</span><span class="p" data-group-id="3972422587-72">]</span><span class="p" data-group-id="3972422587-70">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="3972422587-74">{</span><span class="ss">:put</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3972422587-75">%</span><span class="nc" data-group-id="3972422587-75">Ledger</span><span class="p" data-group-id="3972422587-75">{</span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;l1&quot;</span><span class="p" data-group-id="3972422587-75">}</span><span class="p">,</span><span class="w"> </span><span class="ss">condition</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;attribute_not_exists(pk)&quot;</span><span class="p" data-group-id="3972422587-74">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="3972422587-76">{</span><span class="ss">:check</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3972422587-77">%</span><span class="nc" data-group-id="3972422587-77">Acct</span><span class="p" data-group-id="3972422587-77">{</span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p" data-group-id="3972422587-77">}</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;attribute_exists(pk)&quot;</span><span class="p" data-group-id="3972422587-76">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="3972422587-78">{</span><span class="ss">:delete</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3972422587-79">%</span><span class="nc" data-group-id="3972422587-79">Hold</span><span class="p" data-group-id="3972422587-79">{</span><span class="ss">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;h&quot;</span><span class="p" data-group-id="3972422587-79">}</span><span class="p" data-group-id="3972422587-78">}</span><span class="w">
+</span><span class="p" data-group-id="3972422587-63">]</span><span class="p">,</span><span class="w"> </span><span class="ss">client_request_token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;idem-1&quot;</span><span class="p" data-group-id="3972422587-62">)</span><span class="w">
+
+</span><span class="nc">Repo</span><span class="o">.</span><span class="n">request</span><span class="p" data-group-id="3972422587-80">(</span><span class="s">&quot;DescribeTable&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3972422587-81">%{</span><span class="s">&quot;TableName&quot;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s">&quot;app&quot;</span><span class="p" data-group-id="3972422587-81">}</span><span class="p" data-group-id="3972422587-80">)</span><span class="w">              </span><span class="c1"># raw escape hatch</span></code></pre><p>Update operators: plain value, <code class="inline">{:increment, n}</code>, <code class="inline">{:decrement, n}</code>, <code class="inline">{:add, n | set}</code>,
+<code class="inline">{:delete, set}</code>, <code class="inline">{:append, list}</code>, <code class="inline">{:prepend, list}</code>, <code class="inline">{:if_not_exists, v}</code>, <code class="inline">:remove</code>.
+Key fields cannot be updated (error) – delete and re-put.</p><p>Expression options everywhere: <code class="inline">condition:</code>/<code class="inline">filter:</code> (raw string, or a
+<a href="Dynamo.Condition.html"><code class="inline">Dynamo.Condition</code></a> DSL: keyword list = AND of <code class="inline">field: value | {op, v} | :exists | ...</code>,
+<code class="inline">{:and | :or, a, b}</code>, <code class="inline">{:not, a}</code>, nested path as list), <code class="inline">projection:</code> (string or
+field list), <code class="inline">names:</code> (<code class="inline">%{&quot;#n&quot; =&gt; &quot;attr&quot;}</code>), <code class="inline">values:</code> (<code class="inline">%{v: elixir_value}</code>,
+encoded for you). <code class="inline">return_values: :none | :all_old | :all_new | :updated_old | :updated_new</code>.</p><p>Retries: throttling/5xx are retried with backoff. Transport timeouts are retried
+too, so <code class="inline">{:increment, n}</code> updates can double-apply after a timeout – guard with a
+version <code class="inline">condition:</code> or use <code class="inline">transaction/2</code> + <code class="inline">client_request_token:</code>.</p><h2 id="errors" class="section-heading">
+  <a href="#errors" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Errors</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="p" data-group-id="2445477862-1">%</span><span class="nc" data-group-id="2445477862-1">Dynamo.Error</span><span class="p" data-group-id="2445477862-1">{</span><span class="ss">type</span><span class="p">:</span><span class="w"> </span><span class="n">atom</span><span class="p">,</span><span class="w"> </span><span class="ss">message</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="o">.</span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="ss">aws_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ConditionalCheckFailedException&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+              </span><span class="ss">status</span><span class="p">:</span><span class="w"> </span><span class="mi">400</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w"> </span><span class="ss">retryable?</span><span class="p">:</span><span class="w"> </span><span class="n">boolean</span><span class="p">,</span><span class="w"> </span><span class="ss">cancellation_reasons</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="2445477862-2">[</span><span class="n">...</span><span class="p" data-group-id="2445477862-2">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w"> </span><span class="ss">details</span><span class="p">:</span><span class="w"> </span><span class="n">term</span><span class="p" data-group-id="2445477862-1">}</span></code></pre><p>Common <code class="inline">type</code>s: <code class="inline">:validation_error :resource_not_found :conditional_check_failed :provisioned_throughput_exceeded :throttled :access_denied :authentication_error :transaction_canceled :transaction_conflict :internal_server_error :transport_error :decode_error :no_credentials</code>. Retryable ones are retried by the client (3× default).</p><p>Local validation failures (nil partition key, separator in a key value, unknown
+option, wrong type, updating a key field, &gt;25 batch items, duplicate items in a
+transaction) return <code class="inline">{:error, %Dynamo.Error{type: :validation_error}}</code> <em>before</em>
+any request is sent.</p><h2 id="modelling-rules-of-thumb" class="section-heading">
+  <a href="#modelling-rules-of-thumb" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Modelling rules of thumb</span>
+</h2>
+<ol><li><strong>List access patterns first.</strong> Every query needs a partition key; design keys from queries, not from entities.</li><li><strong>High-cardinality partition keys.</strong> Never a date or status alone. Combine (<code class="inline">partition_key [:tenant, :customer_id]</code>) or shard.</li><li><strong>Sort keys drive ranges.</strong> Put the dimension you range over first (ISO 8601 datetimes sort correctly). Prefix with a type string for single-partition adjacency lists.</li><li><strong>GSIs for the second and third pattern.</strong> Keys keep their field type (numbers stay <code class="inline">N</code>). Use <code class="inline">:keys_only</code>/<code class="inline">:include</code> to cut cost. No consistent reads on GSIs.</li><li><strong>Single table:</strong> several schemas share <code class="inline">table &quot;app&quot;</code>; <code class="inline">entity_name</code> disambiguates the <code class="inline">pk</code>. Child items in the parent's partition: <code class="inline">entity_name ParentModule</code> (compile-time link) + <code class="inline">field :kind, :string, sort_key: true, default: &quot;child&quot;</code>.</li><li><strong>Items &lt; 400 KB.</strong> Store blobs in S3, keep the reference.</li><li><strong>Unbounded lists don't belong in one item.</strong> One item per element with a composite sort key.</li><li><strong>Scans are for migrations.</strong> They read every item; <code class="inline">stream/2</code> bounds memory, not cost.</li><li><strong>Idempotency:</strong> <code class="inline">client_request_token:</code> on transactions; <code class="inline">condition: &quot;attribute_not_exists(pk)&quot;</code> on creates.</li><li><strong>Fail loud:</strong> the library never writes <code class="inline">&quot;empty&quot;</code> or silently drops data. If you get a <code class="inline">:validation_error</code>, fix the data or the schema.</li></ol><h2 id="testing" class="section-heading">
+  <a href="#testing" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Testing</span>
+</h2>
+<ul><li>Request building is pure: assert on <code class="inline">Dynamo.Request.*</code> output directly.</li><li>Stub HTTP with <code class="inline">req_options: [plug: {Req.Test, MyRepo}]</code> in the repo config, or
+copy <code class="inline">test/support/fake_dynamo.ex</code> (in-memory DynamoDB) from this repo.</li><li>Set <code class="inline">consolidate_protocols: Mix.env() != :test</code> in <code class="inline">mix.exs</code> if schemas are defined in tests.</li></ul><h2 id="mix-tasks" class="section-heading">
+  <a href="#mix-tasks" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Mix tasks</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="n">mix</span><span class="w"> </span><span class="n">dynamo</span><span class="o">.</span><span class="n">create_table</span><span class="w"> </span><span class="o">--</span><span class="n">schema</span><span class="w"> </span><span class="nc">MyApp.Order</span><span class="w"> </span><span class="p" data-group-id="7209711838-1">[</span><span class="o">--</span><span class="n">repo</span><span class="w"> </span><span class="nc">MyApp.Dynamo</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="o">--</span><span class="n">endpoint</span><span class="w"> </span><span class="nc">URL</span><span class="w"> </span><span class="o">--</span><span class="n">region</span><span class="w"> </span><span class="nc">R</span><span class="p" data-group-id="7209711838-1">]</span><span class="w">
+</span><span class="n">mix</span><span class="w"> </span><span class="n">dynamo</span><span class="o">.</span><span class="n">create_table</span><span class="w"> </span><span class="nc">NAME</span><span class="w"> </span><span class="o">--</span><span class="n">partition</span><span class="o">-</span><span class="n">key</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">sort</span><span class="o">-</span><span class="n">key</span><span class="w">
+</span><span class="n">mix</span><span class="w"> </span><span class="n">dynamo</span><span class="o">.</span><span class="n">list_tables</span><span class="w"> </span><span class="p" data-group-id="7209711838-2">[</span><span class="o">--</span><span class="n">name</span><span class="o">-</span><span class="n">contains</span><span class="w"> </span><span class="n">x</span><span class="p" data-group-id="7209711838-2">]</span><span class="w">
+</span><span class="n">mix</span><span class="w"> </span><span class="n">dynamo</span><span class="o">.</span><span class="n">delete_table</span><span class="w"> </span><span class="nc">NAME</span><span class="w"> </span><span class="p" data-group-id="7209711838-3">[</span><span class="o">--</span><span class="n">force</span><span class="p" data-group-id="7209711838-3">]</span><span class="w">
+</span><span class="n">mix</span><span class="w"> </span><span class="n">dynamo</span><span class="o">.</span><span class="n">generate_schema</span><span class="w"> </span><span class="nc">NAME</span><span class="w"> </span><span class="p" data-group-id="7209711838-4">[</span><span class="o">--</span><span class="n">module</span><span class="w"> </span><span class="nc">M</span><span class="p" data-group-id="7209711838-4">]</span><span class="w"> </span><span class="p" data-group-id="7209711838-5">[</span><span class="o">--</span><span class="n">output</span><span class="w"> </span><span class="n">path</span><span class="p" data-group-id="7209711838-5">]</span><span class="w"> </span><span class="p" data-group-id="7209711838-6">[</span><span class="o">--</span><span class="n">overwrite</span><span class="p" data-group-id="7209711838-6">]</span></code></pre><p>All exit non-zero on failure and honour the application's config.</p>
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="license.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+LICENSE
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="getting_started.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Getting started
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/dynamo/0.2.0" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/dynamo/0.2.0">Hex Preview</a>
+
+              (<a href="https://preview.hex.pm/preview/dynamo/0.2.0/show/Agents.md">current file</a>)
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.35.1) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

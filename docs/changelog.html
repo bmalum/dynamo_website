@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.35.1">
+    <meta name="project" content="Dynamo v0.2.0">
+
+
+    <title>Changelog — Dynamo v0.2.0</title>
+    <link rel="stylesheet" href="dist/html-elixir-P45HOAC7.css" />
+
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
+    <script src="dist/sidebar_items-FC42D05D.js"></script>
+    <script src="docs_config.js"></script>
+    <script async src="dist/html-PVRIOB7F.js"></script>
+
+  </head>
+  <body data-type="extras" class="page-extra">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
+Dynamo
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v0.2.0
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+      <li>
+        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
+Pages
+        </button>
+      </li>
+
+        <li>
+          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
+            Modules
+          </button>
+        </li>
+
+
+        <li>
+          <button id="tasks-list-tab-button" role="tab" data-type="tasks" aria-controls="tasks-tab-panel" aria-selected="false" tabindex="-1">
+            <span translate="no">Mix</span> Tasks
+          </button>
+        </li>
+
+    </ul>
+  </div>
+
+  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+    <ul id="extras-full-list" class="full-list"></ul>
+  </div>
+
+    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
+      <ul id="modules-full-list" class="full-list"></ul>
+    </div>
+
+
+    <div id="tasks-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="tasks-list-tab-button" hidden>
+      <ul id="tasks-full-list" class="full-list"></ul>
+    </div>
+
+</nav>
+
+<main class="content">
+  <output role="status" id="toast"></output>
+
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Dynamo</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <h1>
+
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/CHANGELOG.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+
+    <span>Changelog</span>
+  </h1>
+
+<h2 id="0-2-0-unreleased" class="section-heading">
+  <a href="#0-2-0-unreleased" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">0.2.0 – unreleased</span>
+</h2>
+<p>Complete rewrite. <strong>Every public API changed.</strong> The 0.1 line was a beta whose
+documented API did not match its implementation; 0.2 is what the docs promised.</p><h3 id="architecture" class="section-heading">
+  <a href="#architecture" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Architecture</span>
+</h3>
+<ul><li><strong><a href="Dynamo.Repo.html"><code class="inline">Dynamo.Repo</code></a></strong> – <code class="inline">use Dynamo.Repo, otp_app: :my_app</code> defines a supervised
+repository that owns region, endpoint, credentials, retry policy and a
+<a href="https://hexdocs.pm/elixir/Task.Supervisor.html"><code class="inline">Task.Supervisor</code></a>. All operations are called on the repo. <code class="inline">Dynamo.Table</code>,
+<code class="inline">Dynamo.AWS</code>, <code class="inline">Dynamo.DynamoDB</code>, <code class="inline">Dynamo.Config</code>, <code class="inline">Dynamo.Logger</code>,
+<code class="inline">Dynamo.Helper</code>, <code class="inline">Dynamo.ErrorHandler</code>, <code class="inline">Dynamo.Transaction</code>,
+<code class="inline">Dynamo.Table.Stream(.Producer)</code> and <code class="inline">Dynamo.Encoder/Decoder</code> are removed.</li><li><strong>Typed fields</strong> – <code class="inline">field :name, :type, opts</code>. 16 built-in types incl.
+<code class="inline">:utc_datetime</code>, <code class="inline">:decimal</code>, <code class="inline">:binary</code>, sets; <a href="Dynamo.Type.html"><code class="inline">Dynamo.Type</code></a> behaviour for
+custom types. Encoding/decoding is schema-driven and round-trips.</li><li><strong><a href="Dynamo.Request.html"><code class="inline">Dynamo.Request</code></a></strong> – pure request builders returning <code class="inline">{action, payload}</code>,
+unit-tested against the DynamoDB JSON shapes.</li><li><strong><a href="Dynamo.Client.html"><code class="inline">Dynamo.Client</code></a></strong> – SigV4 (correct <code class="inline">Host</code> with port), jittered exponential
+retry for retryable errors, <code class="inline">:telemetry</code> events, error normalisation.</li><li><strong><a href="Dynamo.Credentials.html"><code class="inline">Dynamo.Credentials</code></a></strong> – static → env → ECS → IMDSv2 chain with a supervised,
+single-flight refreshing cache.</li><li><strong><a href="Dynamo.Error.html"><code class="inline">Dynamo.Error</code></a></strong> – the only error type. AWS <code class="inline">__type</code>s are un-namespaced and
+both <code class="inline">message</code>/<code class="inline">Message</code> are read, so <code class="inline">:resource_not_found</code>,
+<code class="inline">:conditional_check_failed</code>, <code class="inline">:provisioned_throughput_exceeded</code>,
+<code class="inline">:transaction_canceled</code> (with <code class="inline">cancellation_reasons</code>) etc. actually match.</li><li><strong><a href="Dynamo.Page.html"><code class="inline">Dynamo.Page</code></a></strong> – uniform result for <code class="inline">query</code>/<code class="inline">scan</code> with <code class="inline">last_evaluated_key</code>;
+<a href="https://hexdocs.pm/elixir/Enumerable.html"><code class="inline">Enumerable</code></a>.</li><li><strong><a href="Dynamo.Stream.html"><code class="inline">Dynamo.Stream</code></a></strong> – lazy query/scan; <code class="inline">segments:</code> runs a genuinely parallel
+scan with bounded concurrency and backpressure.</li><li><strong><a href="Dynamo.Update.html"><code class="inline">Dynamo.Update</code></a></strong> – SET/REMOVE/ADD/DELETE with <code class="inline">{:increment, n}</code>,
+<code class="inline">{:decrement, n}</code>, <code class="inline">{:add, _}</code>, <code class="inline">{:delete, set}</code>, <code class="inline">{:append, l}</code>,
+<code class="inline">{:prepend, l}</code>, <code class="inline">{:if_not_exists, v}</code>, <code class="inline">:remove</code>.</li><li><strong><a href="Dynamo.Condition.html"><code class="inline">Dynamo.Condition</code></a></strong> – keyword/combinator DSL accepted by every
+<code class="inline">condition:</code>/<code class="inline">filter:</code> option; generates names/values with the field's type.</li><li><strong>Embedded schemas</strong> – <code class="inline">use Dynamo.Schema, embedded: true</code>; every schema is a
+<a href="Dynamo.Type.html"><code class="inline">Dynamo.Type</code></a>, so <code class="inline">field :address, MyApp.Address</code> and
+<code class="inline">field :items, {:list, MyApp.Item}</code> round-trip with full typing.</li><li><strong><code class="inline">{:list, type}</code></strong> parameterised lists.</li><li><code class="inline">entity_name ParentModule</code> – compile-time link for parent/child items.</li><li><code class="inline">table/1</code> accepts compile-time expressions.</li><li><code class="inline">mix dynamo.create_table --schema A --schema B</code> merges GSIs of a single-table design.</li><li>Credentials cache read path is lock-free (<code class="inline">:persistent_term</code>); only refreshes
+go through the GenServer.</li><li>CI workflow (unit matrix + live suite against DynamoDB Local).</li></ul><h3 id="bugs-fixed-from-the-0-1-review" class="section-heading">
+  <a href="#bugs-fixed-from-the-0-1-review" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Bugs fixed (from the 0.1 review)</span>
+</h3>
+<ul><li>Composite sort keys were corrupted when a value contained the separator
+(<code class="inline">2024-01-15</code> with <code class="inline">-</code> became <code class="inline">2024-15</code>). Keys are now built from values
+directly; separator collisions are rejected.</li><li>Composite partition key fields declared with <code class="inline">field ..., partition_key: true</code>
+were emitted in reverse order.</li><li>Nil partition-key fields silently became the string <code class="inline">&quot;empty&quot;</code>; now a
+<code class="inline">:validation_error</code>.</li><li>AWS errors were never categorised (namespaced <code class="inline">__type</code>, lowercase <code class="inline">message</code>).</li><li>Transaction update operators produced invalid expressions (<code class="inline">SET a + :v</code>) and
+expression attributes passed as documented were dropped.</li><li><code class="inline">belongs_to</code> keys were applied in get/query but not delete/update/batch
+get/transactions. <code class="inline">belongs_to</code> is removed; use <code class="inline">entity_name ParentModule</code>
+(resolved at compile time) plus a typed sort key with a default prefix
+(see guides/DATA_MODELLING.md).</li><li>Encoder/decoder treated any map with a key like <code class="inline">&quot;S&quot;</code>/<code class="inline">&quot;N&quot;</code>/<code class="inline">&quot;M&quot;</code> as an
+already-encoded value, corrupting user data both ways. Pre-encoded values must
+now be wrapped in <a href="Dynamo.Raw.html"><code class="inline">Dynamo.Raw</code></a>.</li><li>Binaries were typed <code class="inline">S</code> or <code class="inline">B</code> depending on UTF-8 validity; <code class="inline">:binary</code> is now
+explicit and stable.</li><li><code class="inline">:client</code> was ignored by query/batch write/parallel scan/streams; the repo owns
+the client so every call uses the same configuration.</li><li>ETS credential cache was created lazily by arbitrary processes (race,
+destroyed on owner exit); replaced by a supervised GenServer.</li><li>Batch writes reported total failure as <code class="inline">{:ok, processed_items: 0}</code>; hard
+errors are now returned, <code class="inline">UnprocessedItems</code> retried with backoff.</li><li><code class="inline">list_items</code> could not paginate; <code class="inline">query/2</code> returns <code class="inline">%Dynamo.Page{}</code>.</li><li>Query accumulation was O(n²) and unbounded; streams are lazy.</li><li>&quot;Parallel&quot; streaming was sequential <code class="inline">Stream.concat</code>; <code class="inline">scan_to_process</code> used an
+un-awaited linked <code class="inline">Task.async</code> and mis-wrapped batch messages;
+<code class="inline">producer_spec/2</code> called a non-existent function. All replaced by
+<a href="Dynamo.Stream.html"><code class="inline">Dynamo.Stream</code></a>.</li><li><code class="inline">Dynamo.Logger</code> wrote full item payloads to stdout on success only; replaced
+by telemetry.</li><li>Mix tasks did not load the host app config, exited 0 on failure, and
+<code class="inline">generate_schema</code> produced schemas that could not read the source table.
+Fixed; <code class="inline">create_table --schema</code> derives keys and GSIs from a schema.</li><li><code class="inline">lib/examples.ex</code> shipped example schemas in the library namespace; removed.</li><li>Tests: <code class="inline">table_stream_test.exs</code> did not compile; <code class="inline">mock</code>/meck removed in favour
+of <a href="https://hexdocs.pm/req/0.5.15/Req.Test.html"><code class="inline">Req.Test</code></a> plugs and an in-memory fake; property-based round-trip tests for
+all types; golden tests for every request builder.</li></ul><h3 id="migration" class="section-heading">
+  <a href="#migration" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Migration</span>
+</h3>
+<table><thead><tr><th style="text-align: left;">0.1</th><th style="text-align: left;">0.2</th></tr></thead><tbody><tr><td style="text-align: left;"><code class="inline">Dynamo.Table.put_item(s)</code></td><td style="text-align: left;"><code class="inline">MyRepo.put(s)</code></td></tr><tr><td style="text-align: left;"><code class="inline">Dynamo.Table.get_item(s)</code></td><td style="text-align: left;"><code class="inline">MyRepo.get(s)</code> (full key required)</td></tr><tr><td style="text-align: left;"><code class="inline">Dynamo.Table.list_items(s, sk_operator: :begins_with, sort_key: v)</code></td><td style="text-align: left;"><code class="inline">MyRepo.query(s, sort_key: {:begins_with, v})</code> → <code class="inline">%Dynamo.Page{}</code></td></tr><tr><td style="text-align: left;"><code class="inline">Dynamo.Table.list_items(s, index_name: &quot;X&quot;)</code></td><td style="text-align: left;"><code class="inline">MyRepo.query(s, index: &quot;X&quot;)</code></td></tr><tr><td style="text-align: left;"><code class="inline">Dynamo.Table.update_item(s, %{a: 1})</code></td><td style="text-align: left;"><code class="inline">MyRepo.update(s, a: 1)</code></td></tr><tr><td style="text-align: left;"><code class="inline">Dynamo.Table.batch_write_item(list)</code></td><td style="text-align: left;"><code class="inline">MyRepo.batch_write(list)</code></td></tr><tr><td style="text-align: left;"><code class="inline">Dynamo.Table.parallel_scan(M, segments: 4)</code></td><td style="text-align: left;"><code class="inline">MyRepo.stream(M, segments: 4)</code></td></tr><tr><td style="text-align: left;"><code class="inline">Dynamo.Table.Stream.scan(M)</code></td><td style="text-align: left;"><code class="inline">MyRepo.stream(M)</code></td></tr><tr><td style="text-align: left;"><code class="inline">Dynamo.Transaction.transact([...])</code></td><td style="text-align: left;"><code class="inline">MyRepo.transaction([...])</code> (ops now <code class="inline">{:put, s, opts}</code> etc.)</td></tr><tr><td style="text-align: left;"><code class="inline">table_name &quot;t&quot;</code></td><td style="text-align: left;"><code class="inline">table &quot;t&quot;</code></td></tr><tr><td style="text-align: left;"><code class="inline">field :x</code> (untyped)</td><td style="text-align: left;"><code class="inline">field :x, :string</code> (or the real type)</td></tr><tr><td style="text-align: left;"><code class="inline">belongs_to :parent, P, sk_strategy: :prefix</code></td><td style="text-align: left;"><code class="inline">entity_name P</code> + <code class="inline">field :kind, :string, sort_key: true, default: &quot;child&quot;</code></td></tr><tr><td style="text-align: left;"><code class="inline">Dynamo.Config.put_process_config/1</code></td><td style="text-align: left;">repo config / <code class="inline">use Dynamo.Schema, opts</code></td></tr><tr><td style="text-align: left;"><code class="inline">Dynamo.Logger.enable/0</code></td><td style="text-align: left;">attach to <code class="inline">[:dynamo, :request, :stop]</code></td></tr></tbody></table><p>Stored keys are compatible for schemas that used the default <code class="inline">#</code> separator,
+single-field keys, default <code class="inline">pk</code>/<code class="inline">sk</code> names <strong>and single-word module names</strong>.
+The default entity name is now <a href="https://hexdocs.pm/elixir/Macro.html#underscore/1"><code class="inline">Macro.underscore/1</code></a> of the module basename
+(<code class="inline">UserProfile</code> → <code class="inline">&quot;user_profile&quot;</code>); 0.1 lower-cased it (<code class="inline">&quot;userprofile&quot;</code>).
+Set <code class="inline">entity_name &quot;userprofile&quot;</code> explicitly on such schemas to keep reading
+existing data. Composite sort keys written by 0.1 with values containing the
+separator are corrupted and must be re-written.</p><h2 id="0-1-x" class="section-heading">
+  <a href="#0-1-x" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">0.1.x</span>
+</h2>
+<p>Initial beta.</p>
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="readme.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+Dynamo
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="license.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+LICENSE
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/dynamo/0.2.0" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/dynamo/0.2.0">Hex Preview</a>
+
+              (<a href="https://preview.hex.pm/preview/dynamo/0.2.0/show/CHANGELOG.md">current file</a>)
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.35.1) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

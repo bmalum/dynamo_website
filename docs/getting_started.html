@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.35.1">
+    <meta name="project" content="Dynamo v0.2.0">
+
+
+    <title>Getting started — Dynamo v0.2.0</title>
+    <link rel="stylesheet" href="dist/html-elixir-P45HOAC7.css" />
+
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
+    <script src="dist/sidebar_items-FC42D05D.js"></script>
+    <script src="docs_config.js"></script>
+    <script async src="dist/html-PVRIOB7F.js"></script>
+
+  </head>
+  <body data-type="extras" class="page-extra">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="readme.html" class="sidebar-projectName" translate="no">
+Dynamo
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v0.2.0
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
+      <li>
+        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
+Pages
+        </button>
+      </li>
+
+        <li>
+          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
+            Modules
+          </button>
+        </li>
+
+
+        <li>
+          <button id="tasks-list-tab-button" role="tab" data-type="tasks" aria-controls="tasks-tab-panel" aria-selected="false" tabindex="-1">
+            <span translate="no">Mix</span> Tasks
+          </button>
+        </li>
+
+    </ul>
+  </div>
+
+  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
+    <ul id="extras-full-list" class="full-list"></ul>
+  </div>
+
+    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
+      <ul id="modules-full-list" class="full-list"></ul>
+    </div>
+
+
+    <div id="tasks-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="tasks-list-tab-button" hidden>
+      <ul id="tasks-full-list" class="full-list"></ul>
+    </div>
+
+</nav>
+
+<main class="content">
+  <output role="status" id="toast"></output>
+
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Dynamo</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <h1>
+
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/guides/GETTING_STARTED.md#L1" title="View Source" class="icon-action" rel="help">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+
+    <span>Getting started</span>
+  </h1>
+
+<p>A complete, minimal walkthrough: local DynamoDB, a repo, a schema, CRUD.</p><h2 id="1-run-dynamodb-local" class="section-heading">
+  <a href="#1-run-dynamodb-local" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">1. Run DynamoDB Local</span>
+</h2>
+<pre><code class="makeup bash" translate="no"><span class="">docker run -p 8000:8000 amazon/dynamodb-local
+</span></code></pre><h2 id="2-add-the-dependency-and-a-repo" class="section-heading">
+  <a href="#2-add-the-dependency-and-a-repo" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">2. Add the dependency and a repo</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="c1"># mix.exs</span><span class="w">
+</span><span class="p" data-group-id="3015353806-1">{</span><span class="ss">:dynamo</span><span class="p">,</span><span class="w"> </span><span class="ss">github</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;bmalum/dynamo&quot;</span><span class="p" data-group-id="3015353806-1">}</span><span class="w">
+
+</span><span class="c1"># lib/my_app/dynamo.ex</span><span class="w">
+</span><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyApp.Dynamo</span><span class="w"> </span><span class="k" data-group-id="3015353806-2">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Dynamo.Repo</span><span class="p">,</span><span class="w"> </span><span class="ss">otp_app</span><span class="p">:</span><span class="w"> </span><span class="ss">:my_app</span><span class="w">
+</span><span class="k" data-group-id="3015353806-2">end</span><span class="w">
+
+</span><span class="c1"># config/dev.exs</span><span class="w">
+</span><span class="n">config</span><span class="w"> </span><span class="ss">:my_app</span><span class="p">,</span><span class="w"> </span><span class="nc">MyApp.Dynamo</span><span class="p">,</span><span class="w">
+  </span><span class="ss">region</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;eu-central-1&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http://localhost:8000&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">access_key_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;local&quot;</span><span class="p">,</span><span class="w">
+  </span><span class="ss">secret_access_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;local&quot;</span><span class="w">
+
+</span><span class="c1"># lib/my_app/application.ex</span><span class="w">
+</span><span class="n">children</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="3015353806-3">[</span><span class="nc">MyApp.Dynamo</span><span class="p" data-group-id="3015353806-3">]</span></code></pre><h2 id="3-define-a-schema" class="section-heading">
+  <a href="#3-define-a-schema" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">3. Define a schema</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">MyApp.Note</span><span class="w"> </span><span class="k" data-group-id="6783126907-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Dynamo.Schema</span><span class="w">
+
+  </span><span class="n">item</span><span class="w"> </span><span class="k" data-group-id="6783126907-2">do</span><span class="w">
+    </span><span class="n">table</span><span class="w"> </span><span class="s">&quot;notes&quot;</span><span class="w">
+
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:owner</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="p">,</span><span class="w"> </span><span class="ss">partition_key</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:created_at</span><span class="p">,</span><span class="w"> </span><span class="ss">:utc_datetime</span><span class="p">,</span><span class="w"> </span><span class="ss">sort_key</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:title</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:body</span><span class="p">,</span><span class="w"> </span><span class="ss">:string</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:tags</span><span class="p">,</span><span class="w"> </span><span class="ss">:string_set</span><span class="w">
+    </span><span class="n">field</span><span class="w"> </span><span class="ss">:pinned</span><span class="p">,</span><span class="w"> </span><span class="ss">:boolean</span><span class="p">,</span><span class="w"> </span><span class="ss">default</span><span class="p">:</span><span class="w"> </span><span class="no">false</span><span class="w">
+  </span><span class="k" data-group-id="6783126907-2">end</span><span class="w">
+</span><span class="k" data-group-id="6783126907-1">end</span></code></pre><p>Keys are generated for you: <code class="inline">pk = &quot;note#&lt;owner&gt;&quot;</code>, <code class="inline">sk = &quot;&lt;created_at ISO 8601&gt;&quot;</code>.</p><h2 id="4-create-the-table-from-the-schema" class="section-heading">
+  <a href="#4-create-the-table-from-the-schema" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">4. Create the table from the schema</span>
+</h2>
+<pre><code class="makeup bash" translate="no"><span class="">mix dynamo.create_table --schema MyApp.Note --repo MyApp.Dynamo
+</span></code></pre><h2 id="5-use-it" class="section-heading">
+  <a href="#5-use-it" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">5. Use it</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="kn">alias</span><span class="w"> </span><span class="nc">MyApp</span><span class="o">.</span><span class="p" data-group-id="4293615556-1">{</span><span class="nc">Dynamo</span><span class="p">,</span><span class="w"> </span><span class="nc">Note</span><span class="p" data-group-id="4293615556-1">}</span><span class="w">
+
+</span><span class="n">note</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="4293615556-2">%</span><span class="nc" data-group-id="4293615556-2">Note</span><span class="p" data-group-id="4293615556-2">{</span><span class="ss">owner</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;alice&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">created_at</span><span class="p">:</span><span class="w"> </span><span class="nc">DateTime</span><span class="o">.</span><span class="n">utc_now</span><span class="p" data-group-id="4293615556-3">(</span><span class="p" data-group-id="4293615556-3">)</span><span class="p">,</span><span class="w"> </span><span class="ss">title</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Hello&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">tags</span><span class="p">:</span><span class="w"> </span><span class="nc">MapSet</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="4293615556-4">(</span><span class="p" data-group-id="4293615556-5">[</span><span class="s">&quot;intro&quot;</span><span class="p" data-group-id="4293615556-5">]</span><span class="p" data-group-id="4293615556-4">)</span><span class="p" data-group-id="4293615556-2">}</span><span class="w">
+
+</span><span class="p" data-group-id="4293615556-6">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">note</span><span class="p" data-group-id="4293615556-6">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Dynamo</span><span class="o">.</span><span class="n">put</span><span class="p" data-group-id="4293615556-7">(</span><span class="n">note</span><span class="p" data-group-id="4293615556-7">)</span><span class="w">
+
+</span><span class="p" data-group-id="4293615556-8">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="o">^</span><span class="n">note</span><span class="p" data-group-id="4293615556-8">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Dynamo</span><span class="o">.</span><span class="n">get</span><span class="p" data-group-id="4293615556-9">(</span><span class="p" data-group-id="4293615556-10">%</span><span class="nc" data-group-id="4293615556-10">Note</span><span class="p" data-group-id="4293615556-10">{</span><span class="ss">owner</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;alice&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">created_at</span><span class="p">:</span><span class="w"> </span><span class="n">note</span><span class="o">.</span><span class="n">created_at</span><span class="p" data-group-id="4293615556-10">}</span><span class="p" data-group-id="4293615556-9">)</span><span class="w">
+
+</span><span class="p" data-group-id="4293615556-11">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="no">nil</span><span class="p" data-group-id="4293615556-11">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Dynamo</span><span class="o">.</span><span class="n">update</span><span class="p" data-group-id="4293615556-12">(</span><span class="n">note</span><span class="p">,</span><span class="w"> </span><span class="ss">pinned</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w"> </span><span class="ss">tags</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="4293615556-13">{</span><span class="ss">:add</span><span class="p">,</span><span class="w"> </span><span class="nc">MapSet</span><span class="o">.</span><span class="n">new</span><span class="p" data-group-id="4293615556-14">(</span><span class="p" data-group-id="4293615556-15">[</span><span class="s">&quot;important&quot;</span><span class="p" data-group-id="4293615556-15">]</span><span class="p" data-group-id="4293615556-14">)</span><span class="p" data-group-id="4293615556-13">}</span><span class="p" data-group-id="4293615556-12">)</span><span class="w">
+
+</span><span class="p" data-group-id="4293615556-16">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">page</span><span class="p" data-group-id="4293615556-16">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Dynamo</span><span class="o">.</span><span class="n">query</span><span class="p" data-group-id="4293615556-17">(</span><span class="p" data-group-id="4293615556-18">%</span><span class="nc" data-group-id="4293615556-18">Note</span><span class="p" data-group-id="4293615556-18">{</span><span class="ss">owner</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;alice&quot;</span><span class="p" data-group-id="4293615556-18">}</span><span class="p">,</span><span class="w"> </span><span class="ss">descending</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p">,</span><span class="w"> </span><span class="ss">limit</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p" data-group-id="4293615556-17">)</span><span class="w">
+</span><span class="nc">Enum</span><span class="o">.</span><span class="n">map</span><span class="p" data-group-id="4293615556-19">(</span><span class="n">page</span><span class="o">.</span><span class="n">items</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="ni">&amp;1</span><span class="o">.</span><span class="n">title</span><span class="p" data-group-id="4293615556-19">)</span><span class="w">
+
+</span><span class="p" data-group-id="4293615556-20">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="no">nil</span><span class="p" data-group-id="4293615556-20">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Dynamo</span><span class="o">.</span><span class="n">delete</span><span class="p" data-group-id="4293615556-21">(</span><span class="n">note</span><span class="p" data-group-id="4293615556-21">)</span></code></pre><p>Every call returns <code class="inline">{:ok, _} | {:error, %Dynamo.Error{}}</code>; use the <code class="inline">!</code> variants
+(<code class="inline">put!</code>, <code class="inline">get!</code>, …) when you'd rather raise.</p><h2 id="6-handle-errors" class="section-heading">
+  <a href="#6-handle-errors" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">6. Handle errors</span>
+</h2>
+<pre><code class="makeup elixir" translate="no"><span class="k">case</span><span class="w"> </span><span class="nc">Dynamo</span><span class="o">.</span><span class="n">put</span><span class="p" data-group-id="2487798755-1">(</span><span class="n">note</span><span class="p">,</span><span class="w"> </span><span class="ss">condition</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;attribute_not_exists(pk)&quot;</span><span class="p" data-group-id="2487798755-1">)</span><span class="w"> </span><span class="k" data-group-id="2487798755-2">do</span><span class="w">
+  </span><span class="p" data-group-id="2487798755-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">note</span><span class="p" data-group-id="2487798755-3">}</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p" data-group-id="2487798755-4">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">note</span><span class="p" data-group-id="2487798755-4">}</span><span class="w">
+  </span><span class="p" data-group-id="2487798755-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2487798755-6">%</span><span class="nc" data-group-id="2487798755-6">Dynamo.Error</span><span class="p" data-group-id="2487798755-6">{</span><span class="ss">type</span><span class="p">:</span><span class="w"> </span><span class="ss">:conditional_check_failed</span><span class="p" data-group-id="2487798755-6">}</span><span class="p" data-group-id="2487798755-5">}</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p" data-group-id="2487798755-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:already_exists</span><span class="p" data-group-id="2487798755-7">}</span><span class="w">
+  </span><span class="p" data-group-id="2487798755-8">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2487798755-9">%</span><span class="nc" data-group-id="2487798755-9">Dynamo.Error</span><span class="p" data-group-id="2487798755-9">{</span><span class="p" data-group-id="2487798755-9">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p" data-group-id="2487798755-8">}</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">raise</span><span class="w"> </span><span class="n">e</span><span class="w">
+</span><span class="k" data-group-id="2487798755-2">end</span></code></pre><h2 id="next" class="section-heading">
+  <a href="#next" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Next</span>
+</h2>
+<ul><li><a href="data_modelling.html">Data modelling</a> – composite keys, GSIs, single-table design</li><li><a href="streaming.html">Streaming &amp; batches</a></li><li><a href="testing.html">Testing</a></li><li><a href="agents.html">Agents.md</a> – patterns and anti-patterns</li></ul>
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="agents.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+Dynamo Agent Guide
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="data_modelling.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Data modelling with Dynamo
+        </span>
+      </a>
+
+  </div>
+</div>
+    <footer class="footer">
+      <p>
+
+          <span class="line">
+            <a href="https://hex.pm/packages/dynamo/0.2.0" class="footer-hex-package">Hex Package</a>
+
+            <a href="https://preview.hex.pm/preview/dynamo/0.2.0">Hex Preview</a>
+
+              (<a href="https://preview.hex.pm/preview/dynamo/0.2.0/show/guides/GETTING_STARTED.md">current file</a>)
+
+          </span>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.35.1) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>
