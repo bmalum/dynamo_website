@@ -39,6 +39,7 @@ Mix.Tasks.Dynamo.ListTables.html
 agents.html
 api-reference.html
 changelog.html
+contributing.html
 data_modelling.html
 dist/handlebars.runtime-NWIB6V2M.js
 dist/handlebars.templates-K7URE6B4.js
@@ -57,12 +58,13 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-8E51B46E.js
-dist/sidebar_items-B01FFB7B.js
+dist/search_data-D1CF59E1.js
+dist/sidebar_items-9ABBB7EB.js
 getting_started.html
 index.html
 license.html
 readme.html
 search.html
+security.html
 streaming.html
 testing.html

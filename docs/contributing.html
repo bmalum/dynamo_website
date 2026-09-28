@@ -8,7 +8,7 @@
     <meta name="project" content="Dynamo v0.2.0">
 
 
-    <title>Dynamo.Type.NumberSet — Dynamo v0.2.0</title>
+    <title>Contributing — Dynamo v0.2.0</title>
     <link rel="stylesheet" href="dist/html-elixir-P45HOAC7.css" />
 
 
@@ -19,7 +19,7 @@
     <script async src="dist/html-PVRIOB7F.js"></script>
 
   </head>
-  <body data-type="modules" class="page-module">
+  <body data-type="extras" class="page-extra">
     <script>
 
       try {
@@ -122,142 +122,94 @@ Pages
 <div id="top-content">
   <h1>
 
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type/builtin.ex#L302" title="View Source" class="icon-action" rel="help">
+      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/CONTRIBUTING.md#L1" title="View Source" class="icon-action" rel="help">
         <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         <span class="sr-only">View Source</span>
       </a>
 
-    <span translate="no">Dynamo.Type.NumberSet</span> 
-    <small class="app-vsn" translate="no">(Dynamo v0.2.0)</small>
 
+    <span>Contributing</span>
   </h1>
 
-
-    <section id="moduledoc">
-<p><code class="inline">:number_set</code> – <code class="inline">NS</code>. Empty sets dump to <code class="inline">NULL</code>.</p>
-    </section>
-
+<p>Thanks for looking at Dynamo. Bug reports, questions and pull requests are welcome.</p><h2 id="before-you-open-a-pull-request" class="section-heading">
+  <a href="#before-you-open-a-pull-request" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Before you open a pull request</span>
+</h2>
+<ul><li>Open an issue first for anything that changes the public API or adds a
+DynamoDB feature, so the shape can be agreed before code is written.</li><li>Read <code class="inline">Agents.md</code> for the mental model and <code class="inline">skills/dynamo-maintainer/SKILL.md</code>
+for the invariants, the test tiers and the step-by-step procedure for adding
+a feature. The maintainer skill is written for AI agents and applies to
+humans just the same.</li></ul><h2 id="running-the-checks" class="section-heading">
+  <a href="#running-the-checks" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Running the checks</span>
+</h2>
+<pre><code class="makeup bash" translate="no"><span class="">mix deps.get
+</span><span class="">mix format --check-formatted
+</span><span class="">MIX_ENV=test mix compile --force --warnings-as-errors
+</span><span class="">mix test
+</span><span class="">mix docs
+</span></code></pre><p>All four must be clean. The unit suite runs against an in-memory fake
+(<code class="inline">test/support/fake_dynamo.ex</code>) and takes about a second.</p><p>Changes that touch the wire (new request, new attribute type, endpoint routing)
+also need a scenario in <code class="inline">test/integration/live_test.exs</code>. It runs against
+DynamoDB Local or a real AWS account and cleans up its own tables:</p><pre><code class="makeup bash" translate="no"><span class="">DYNAMO_ENDPOINT=http://localhost:8000 AWS_ACCESS_KEY_ID=local AWS_SECRET_ACCESS_KEY=local \
+</span><span class="">  mix test --include integration test/integration/live_test.exs
+</span></code></pre><h2 id="what-a-good-pull-request-looks-like" class="section-heading">
+  <a href="#what-a-good-pull-request-looks-like" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">What a good pull request looks like</span>
+</h2>
+<ul><li>One change per PR, with a test that fails without it.</li><li>Request builders get a golden-payload test; schema DSL changes get a
+compile-error test for the failure case.</li><li>Documentation updated in the same PR: README section, <code class="inline">Agents.md</code> cheat
+sheet, the relevant guide, and a <code class="inline">CHANGELOG.md</code> line under &quot;unreleased&quot;.
+Every snippet in the docs must run.</li><li>No new dependencies without discussion. Runtime deps are <code class="inline">req</code> and <code class="inline">jason</code>;
+<code class="inline">decimal</code> is optional and must stay optional.</li></ul><h2 id="style" class="section-heading">
+  <a href="#style" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Style</span>
+</h2>
+<p><a href="https://hexdocs.pm/mix/Mix.Tasks.Format.html"><code class="inline">mix format</code></a> decides. Beyond that: public functions return
+<code class="inline">{:ok, value} | {:error, %Dynamo.Error{}}</code>, options are validated with
+<a href="https://hexdocs.pm/elixir/Keyword.html#validate/2"><code class="inline">Keyword.validate/2</code></a>, invalid input is an error and never a sentinel value.</p><h2 id="reporting-a-security-issue" class="section-heading">
+  <a href="#reporting-a-security-issue" class="hover-link">
+    <i class="ri-link-m" aria-hidden="true"></i>
+  </a>
+  <span class="text">Reporting a security issue</span>
+</h2>
+<p>See <a href="security.html">SECURITY.md</a>. Please don't open a public issue for it.</p>
 </div>
 
-  <section id="summary" class="details-list">
-    <h1 class="section-heading">
-      <a class="hover-link" href="#summary">
-        <i class="ri-link-m" aria-hidden="true"></i>
+<div class="bottom-actions" id="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="changelog.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+Changelog
+        </span>
       </a>
-      <span class="text">Summary</span>
-    </h1>
-<div class="summary-functions summary">
-  <h2>
-    <a href="#functions">Functions</a>
-  </h2>
 
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#cast/1" data-no-tooltip translate="no">cast(value)</a>
+  </div>
+  <div class="bottom-actions-item">
 
-      </div>
+      <a href="security.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+Security
+        </span>
+      </a>
 
-        <div class="summary-synopsis"><p>Callback implementation for <a href="Dynamo.Type.html#c:cast/1"><code class="inline">Dynamo.Type.cast/1</code></a>.</p></div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#dump/1" data-no-tooltip translate="no">dump(s)</a>
-
-      </div>
-
-        <div class="summary-synopsis"><p>Callback implementation for <a href="Dynamo.Type.html#c:dump/1"><code class="inline">Dynamo.Type.dump/1</code></a>.</p></div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#load/1" data-no-tooltip translate="no">load(arg1)</a>
-
-      </div>
-
-        <div class="summary-synopsis"><p>Callback implementation for <a href="Dynamo.Type.html#c:load/1"><code class="inline">Dynamo.Type.load/1</code></a>.</p></div>
-
-    </div>
-
+  </div>
 </div>
-
-  </section>
-
-
-  <section id="functions" class="details-list">
-    <h1 class="section-heading">
-      <a class="hover-link" href="#functions">
-        <i class="ri-link-m" aria-hidden="true"></i>
-      </a>
-      <span class="text">Functions</span>
-    </h1>
-    <div class="functions-list">
-<section class="detail" id="cast/1">
-
-  <div class="detail-header">
-    <a href="#cast/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-    </a>
-    <h1 class="signature" translate="no">cast(value)</h1>
-
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type/builtin.ex#L304" class="icon-action" rel="help" aria-label="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-<p>Callback implementation for <a href="Dynamo.Type.html#c:cast/1"><code class="inline">Dynamo.Type.cast/1</code></a>.</p>
-  </section>
-</section>
-<section class="detail" id="dump/1">
-
-  <div class="detail-header">
-    <a href="#dump/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-    </a>
-    <h1 class="signature" translate="no">dump(s)</h1>
-
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type/builtin.ex#L306" class="icon-action" rel="help" aria-label="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-<p>Callback implementation for <a href="Dynamo.Type.html#c:dump/1"><code class="inline">Dynamo.Type.dump/1</code></a>.</p>
-  </section>
-</section>
-<section class="detail" id="load/1">
-
-  <div class="detail-header">
-    <a href="#load/1" class="detail-link" data-no-tooltip aria-label="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-    </a>
-    <h1 class="signature" translate="no">load(arg1)</h1>
-
-      <a href="https://github.com/bmalum/dynamo/blob/v0.2.0/lib/dynamo/type/builtin.ex#L324" class="icon-action" rel="help" aria-label="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-<p>Callback implementation for <a href="Dynamo.Type.html#c:load/1"><code class="inline">Dynamo.Type.load/1</code></a>.</p>
-  </section>
-</section>
-
-    </div>
-  </section>
-
     <footer class="footer">
       <p>
 
@@ -265,6 +217,8 @@ Pages
             <a href="https://hex.pm/packages/dynamo/0.2.0" class="footer-hex-package">Hex Package</a>
 
             <a href="https://preview.hex.pm/preview/dynamo/0.2.0">Hex Preview</a>
+
+              (<a href="https://preview.hex.pm/preview/dynamo/0.2.0/show/CONTRIBUTING.md">current file</a>)
 
           </span>
 
