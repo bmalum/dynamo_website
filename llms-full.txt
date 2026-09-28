@@ -1,4 +1,4 @@
-# Dynamo: full documentation (generated 2026-09-27 from 5747a94)
+# Dynamo: full documentation (generated 2026-09-28 from be6cbfc)
 
 
 ---
@@ -446,6 +446,10 @@ in-memory fake (`test/support/fake_dynamo.ex`) you can borrow.
 - **Fail loud** – nil keys, separator collisions, unknown options and wrong types are errors, never sentinels.
 
 See [Agents.md](Agents.md) for data-modelling guidance and the `guides/` folder for worked examples.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Security issues: [SECURITY.md](SECURITY.md).
 
 ## License
 
